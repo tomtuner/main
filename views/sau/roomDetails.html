@@ -27,8 +27,8 @@ if( $row['diagram'] != '' )
 
 if( $row['Image'] != '')
 {
-	echo "<img src='http://campuslife.rit.edu/main/images/reservations/" . $row['Image'] . "' alt='" . $row['Name']  . "'/><br /><br /><br /><br />";
-	//echo '<iframe src="http://www.360cities.net/embed_iframe/panorama-' . $row['Name'] . '" width="375" height="315" frameborder="0" bgcolor="#000000" target="_blank"></iframe><br/><a title="Panorama photos of Room ' . $row['Name'] . ' on 360cities.net" href="http://www.360cities.net/image/panorama-' . $row['Name'] . '">Room ' . $row['Name'] . '</a> in <a href="http://www.360cities.net/area/world" title="Panoramic images from The World">The World</a>';
+	//echo "<img src='http://campuslife.rit.edu/main/images/reservations/" . $row['Image'] . "' alt='" . $row['Name']  . "'/><br /><br /><br /><br />";
+	echo '<iframe src="http://www.360cities.net/embed_iframe/panorama-' . $row['Name'] . '" width="375" height="315" frameborder="0" bgcolor="#000000" target="_blank"></iframe><br/><a title="Panorama photos of Room ' . $row['Name'] . ' on 360cities.net" href="http://www.360cities.net/image/panorama-' . $row['Name'] . '">Room ' . $row['Name'] . '</a> in <a href="http://www.360cities.net/area/world" title="Panoramic images from The World">The World</a>';
 }
 ?>
 
