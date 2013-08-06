@@ -1,0 +1,26 @@
+<?php require('subHeader.html'); ?>
+<table class="aboutDetails" cellspacing="15">
+<th align="left">Name</th>
+<th align="left">Phone</th>
+<th align="left">Bldg. No.</th>
+
+<?php
+
+foreach ($foo as $department) 
+{
+	$html = <<<EOL
+	<tr>
+		<td width="200"><a href="{$department->getUrl()}">{$department->getTitle()}</a></td>
+		<td width="150">585.475.{$department->getPhone()}</td>
+		<td width="210">{$department->getOfficeLocation()}</td>
+	</tr>
+	
+EOL;
+echo $html;
+}	
+
+?>
+</table>
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<?php require('subFooter.html'); ?>

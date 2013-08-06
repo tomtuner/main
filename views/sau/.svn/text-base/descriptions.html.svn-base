@@ -1,0 +1,12 @@
+<?php require_once('subHeader.html') ?>
+
+<strong>Reserve one of these rooms for your event today!</strong>
+<br/><br/>Click on the links below to find out information on room occupancy, special features, and room diagrams.<br/><br/><br/>	
+<?php
+	while( $row = $result->fetchRow() )
+	{
+		echo  "<img src='images/link.gif' align='left' border='0' alt='click link'/> &nbsp;<a href='sau/roomDetails?id= " . $row['ID'] . "'>" . $row['Name'] . "</a><br/><br/>";
+	}
+?>
+
+<?php require_once('subFooter.html') ?>

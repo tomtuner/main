@@ -1,0 +1,16 @@
+<?php
+require('admin_header.html');
+
+$urlPath = "http://campuslife.rit.edu/main/uploads/";
+?>
+<table>
+<tr><th>Original file</th><th>Available online at (will open a new window)</th>
+<?
+
+foreach($results as $name => $newName){
+echo "<tr><td>$name</td><td><a href='$urlPath"."$newName' target=_blank>$urlPath"."$newName</a></td></tr>";
+}
+?>
+</table>
+
+<?php require('admin_footer.html'); ?>

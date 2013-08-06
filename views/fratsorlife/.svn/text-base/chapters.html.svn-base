@@ -1,0 +1,34 @@
+<?php require('subHeader.html'); ?>
+
+For more information on individual Greek Chapters,<br/> click on the links below.<br/><br/>
+<?php
+
+	$totalSorority=0;
+	
+	echo "<strong>Fraternities</strong><br/><br/>";
+	
+	//Fraternity
+	while($row = $result->fetchRow())
+	{
+		if( $row['type'] == 'Fraternity')
+		{
+			echo "<a href='fratsorlife/chapterDetails?id=" . $row['org_id'] . "&type=Fraternity'>" . $row['n_name'] . "</a><br/>";
+		}
+		else
+		{
+			$sorority[] = $row['n_name'];
+			$sororityId[] = $row['org_id'];
+			$totalSorority++;
+		}
+	}
+	
+	//Sorority
+	echo "<br/><br/><strong>Sororities</strong><br/><br/>";
+	for( $i=0; $i<$totalSorority; $i++ )
+	{
+		echo "<a href='fratsorlife/chapterDetails?id=" . $sororityId[$i] . "&type=Sorority'>" .  $sorority[$i] . "</a><br/>";
+	}
+	
+?>
+
+<?php require('subFooter.html'); ?>

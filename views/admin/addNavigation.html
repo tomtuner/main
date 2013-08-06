@@ -1,0 +1,25 @@
+<?php require('admin_header.html'); ?>
+
+<h2>Create New Content</h2>
+<form action="admin/process" method="post">
+	<table>
+		<tr>
+			<td>Parent</td>
+		</tr>
+		<tr>
+			<td>Weight</td>
+			<td><input type="integer" name="weight"></td>
+		</tr>
+		<tr>
+			<td>Label</td>
+			<td><input type="text" name="label"></td>
+		</tr>
+		<tr>
+			<td>Url</td>
+			<td><input type="text" name="url"></td>
+		</tr>
+	</table>
+
+	<input type="submit" name="saveNewNav" value="Save Navigation" />
+</form>
+<?php require('admin_footer.html'); ?>

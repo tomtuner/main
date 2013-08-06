@@ -1,0 +1,42 @@
+<?php require("subHeader.html"); ?>
+<!-- NOTE: THE FORM IS COMMENTED OUT AT CAROL'S REQUEST -->
+
+The Campus Life Reservations Office handles all RIT student, faculty and staff reservations for Campus Center (building 3) and Student Alumni Union (building 4) meeting rooms, display cases and tables. Campus Life Reservations also processes all non-credit bearing student requests for academic space through the Registrars Office if space is not available in the SAU or Campus Center.   Nonaffiliated requests must be made through RIT’s Office of Government and Community Relations by calling 585.475.5012.<br/><br/>
+
+ 
+
+If you are interested in reserving a room in the Campus Center or SAU, please <!--complete the form below and a Reservations Coordinator will contact you regarding your request. You may also call--> contact us by phone at 585.475.6992 or email us at <a href ="mailto://reserve@rit.edu">reserve@rit.edu</a>.  A new online form for room reservations is currently undergoing construction.<br/><br/>
+
+ 
+
+Visit the <strong><a href="sau/descriptions">Room Descriptions</a></strong> page to learn more about each of the rooms in the Campus Center and SAU.<br/><br/>
+<!--
+<text style="color:red">
+Note: All information is required.</text><br/><br/>
+<form>
+<table cellpadding="5" cellspacing="5">
+<tr><td>Your Name:</td><td><input type="text" size="20" id="name"/></td></tr>
+<tr><td>Phone Number:</td><td><input type="text" size="20" id="phone"/></td></tr>
+<tr><td>E. mail Address:</td><td><input type="text" size="20" id="email"/></td></tr>
+<tr><td>Organization or Department:</td><td><input type="text" size="20" id="department"/></td></tr>
+</table>
+<br/><br/>
+You may submit up to four different reservations per form. If you need more than four, you may return and fill out another request.<br/><br/>
+
+How many requests do you want to make now?
+<select onchange="showRequests( this.value )" id="totalRequests" name="totalRequests">
+<option value="">--</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+</select>
+<br /><br />
+-->
+<div id='requestsHolder'>
+	<!-- Number of request forms are generated based on the total requests value -->
+	Loading please wait..
+</div>
+
+</form>
+<?php require("subFooter.html"); ?>

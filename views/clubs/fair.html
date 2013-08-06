@@ -1,0 +1,117 @@
+<?php require('views/subHeader.html'); ?>
+<style type="text/css">
+p {
+margin-top: 5px;
+}
+span.required {
+color: red;
+font-size:12px;
+}
+form#requestForm {
+margin-top: 20px;
+background:#efefef;
+border:solid 2px #ccc;
+padding: 10px;
+}
+</style>
+
+<?php /*
+<h3 style="color:black;font-size:15px;">8th Annual Club Fair Organization Registration Form</h3>
+<p>
+<strong>Event Date:</strong>&nbsp;Sunday, September 5, 2010<br/>
+<strong>Event Time:</strong>&nbsp;1:00 – 4:00 pm<br/>
+<strong>Location:</strong>&nbsp;Gordon Field House and Activities Center
+</p>
+
+<p>
+This event is for first-year and transfer students and will conclude the week-long New Student Orientation program.  This is a great opportunity for your group to get new students interested in, and involved with, your organizations.
+</p>
+
+<ul>
+<li>Set up begins at Noon.</li>
+<li>All tables must be staffed exclusively by students of the organization.</li>
+<li>Each organization will receive 1 table and 2 chairs with your registration.</li>
+<li>Power is available to groups who request it on this form.</li>
+</ul>
+
+<p>
+<strong>Instructions</strong><br/>
+Please fill out the information below.  Make sure to check Power Source if you will need power for your display.  If you do not check yes, your organization will not receive power.  Indicate any other special requests in the space provided.  Staff will make every effort to accommodate special requests, but cannot guarantee all requests.
+</p>
+ 
+<p>
+<strong>Questions?</strong><br/>
+Contact Jessica Berner, Assistant Director of Campus Life and Event Organizer at jrbccl@rit.edu or 585-475-7123.
+</p>
+*/?>
+<form id="requestForm" action="/main/clubs/submitFairRequest" method="post">
+<table>
+<?php if (isset($_POST["errors"])): ?>
+<tr>
+<td colspan="2">
+<strong><span class="required">The following errors were found!</span></strong>
+<ul>
+<?php foreach ($_POST["errors"] as $error): ?>
+<li><?php echo $error; ?></li>
+<?php endforeach; ?>
+</ul>
+</td>
+</tr>
+<?php endif; ?>
+<tr>
+<th colspan="2" style="text-align:left;">Contact Information</th>
+</tr>
+<tr>
+<td>Organization:</td>
+<td><input type="text" value="<?php if (isset($_POST["organization_name"])) echo $_POST["organization_name"]; ?>" name="organization_name" size="30"/></td>
+</tr>
+<tr>
+<td>Responsible Rep:</td>
+<td><input type="text" value="<?php if (isset($_POST["responsible_rep"])) echo $_POST["responsible_rep"]; ?>" name="responsible_rep" size="30"/></td>
+</tr>
+<tr>
+<td>Email:</td>
+<td><input type="text" value="<?php if (isset($_POST["email"])) echo $_POST["email"]; ?>" name="email" size="30"/></td>
+</tr>
+<tr>
+<td>Phone Number:<br/><span class="required">e.g. 585-475-2804</span></td>
+<td><input type="text" value="<?php if (isset($_POST["phone"])) echo $_POST["phone"]; ?>" name="phone" size="30"/></td>
+</tr>
+<tr>
+<th colspan="2" style="text-align:left;">Request Information</th>
+</tr>
+
+<tr><td colspan="2"><strong>If you do not request power or an interpreter, they will not be provided!</strong></td></tr>
+<tr>
+<td>Power Source Needed:</td>
+<td>
+<select name="power_source">
+<option value="0"<?php if (isset($_POST["power_source"]) && $_POST["power_source"] == 0):?>selected="true"<?php endif; ?>>No</option>
+<option value="1"<?php if (isset($_POST["power_source"]) && $_POST["power_source"] == 1):?>selected="true"<?php endif; ?>>Yes</option>
+</select>
+</td>
+<tr></tr>
+<td>Interpreting Services Needed:</td>
+<td>
+<select name="interpreting_services">
+<option value="0"<?php if (isset($_POST["interpreting_services"]) && $_POST["interpreting_services"] == 0):?>selected="true"<?php endif; ?>>No</option>
+<option value="1"<?php if (isset($_POST["interpreting_services"]) && $_POST["interpreting_services"] == 1):?>selected="true"<?php endif; ?>>Yes</option>
+</select>
+</td>
+</tr>
+</table>
+
+<p>
+Other Requests:<br/>
+<textarea name="other_requests" cols="40" rows="10"><?php if (isset($_POST["other_requests"])) echo $_POST["other_requests"]; ?></textarea>
+</p>
+
+<p>
+<input type="hidden" name="submitted" value="1"/>
+<input type="submit" value="Submit"/>
+</p>
+</form>
+<br/>
+<a href = http://campuslife.rit.edu/main/clubs/fairAdmin >Admin Login</a>
+
+<?php require('views/subFooter.html'); ?>

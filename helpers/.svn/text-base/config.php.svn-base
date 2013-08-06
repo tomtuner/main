@@ -1,0 +1,11 @@
+<?php
+
+$dsn = array(
+	'phptype' => 'mysqli',
+	'hostspec' => 'localhost',
+	'username' => 'cclwww',
+	'password' => 'esmo49)ant',
+	'database' => 'evr',
+);
+
+?>

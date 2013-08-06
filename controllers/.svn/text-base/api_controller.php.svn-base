@@ -1,0 +1,19 @@
+<?php
+
+class ApiController extends Controller {
+	public function __construct() {
+	}
+
+	public function checkConfirmationCode() {
+		global $db;
+
+		$count = $db->getOne("SELECT COUNT(*) FROM events WHERE confirmation_code = ". $db->quoteSmart($_GET["confirmation_code"]));
+		if($count) {
+			echo "true";
+		} else {
+			echo "false";
+		}
+	}
+}
+
+?>

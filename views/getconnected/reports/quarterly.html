@@ -1,0 +1,37 @@
+<?php require('header.html'); ?>
+<?php require('reportHeader.html'); ?>
+
+
+<p><h2>Quarterly Report</h2></p>
+
+
+	<form action="report/createQuarterReport" method="post">
+	<input name="type" id="type" type="hidden" size="15" value="0"/>
+	<table class="list">
+	<tr>
+		<th>From Date (mm/dd/yyyy)</th>
+		<th>To Date (mm/dd/yyyy)</th>
+	</tr>
+	<tr>
+		<td>
+			<input name="fmonth" id="month" type="text" size="2" maxlength="2"/>
+			<input name="fday" id="day" type="text" size="2" maxlength="2"/>
+			<input name="fyear" id="year" type="text" size="4" maxlength="4"/>
+		</td>
+		<td>
+			<input name="tmonth" id="month" type="text" size="2" maxlength="2"/>
+			<input name="tday" id="day" type="text" size="2" maxlength="2"/>
+			<input name="tyear" id="year" type="text" size="4" maxlength="4"/>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="1"></td>
+		<td align="right"><input name="createQuarterReport" type="submit" value="Create Report"/></td>
+	</tr>
+	</table>
+	</form>
+	<br>
+	<br>
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

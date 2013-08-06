@@ -1,0 +1,13 @@
+<?php require('admin_header.html'); ?>
+Please Choose which backup you would like to restore. 
+<table>
+<form action='admin/process' method=post>
+<?php 
+foreach ($backups as $backup){
+echo "<tr><td><button type=submit name=backup value='$backup' onSubmit='confirm(\"Annihilate the database\")' >".date("l, d-M-y H:i:s",$backup)."</button></td></tr>\n";
+}
+?>
+</form>
+</table>
+
+<?php require('admin_footer.html'); ?>

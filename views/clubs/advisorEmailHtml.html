@@ -1,0 +1,15 @@
+<html>
+<head>
+</head>
+<body>
+<p>
+<?php if(!isset($advisorName)){$advisorName="Timmy";}
+$path = "http://campuslife.rit.edu/main/clubs/AdvisorDocs/" . $advisorName . ".doc"; ?>
+<?php echo $path; ?>
+
+Thank you filling out the Club Advisor Form, you can get a copy to keep for your own records <a href="<?php echo $path; ?>">here</a><br />
+<div style="color: #E88A3C;">
+<em>Sarah Griffith</em>
+</div>
+</body>
+</html>

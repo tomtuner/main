@@ -1,0 +1,28 @@
+<?php require("subHeader.html") ?>
+
+
+<table cellpadding="5" cellspacing="5">
+
+<?php
+$row = $result->fetchRow();
+$localInfo = $presidentInfo->fetchRow();
+
+$presidentEmail = (strlen($localInfo['email'])>1)?$localInfo['email']:$localInfo['username']."@rit.edu";
+
+echo "<tr><td colspan='2'><strong>" . $row['n_name'] . "</strong><br/><br/></td></tr>\n";
+echo "<tr><td colspan='2'><img src='http://campuslife.rit.edu:81/main/images/Crests/" . $row['image_loc'] . ".jpg' alt='" . $row['n_name'] . "' height='200' width='180'/><br /><br /></td></tr>\n";
+echo "<tr><td>National Founding</td><td>" . $row['n_founding'] . "</td></tr>";
+echo "<tr><td>RIT Chapter & Charter Date</td><td>" . $row['r_founding'] . "</td></tr>";
+echo "<tr><td>Chapter Size</td><td>" . $row['c_size'] . "</td></tr>";
+echo "<tr><td>Chapter GPA</td><td>" . $row['c_gpa'] . "</td></tr>";
+echo "<tr><td>Philanthropy</td><td>" . $row['philanthropy'] . "</td></tr>";
+echo "<tr><td>Colors</td><td>" . $row['colors'] . "</td></tr>";
+echo "<tr><td>Local Web Site</td><td><a href='http://" . $row['c_web']. "'>" . $row['c_web'] . "</a></td></tr>";
+echo "<tr><td>Local Contact Information</td><td><a href='mailto:" .$presidentEmail . "'>" . $localInfo['first_name'] . " " . $localInfo['last_name'] . "</a></td></tr>";
+echo "<tr><td>National Web Site</td><td><a href='http://" . $row['n_web']. "'>" . $row['n_web'] . "</a></td></tr>";
+echo "<tr><td>National Contact Information<br/><br/><br/><br/><br/></td><td>" . $row['n_address']. "<br/><br/>Phone: " . $row['n_phone'] . "<br/>Fax: " . $row['n_fax'] . "<br/></td></tr>";
+?>
+
+</table>
+
+<?php require("subFooter.html") ?>

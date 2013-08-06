@@ -1,0 +1,21 @@
+* {
+	margin: 0px;
+	padding: 0px;
+}
+
+body {
+	font-family: helvetica, arial;
+	font-size: 12px;
+	padding: 2em 0em;
+	color: #412315;
+}
+
+#content {
+ margin-left: auto;
+ margin-right: auto;
+ border: 1px solid pink;
+}
+
+table {
+	width: 80%;
+}

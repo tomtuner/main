@@ -1,0 +1,35 @@
+<?php require_once('subHeader.html') ?>
+
+<?php
+
+$row = $result->fetchrow();
+
+echo "<strong>" . $row['Name'] . "</strong><br /><br />";
+echo "Occupancy: <br />";
+echo "<ul><li>with chairs: " . $row['OccChairs'] . "</li><li>without chairs: " . $row['OccNoChairs'] . "</li></ul>";
+echo "Special Features: <br/>";
+
+echo "<ul>";
+for( $i=1; $i<=6; $i++ )
+{
+	$feature_join = "Feature" . $i;
+	if( ($row[$feature_join]) != '')
+	{
+		echo "<li>" . $row[$feature_join] . "</li>";
+	}
+}
+echo "</ul><br />";
+
+if( $row['diagram'] != '' )
+{
+	echo "<img src=\"images/icon_acrobat.gif\"alt=\"adobe pdf\" border=\"0\"/> <a href='http://campuslife.rit.edu/sau/reservations/diagrams/" . $row['diagram'] . "'>Room Diagram</a>" . "<br /><br /><br />";
+}
+
+if( $row['Image'] != '')
+{
+	//echo "<img src='http://campuslife.rit.edu/main/images/reservations/" . $row['Image'] . "' alt='" . $row['Name']  . "'/><br /><br /><br /><br />";
+	echo '<iframe src="http://www.360cities.net/embed_iframe/panorama-' . $row['Name'] . '" width="375" height="315" frameborder="0" bgcolor="#000000" target="_blank"></iframe><br/><a title="Panorama photos of Room ' . $row['Name'] . ' on 360cities.net" href="http://www.360cities.net/image/panorama-' . $row['Name'] . '">Room ' . $row['Name'] . '</a> in <a href="http://www.360cities.net/area/world" title="Panoramic images from The World">The World</a>';
+}
+?>
+
+<?php require_once('subFooter.html') ?>

@@ -1,0 +1,29 @@
+<?php require('subHeader.html'); ?>
+
+<table class="aboutDetails" cellspacing="15">
+<th align="left">Name &amp; Title</th>
+<th align="left">Phone</th>
+<th align="left">E. Mail</th>
+
+<?php
+
+foreach ($foo as $users) 
+{
+	$html = <<<EOL
+	<tr>
+		<td width="300">
+		{$users->getFirstName()}&nbsp;{$users->getLastName()}<br/>
+		<i>{$users->getTitle()}</i>
+		</td>
+		<td width="50">585.475.{$users->getPhone()}</td>
+		<td width="50"><a href="mailto:{$users->getEmail()}">{$users->getEmail()}</a></td>
+	</tr>
+EOL;
+echo $html;
+}
+
+?>
+
+</table>
+
+<?php require('subFooter.html'); ?>

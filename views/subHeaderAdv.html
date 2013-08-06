@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<!--this is subHeader.html                 This is for everything but the main page-->
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+		<meta name="Author" content="The Center for Campus Life"/><title>RIT - Center for Campus Life</title>
+		<base href="<?php echo 'http://'. $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) .'/'; ?>" />
+		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://campuslife.rit.edu/main/rss/"/>
+		<link rel="stylesheet" type="text/css" href="style_sheets/news.css"/>
+		<link rel="stylesheet" type="text/css" href="style_sheets/content.css"/>
+		<link rel="shortcut icon" href="images/favicon.gif" type="image/x-icon" />
+		<script type="text/javascript" src="javascript/yui/yahoo/yahoo.js"></script>
+		<script type="text/javascript" src="javascript/yui/event/event.js"></script>
+		<script type="text/javascript" src="javascript/yui/dom/dom.js"></script>
+		<script type="text/javascript" src="javascript/yui/animation/animation.js"></script>
+		<script type="text/javascript" src="javascript/findClub.js"></script>
+		<script type="text/javascript" src="javascript/framework/prototype.js"></script>
+		<script type="text/javascript" src="javascript/base.js"></script>
+		<script type="text/javascript" src="javascript/event_ajax.js"></script>
+		<script type="text/javascript" src="javascript/general.js"></script>
+		<link rel='stylesheet' type='text/css' href='style_sheets/base.css'/>
+		<link rel='stylesheet' type='text/css' href='style_sheets/subBaseAdv.css'/>
+		<?php /*<!--<script language="javascript" type="text/javascript">
+			
+				if( getInternetExplorerVersion() == 6 )
+				{
+					document.write("<link rel='stylesheet' type='text/css' href='style_sheets/IE6_base.css'/>\n");
+					document.write("<link rel='stylesheet' type='text/css' href='style_sheets/IE6_subBase.css'/>\n");
+				}
+				else
+				{
+					document.write("<link rel='stylesheet' type='text/css' href='style_sheets/base.css'/>\n");
+					document.write("<link rel='stylesheet' type='text/css' href='style_sheets/subBase.css'/>\n");
+				}
+			
+		</script>-->*/ ?>
+	</head>
+<body onclick="offFocus()">
+<div id="page">
+	<div id="pageBack">
+		<div id="nav">
+			<div id="navigation">
+			<!-- Begin Navigation -->
+				<div id="cclLogo"><a href="/main"><img src="images/cclLogo.jpg" alt="RIT Center for Campus Life" class="ccllogo" border="0"/></a></div>
+					<?php
+						include("navigation.html");
+					?>
+				<!-- End Navigation -->
+				<!-- Club of the day beginning-->
+					<div id="clubday"><img src="images/club-box5_02.jpg"/><div id="clubdayContent"><?php
+					//include("club_of_the_day.txt");
+					$table = array();
+					$file = file("club_of_the_day.txt");
+					foreach($file as $id => $item)
+					$table[$id] = explode(",",$item);
+
+					/*echo "<pre>";
+					print_r($table);
+					echo "</pre>";*/
+
+					$today = date("m/d/Y");
+					for ($row = 0; $row < count($file); $row++){
+						for ($col = 0; $col < count(explode(",",$item)); $col++){
+							if(strcmp($today,$table[$row][0] )==0){
+								echo "<b>" . $table[$row][1] . "</b>";
+								echo '<br/>';
+								echo '<a href="'.$table[$row][2].'">Visit Club Website</a>';
+								break;
+							}
+						}
+					}
+				?></div></div><!--End of Club of the day  -->
+			</div>
+		<div id="contactInfo">
+					<div style="padding-left:10px">
+						<strong>Office Hours:</strong><br/>
+						Monday - Friday<br/>
+						8:30 AM to 4:30 PM<br/>
+						(p) 585.475.7058<br/>
+						(f) 585.475.7019<br/><br/>
+						<a class="contactLink" href="about/profstaff"><strong>Staff Directory</strong></a>
+					</div>
+		</div>
+		<div id="navBottom">&nbsp;<br/><br/>
+		<?php if (time() < mktime(0, 0, 0, 8, 27, date("Y"))): ?>
+		<?php endif; ?>
+		</div>
+	</div>
+		<div id="right">
+			<!-- Begin Right Column-->
+			<div id="header">
+				<a href="http://www.rit.edu/"><img alt="RIT Home" src="images/RITLogo.jpg" border="0"/></a>
+			<!-- Begin Header -->
+				<form id="searchbox_016792319780221422966:zlqjppyxsiy" action="http://google.com/cse">
+					<ul>
+								<li><a href="http://www.rit.edu/">RIT Home</a></li>
+								<li><a href="http://www.rit.edu/Index/">RIT A-Z Site Index</a></li>
+								<li><a href="http://events.rit.edu/">RIT Events Calendar</a></li>
+								<li><a href="http://www.rit.edu/Search/">RIT Search</a></li>
+								
+								<a href="http://www.google.com/cse?cx=016792319780221422966:zlqjppyxsiy&amp;cof=FORID:0">CCL Search</a>						
+									<input type="hidden" name="cx" value="016792319780221422966:zlqjppyxsiy" />
+									<input type="hidden" name="cof" value="FORID:0" />
+									<input name="q" type="text" size="20" id="cclSearchBox" onclick="resetSearchValue()" value="Search CCL Site"/>&nbsp;&nbsp;
+					</ul>
+				</form>
+			<!-- end header -->	
+			</div> 
+			
+			<?php
+				$globalPage = explode( "/",$_SERVER['REQUEST_URI'] );
+				print "<img src='images/Headers/$globalPage[2].jpg' alt='$globalPage[2]' height='120' width='720' />";
+			?>
+			
+			<div id="leftside">
+				<div id="leftTitle"><h2><?php if (isset($page_title[0])) {echo $page_title[0]; } else { echo "Oops!";}?></h2></div>
+				<div id="content">
+				&nbsp;<br/>

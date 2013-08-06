@@ -1,0 +1,88 @@
+<?php require('subHeader.html'); ?>
+<br/>
+
+<?php
+$html = "<strong>" . $_GET['clubName'] . "</strong><br/><br/>";
+
+echo "<table cellpadding=\"5\" cellspacing=\"3\" class=\"clubDetails\">\n";
+foreach ($foo as $clubDetails) 
+{
+	$correctedUrl = $clubDetails->getWebSite();
+	$webSiteGiven = (is_string($correctedUrl) && !empty($correctedUrl));
+	
+	if ($webSiteGiven) {
+		if (substr_compare($correctedUrl, "!@#$%^&", 0, 7) == 0)
+			$correctedUrl = str_replace("!@#$%^&", "http://", $correctedUrl);
+		//else
+		//	$correctedUrl = "http://" . $correctedUrl;
+		//if (strpos($correctedUrl, "https://") === FALSE && strpos($correctedUrl, "http://") === FALSE) {
+		//	$correctedUrl = "http://" . $correctedUrl;
+		//}
+	}
+	
+	//$correctedUrl =  http_build_url($clubDetails->getWebSite());
+	//Handle the URL in DB. Some are in 'httP://' and some are in 'www.'
+	//$dbUrl = explode( "//", $clubDetails->getWebSite() );
+	/*
+	if( isset($dbUrl[1]) )
+	{
+		$correctedUrl = "http://" . $dbUrl[1];
+	}
+	else
+	{
+		$correctedUrl = "";
+	}
+	*/
+	$html .= <<<EOL
+	<tr>
+		<td colspan="2">{$clubDetails->getAcronym()}</td>
+	</tr>
+	<tr>
+		<td colspan="2">{$clubDetails->getDescription()}</td>
+	</tr>
+	<tr>
+		<td>General Club E. Mail</td>
+		<td><a href="mailto:{$clubDetails->getEmail()}"">{$clubDetails->getEmail()}</a></td>
+	</tr>
+	<tr>
+		<td width="150">Meeting Day</td>
+		<td>{$clubDetails->getMeetingDay()}</td>
+	</tr>
+	<tr>
+		<td>Meeting Time</td>
+		<td>{$clubDetails->getMeetingTime()}</td>
+	</tr>
+	<tr>
+		<td>Meeting Location</td>
+		<td>{$clubDetails->getMeetingLoc()}</td>
+	</tr>
+	<tr>
+		<td>Meeting Frequency</td>
+		<td>{$clubDetails->getMeetingFreq()}</td>
+	</tr>
+EOL;
+	if ($webSiteGiven) {
+		$html .= <<<EOL
+		<tr>
+		<td colspan="2"><br/><br/><a href="{$correctedUrl}">Website</a></td>
+		</tr>
+		<tr>
+		<td colspan="2">({$correctedUrl})</td>
+		</tr>
+EOL;
+	} else {
+		$html .= <<<EOL
+		<tr>
+		<td colspan="2"><br/><br/>No website provided for this club...</td>
+		</tr>
+EOL;
+	}
+}
+
+echo $html ;
+
+echo "</table>\n";
+
+?>
+
+<?php require('subFooter.html'); ?>

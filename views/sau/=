@@ -1,0 +1,53 @@
+<?php
+
+$Posts=array('name','phone','email','department','totalRequests');
+$fail = false;
+
+foreach ($Posts as $var){
+	if (!isset($_POST[$var])){
+		$_POST[$var]="<field was not posted>";
+		$fail = $fail." ".$var;
+		}
+}
+if ($fail){
+	error_log("Solo Non-Fatal Error, views/sau/mailReservation.html $fail was not posted");
+}
+
+
+
+$to = "reserve@rit.edu";
+//$to = "reserve@rit.edu";
+$subject = "Online SAU Room Reservation Request from the CCL website";
+$from = $_POST['email'];
+$AdditionalHeaders = "From: $from \r\n";
+
+$message = "Name: " . $_POST['name'] . "\n";
+$message .= "Phone: " . $_POST['phone'] . "\n";
+$message .= "E. Mail: " . $_POST['email'] . "\n";
+$message .= "Department: " . $_POST['department'] . "\n\n";
+
+for( $i=1; $i<=$_POST['totalRequests']; $i++ )
+{
+	$eventName = "eventName" . $i;
+	$eventDate = "eventDate" . $i;
+	$roomChoiceOne = "roomChoiceOne" . $i;
+	$roomChoiceTwo = "roomChoiceTwo" . $i;
+	$startTime = "startTime" . $i;
+	$endTime = "endTime" . $i;
+	$peopleExpected = "peopleExpected" . $i;
+	
+	$message .= "Request No. " . $i . "\n\n";
+	$message .= "\tEvent Name: " . $_POST[$eventName] . "\n";
+	$message .= "\tEvent Date: " . $_POST[$eventDate] . "\n";
+	$message .= "\tFirst Room Choice: " . $_POST[$roomChoiceOne] . "\n";
+	$message .= "\tSecond Room Choice: " . $_POST[$roomChoiceTwo] . "\n";
+	$message .= "\tStart Time: " . $_POST[$startTime] . "\n";
+	$message .= "\tEnd Time: " . $_POST[$endTime] . "\n";
+	$message .= "\tPeople Expected: " . $_POST[$peopleExpected] . "\n\n";
+}
+
+if (!mail( $to, $subject, $message, $AdditionalHeaders)){
+	error_log("Solo Fatal Error An email failed sending in /var/www/data-dist/main/views/mailReservation.html, Hope that event wasnt important");
+}
+	
+	?>

@@ -1,0 +1,60 @@
+.clubDetails
+{
+	margin-left:-10px;
+}
+
+.aboutDetails
+{
+	margin-left:-15px;
+	margin-top:-18px;
+	
+}
+
+.orange
+{
+	color:#E86924;
+}
+
+/* SAU  Reservation */
+#requestsHolder
+{
+	display:none;
+}
+
+.request
+{
+	border-width:thin;
+	border-style:solid;
+	border-color:#888888;
+	padding:20px;
+}
+
+/* Find a Club - AJAXified*/
+#resultsHolder
+{
+	position:relative;
+	left: 125px;
+	background-color: #FFFFFF;
+	color: #412315;
+	width: 207px;
+	height: 150px;
+	font-size: 10px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	cursor: default;
+	display: none;
+}
+
+#message
+{
+	padding-left:10px;
+	background-color:#FFCC33;
+	height:20px;
+	color: #000000;
+	text-align:center;
+}
+
+#searchPage
+{
+	background-color: #412315;
+}

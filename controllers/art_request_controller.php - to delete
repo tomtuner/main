@@ -1,0 +1,2690 @@
+<?php
+
+// On access run a check against the CAS DCE Checker
+require_once('CAS/CAS.php');
+phpCAS::client(CAS_VERSION_2_0, 'webapps.rit.edu', 443, '/cas');
+phpCAS::forceAuthentication();
+
+$us = phpCAS::getUser();
+
+// If it gets this far then it was a confirmed RIT DCE + Password Combination
+// Thus check the available DCE agaionst a list of those with DCEs acceptable by the system in order to grant authorized access to private parts of the system
+global $db;
+
+$sql = $db->prepare( "
+SELECT id
+FROM staff_artist.confirmed_users
+WHERE staff_artist.confirmed_users.dce_username = '$us'");
+
+$res = $db->execute($sql);
+
+if(PEAR::isError($res))
+{
+	die($res->getMessage());
+}
+
+$results = $res->fetchRow();
+
+// Session variable for authroized is set to true
+if ( $results['id'] > 0 )
+{
+	$_SESSION['authorized'] = 1;
+}
+
+ 
+/// Remove option to mark request as completed from completed requests in displayRequest
+/// Ensure all sql connections are closed and remove unnessisary connections
+class ArtRequestController extends Controller
+{
+
+
+
+	// Displays the art request form via the require function.  Does not require authorization to access
+	public function displayForm()
+	{
+		$page_title = array('Artist Request Form');
+		
+		require('views/art_request/request_form.html');
+	}
+	
+	
+	
+	//Displayed page after information is submitted to the database, confirms the submission to the database
+	public function requestSubmitted()
+	{
+		$page_title = array('Artist Request Form Submitted');
+		
+		require('views/art_request/submit_response.html');
+	}
+	
+	
+	
+	// Displays this page if you try to access a "art certified only" page and the DCE is not certified.  This redirect is done through checks at the beginning certified only pages
+	public function notArtCertified ()
+	{
+		require ( 'displayRequestsHeader.html' );
+		
+		echo ( "You are not currently certified to check or deal with art requests.  Please contact the Center For Campus Life if you believe you recieved this message erroneously" );
+		
+		require ( 'displayRequestsHeader.html' );
+	}
+	
+	
+	
+	// Updates comments for an individual request.  Saves all text data currently in the text field.  Used by a function in displayRequest
+	public function updateComments()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		global $db;
+		
+		$idToMark = $_POST['markId'];
+		$mediaToMark = $_POST['markType'];
+		$newComments = $_POST['comments'];
+		
+		// SQL statement that updates the data
+		$sql = $db->prepare( "
+			UPDATE staff_artist.comments
+			SET	staff_artist.comments.comment = '" . $newComments . "'
+			WHERE staff_artist.comments.art_request_id = $idToMark
+				AND staff_artist.comments.request_type = $mediaToMark" 
+		);
+		
+		$res = $db->execute($sql);
+		
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		header( "Location: /main/art_request/display_request?eventId=$idToMark&requestType=$mediaToMark" );
+	}
+	
+	// Function marks an unstarted request as started
+	public function markAsStarted()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		global $db;
+		
+		// Takes in id and media type of the target request
+		$idToMark = $_POST['markId'];
+		$mediaToMark = $_POST['markType'];
+		$whoStarted = $_POST['artistName'];
+		
+		// makes a holder for the current date
+		$rightNow = date ( 'Y-m-d G:i:s' );
+		
+		// Chooses correct values for the update based on its media type
+		if ( $mediaToMark == 1 )	// Banner
+		{
+			$dbToChange = "staff_artist.banner_requests";
+			$valToChange = "banner_started";
+			$startDateCategory = "banner_started_on";
+		}
+		elseif ( $mediaToMark == 2 )	// Flyer
+		{
+			$dbToChange = "staff_artist.flyer_requests";
+			$valToChange = "flyer_started";
+			$startDateCategory = "flyer_started_on";
+		}
+		else	// Other
+		{
+			$dbToChange = "staff_artist.other_requests";
+			$valToChange = "other_started";
+			$startDateCategory = "other_started_on";
+		}
+		
+		// Prepares and sends the update data to the databases
+		$sql = $db->prepare( 
+			"UPDATE $dbToChange
+			SET $dbToChange.started_on = '" . $rightNow . "'
+			WHERE $dbToChange.art_request_id = '" . $idToMark . "'" 
+		);
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		// Prepares and sends the update data to the databases.
+		// This updates data in the art_requests part.
+		$sql = $db->prepare( 
+		"UPDATE staff_artist.art_requests
+		SET staff_artist.art_requests.$valToChange = 1,
+			staff_artist.art_requests.$startDateCategory = '" . $rightNow . "'
+		WHERE staff_artist.art_requests.event_id = '" . $idToMark . "'" );
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		//Updates the name of who started the work in the comments area
+		$sql = $db->prepare( 
+		"UPDATE staff_artist.comments
+		SET staff_artist.comments.started_by = '" . $whoStarted . "'
+		WHERE staff_artist.comments.art_request_id = $idToMark 
+			AND staff_artist.comments.request_type = $mediaToMark" );
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		// returns to the current requests page
+		header( 'Location: /main/art_request/currentRequests' ) ;
+	}
+	
+	// Function marks an unfinished request as a finished one
+	public function markAsCompleted()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		global $db;
+		
+		// Takes in id and media type of the target request
+		$idToMark = $_POST['markId'];
+		$mediaToMark = $_POST['markType'];
+		$whoCompleted = $_POST['artistName'];
+		
+		// makes a holder for the current date
+		$rightNow = date ( 'Y-m-d G:i:s' );
+		
+		// Chooses forrect values for the update based on its media type
+		if ( $mediaToMark == 1 )	// Banner
+		{
+			$dbToChange = "staff_artist.banner_requests";
+			$valToChange = "banner_completed";
+			$endDateCategory = "banner_completed_on";
+		}
+		elseif ( $mediaToMark == 2 )	// Flyer
+		{
+			$dbToChange = "staff_artist.flyer_requests";
+			$valToChange = "flyer_completed";
+			$endDateCategory = "flyer_completed_on";
+		}
+		else	// Other
+		{
+			$dbToChange = "staff_artist.other_requests";
+			$valToChange = "other_completed";
+			$endDateCategory = "other_completed_on";
+		}
+		
+		// Prepares and sends the update data to the databases
+		$sql = $db->prepare( 
+			"UPDATE $dbToChange
+			SET $dbToChange.completed_on = '" . $rightNow . "'
+			WHERE $dbToChange.art_request_id = '" . $idToMark . "'" 
+		);
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		// Prepares and sends the update data to the databases.
+		// This updates data in the art_requests part.
+		$sql = $db->prepare( 
+		"UPDATE staff_artist.art_requests
+		SET staff_artist.art_requests.$valToChange = 1,
+			staff_artist.art_requests.$endDateCategory = '" . $rightNow . "'
+		WHERE staff_artist.art_requests.event_id = '" . $idToMark . "'" );
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		//Updates the name of who completed the work in the comments area
+		$sql = $db->prepare( 
+		"UPDATE staff_artist.comments
+		SET staff_artist.comments.completed_by = '" . $whoCompleted . "'
+		WHERE staff_artist.comments.art_request_id = $idToMark 
+			AND staff_artist.comments.request_type = $mediaToMark" );
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		// returns to the current requests page
+		header( 'Location: /main/art_request/currentRequests' ) ;
+	}
+	
+	
+	
+	public function markAsIncomplete ()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		global $db;
+		
+		// Takes in id and media type of the target request
+		$idToMark = $_POST['markId'];
+		$mediaToMark = $_POST['markType'];
+		
+		// Chooses forrect values for the update based on its media type
+		if ( $mediaToMark == 1 )	// Banner
+		{
+			$dbToChange = "staff_artist.banner_requests";
+			$valToChange = "banner_completed";
+			$endDateCategory = "banner_completed_on";
+		}
+		elseif ( $mediaToMark == 2 )	// Flyer
+		{
+			$dbToChange = "staff_artist.flyer_requests";
+			$valToChange = "flyer_completed";
+			$endDateCategory = "flyer_completed_on";
+		}
+		else	// Other
+		{
+			$dbToChange = "staff_artist.other_requests";
+			$valToChange = "other_completed";
+			$endDateCategory = "other_completed_on";
+		}
+		
+		// Prepares and sends the update data to the databases
+		$sql = $db->prepare( 
+		"UPDATE $dbToChange
+		SET $dbToChange.completed_on = NULL
+		WHERE $dbToChange.art_request_id = '" . $idToMark . "'" );
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		// Prepares and sends the update data to the databases
+		$sql = $db->prepare( 
+		"UPDATE staff_artist.art_requests
+		SET staff_artist.art_requests.$valToChange = 0,
+			staff_artist.art_requests.$endDateCategory = NULL
+		WHERE staff_artist.art_requests.event_id = '" . $idToMark . "'" );
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		$sql = $db->prepare( 
+		"UPDATE staff_artist.comments
+		SET staff_artist.comments.completed_by = NULL
+		WHERE staff_artist.comments.art_request_id = $idToMark 
+			AND staff_artist.comments.request_type = $mediaToMark" );
+		
+		$res = $db->execute($sql);
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		// returns to the current requests page
+		header( 'Location: /main/art_request/finishedRequests' ) ;
+	}
+	
+	
+	
+	public function markAsArchived ()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		global $db;
+		
+		// Gets the media type and ID of the item to update
+		$idToMark = $_POST['markId'];
+		$mediaToMark = $_POST['markType'];
+		
+		// Interprets the media to mark number into a value for the SQL statement
+		if ( $mediaToMark == 1 )
+		{
+			$media_marking = "banner";
+		}
+		elseif ( $mediaToMark == 2 )
+		{
+			$media_marking = "flyer";
+		}
+		else
+		{
+			$media_marking = "other";
+		}
+		
+		$sql = $db->prepare( "
+			UPDATE staff_artist.art_requests
+			SET	staff_artist.art_requests." . $media_marking . "_archived = 1
+			WHERE staff_artist.art_requests.id = $idToMark"
+		);
+		
+		$res = $db->execute($sql);
+		
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		header( "Location: /main/art_request/finishedRequests" );
+	}
+	
+	
+	
+/* 	public function autoArchive ()
+	{
+		global $db;
+		
+		$now = date ( 'm' );
+		
+		if ( $now == '0
+		
+		$rightNow = date ( 'Y-m-d G:i:s' );
+		
+		echo ( $now );
+		
+		$sql = $db->prepare( "
+			UPDATE staff_artist.art_requests
+			SET	staff_artist.art_requests.flyer_archived = 1
+			WHERE staff_artist.art_requests.flyer_completed_on != '0000-00-00 00:00:00' AND staff_artist.art_requests.id < "
+		);
+		
+		$res = $db->execute($sql);
+		
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		
+		//header( "Location: /main/art_request/finishedRequests" ); 
+	}
+	 */
+	
+	// Functions displays the information for a particular request
+	public function displayRequest()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		global $db;
+		
+		$page_title = array('Art Request Information');
+		
+		require ('displayRequestsHeader.html');
+		
+		// Translates a boolean to a yes or no
+		function yesOrNo ( $bool )
+		{
+			if ( $bool == 1 )
+			{
+				return "Yes";
+			}
+			else
+			{
+				return "No";
+			}
+		}
+		
+		// Translates a 0 or 1 color value into Yes or no
+		function colorOrBW ( $arg ) 
+		{
+			if ( $arg == 0 )
+			{
+				return "Yes";
+			}
+			else
+			{
+				return "No";
+			}
+		}
+		
+		//hyphenates long words
+		function hyphenate( $text )
+		{
+			$finalString = "";
+			foreach(explode(' ', $text) as $value => $word)
+			{
+				$chunk = "";
+				if (strlen($word) > 60)
+				{
+					$chunk1 = chunk_split($word,60,"-<br />");
+					$chunk = substr($chunk1,0,-7);
+					$finalString = $finalString . $chunk . " ";
+				} else
+				{
+					$finalString = $finalString . $word . " ";
+				}
+			}
+			return $finalString;
+		}
+		
+		// Interprets an event_category_id from art_request.event_category_id into a human readable value
+		function eventCategoryInterpreter ( $num )
+		{
+			switch ( $num )
+			{
+				case "1":
+					return "Athletic";
+					break;
+				case "2":
+					return "Banquet";
+					break;
+				case "3":
+					return "BBQ/Picnic";
+					break;
+				case "4":
+					return "Charity";
+					break;
+				case "5":
+					return "Comedy";
+					break;
+					
+				case "6":
+					return "Community Service";
+					break;
+				case "7":
+					return "Competition";
+					break;
+				case "8":
+					return "Concert";
+					break;
+				case "9":
+					return "Conference";
+					break;
+				case "10":
+					return "Cultural";
+					break;
+
+				
+				case "11":
+					return "Dance/DJ Party";
+					break;
+				case "12":
+					return "Dinner";
+					break;
+				case "13":
+					return "Educational";
+					break;
+				case "14":
+					return "Fair";
+					break;
+				case "15":
+					return "Forum";
+					break;
+					
+				case "16":
+					return "Fundraiser";
+					break;
+				case "17":
+					return "Game (non athletic)";
+					break;
+				case "18":
+					return "Informational";
+					break;
+				case "19":
+					return "Lecture";
+					break;
+				case "20":
+					return "Meeting";
+					break;
+				
+				case "21":
+					return "Movie";
+					break;
+				case "22":
+					return "Party";
+					break;
+				case "23":
+					return "Presentation";
+					break;
+				case "24":
+					return "Recruitment";
+					break;
+				case "25":
+					return "Social";
+					break;
+					
+				case "26":
+					return "Speaker";
+					break;
+				case "27":
+					return "Travel";
+					break;
+				case "28":
+					return "Performance";
+					break;
+				case "29":
+					return "Leadership";
+					break;
+				case "30":
+					return "Other";
+					break;
+			}
+		}
+		
+		// Translates an event_sponsor_type from art_request.event_category_id into a human readable value
+		function eventSponsorInterpreter ( $num )
+		{
+			switch ( $num )
+			{
+				case "1":
+					return "SG Recognized Club";
+					break;
+				case "2":
+					return "Major Student Organization";
+					break;
+				case "3":
+					return "Greek Organization";
+					break;
+				case "4":
+					return "Other Organization";
+					break;
+				case "5":
+					return "Special Interest";
+					break;
+				case "6":
+					return "Honors Fraternity";
+					break;
+				case "7":
+					return "Non SG Club";
+					break;
+				case "8":
+					return "Department";
+					break;
+				case "9":
+					return "Greek Councils";
+					break;
+			}
+		}
+		
+		// Takes in an  eventId and a request type to display the request's information
+		if ( isset ( $_GET["eventId"] ) && isset ( $_GET["requestType"] ) )
+		{
+			$event_id = $_GET["eventId"];
+			$media_type = $_GET["requestType"];
+			
+			$is_completed = false;
+			$is_archived = false;
+			$is_started = false;
+			
+			//Get artist information
+			$sql = $db->prepare( "
+					SELECT comment, completed_by, started_by
+					FROM staff_artist.comments 
+					WHERE staff_artist.comments.art_request_id = $event_id AND staff_artist.comments.request_type = $media_type
+				" );
+		
+			$res = $db->execute($sql);
+			
+			if(PEAR::isError($res))
+			{
+				die($res->getMessage());
+			}
+			
+			$holder = $res->fetchRow();
+			
+			$artist_comments = $holder['comment'];
+			$completed_by = $holder['completed_by'];
+			$started_by = $holder['started_by'];
+			
+			// Display breadcrumbs
+			echo ("<a href=\"currentRequests\">Current Requests</a> - <a href=\"finishedRequests\">Finished Requests</a> - <a href=\"archivedRequests\">Archived Requests</a> <br/> <br/>");
+				
+			// If its a banner...
+			if ( $media_type == 1 )
+			{
+				// Request all its information through a big-ass join
+				$sql = $db->prepare( "
+				SELECT event_name, event_category_id, event_sponsor_name, event_sponsor_type, event_description, begin_date_time, begin_am_pm, end_date_time, end_am_pm, member, student, faculty, public, requester_name, requester_email, requester_phone, submitted_on, due_on, width, length, number, lobby, dining_commons, banner_started, banner_completed, banner_archived, completed_on, banner_started_on, has_file
+				FROM staff_artist.banner_requests_rooms 
+				JOIN ( staff_artist.banner_requests 
+				JOIN ( staff_artist.event_dates 
+				JOIN ( staff_artist.event_price 
+				JOIN ( staff_artist.art_requests 
+				JOIN staff_artist.event_information 
+				ON staff_artist.event_information.id = staff_artist.art_requests.event_id  ) 
+				ON staff_artist.event_price.id = staff_artist.art_requests.event_id ) 
+				ON staff_artist.event_dates.id = staff_artist.art_requests.event_id ) 
+				ON staff_artist.banner_requests.art_request_id = staff_artist.art_requests.event_id ) 
+				ON staff_artist.banner_requests_rooms.banner_request_id = staff_artist.art_requests.event_id
+				WHERE staff_artist.art_requests.event_id = $event_id" );
+		
+				$res = $db->execute($sql);
+				
+				if(PEAR::isError($res))
+				{
+					die($res->getMessage() . " -- banner error");
+				}
+				
+				$request = $res->fetchRow();
+
+				// Find out if its started or not
+				if ($request['banner_started'] == 1)
+				{
+					$is_started = true;
+				}
+				
+				// Display its status of completion and then all other pertainant information
+				if ( $request['banner_archived'] == 1 )
+				{
+					echo ( "This request has been ARCHIVED, it was finished as of " . $request['completed_on'] . ". It was completed by " . $completed_by);
+					$is_archived = true;
+				}
+				elseif ( $request['banner_completed'] == 1 )
+				{
+					echo ( "This request has been FINISHED as of " . $request['completed_on'] . ". It was completed by " . $completed_by);
+					$is_completed = true;
+				}
+				elseif ($is_started)
+				{
+					echo ( "This request is UNFINISHED but has been started on " . $request['banner_started_on'] . ". It was started by " . $started_by);
+					$is_completed = false;
+					$is_started = true;
+				}
+				else
+				{
+					echo ( "This request is UNFINISHED and has not been started");
+				}
+				
+				echo ( "<table border=\"1\" size=\"100%\" >
+					<tr> <td><b> Due On </b></td> <td> $request[due_on] </td> </tr>
+					<tr> <td><b> Request type </b></td> <td> BANNER </td> </tr>
+					<tr> <td><b> Number of Banners </b></td> <td> $request[number] </td> </tr>
+					<tr> <td><b> Banner Width </b></td> <td> $request[width] ft </td> </tr>
+					<tr> <td><b> Banner Length </b></td> <td> $request[length] ft </td> </tr>
+					<tr> <td><b> Event Name </b></td> <td> $request[event_name] </td> </tr>
+					<tr> <td><b> Banner in SAU Lobby? </b></td> <td> " . yesOrNo ( $request['lobby'] ) . " </td> </tr>
+					<tr> <td><b> Banner in Dining Commons? </b></td> <td> " . yesOrNo ( $request['dining_commons'] ) . " </td> </tr>
+					<tr> <td><b> Begin Date & Time </b></td> <td> $request[begin_date_time] " );
+					
+					if ( $request['begin_am_pm'] == 1 )
+						echo ( "AM" );
+					else
+						echo ( "PM" );
+						
+					echo ( "</td></tr> <tr> <td><b> End Date & Time </b></td> <td> $request[end_date_time] " );
+					
+					if ( $request['end_am_pm'] == 1 )
+						echo ( "AM" );
+					else
+						echo ( "PM" );
+					
+					echo ( "</td> </tr> 
+					<tr> <td><b> Event Description </b></td> <td> " . hyphenate( $request['event_description'] ) . "</td> </tr>
+					<tr> <td><b> Event Category </b></td> <td> " . eventCategoryInterpreter ( $request['event_category_id'] ) . "</td> </tr>
+					<tr> <td><b> Event Sponsor Name </b></td> <td> $request[event_sponsor_name] </td> </tr>
+					<tr> <td><b> Event Sponsor Type </b></td> <td> " . eventSponsorInterpreter ( $request['event_sponsor_type'] ) . "</td> </tr>
+					<tr> <td><b> Member Admission </b></td> <td> $request[member] </td> </tr>
+					<tr> <td><b> Student Admission </b></td> <td> $request[student] </td> </tr>
+					<tr> <td><b> Faculty Admission </b></td> <td> $request[faculty] </td> </tr>
+					<tr> <td><b> Public Admission </b></td> <td> $request[public] </td> </tr>
+					<tr> <td><b> Requester Name </b></td> <td> $request[requester_name] </td> </tr>
+					<tr> <td><b> Requester Email </b></td> <td> $request[requester_email] </td> </tr>
+					<tr> <td><b> Requester Phone Number </b></td> <td> $request[requester_phone] </td> </tr>
+					<tr> <td><b> Submitted On </b></td> <td> $request[submitted_on] </td> </tr>
+				</table>" );
+			}
+			
+			// If its a flyer...
+			elseif ( $media_type == 2 )
+			{
+				// Request all its information through a big-ass join
+				$sql = $db->prepare( "
+					SELECT event_name, event_category_id, event_sponsor_name, event_sponsor_type, event_description, begin_date_time, begin_am_pm, end_date_time, end_am_pm, member, student, faculty, public,  requester_name, requester_email, requester_phone, submitted_on, due_on, color, width, length, flyer_started, flyer_completed, flyer_archived, completed_on, flyer_started_on, has_file
+					FROM staff_artist.flyer_requests 
+					JOIN ( staff_artist.event_dates 
+					JOIN ( staff_artist.event_price 
+					JOIN ( staff_artist.art_requests 
+					JOIN staff_artist.event_information 
+					ON staff_artist.event_information.id = staff_artist.art_requests.event_id  ) 
+					ON staff_artist.event_price.id = staff_artist.art_requests.event_id ) 
+					ON staff_artist.event_dates.id = staff_artist.art_requests.event_id ) 
+					ON staff_artist.flyer_requests.art_request_id = staff_artist.art_requests.event_id
+					WHERE staff_artist.art_requests.event_id = $event_id" );
+		
+				$res = $db->execute($sql);
+				
+				if(PEAR::isError($res))
+				{
+					die($res->getMessage());
+				}
+				
+				$request = $res->fetchRow();
+				
+				// Find out if its started or not
+				if ($request['flyer_started'] == 1)
+				{
+					$is_started = true;
+				}
+				
+				// Display its status of completion and then all other pertainant information
+				if ( $request['flyer_archived'] == 1 )
+				{
+					echo ( "This request has been ARCHIVED, it was finished as of " . $request['completed_on'] . ". It was completed by " . $completed_by);
+					$is_archived = true;
+				}
+				elseif ( $request['flyer_completed'] == 1 )
+				{
+					echo ( "This request has been FINISHED as of " . $request['completed_on'] . ". It was completed by " . $completed_by);
+					$is_completed = true;
+				}
+				elseif ($is_started)
+				{
+					echo ( "This request is UNFINISHED but has been started on " . $request['flyer_started_on'] . ". It was started by " . $started_by);
+					$is_completed = false;
+				}
+				else
+				{
+					echo ( "This request is UNFINISHED and has not been started");
+				}
+				
+				echo ( "<table border=\"1\" size=\"100%\" >
+					<tr> <td><b> Due On </td> </b><td> $request[due_on] </td> </tr>
+					<tr> <td><b> Request type </b></td> <td> FLYER </td> </tr>
+					<tr> <td><b> Flyer Width </b></td> <td> $request[width] in </td> </tr>
+					<tr> <td><b> Flyer Length </b></td> <td> $request[length] in </td> </tr>
+					<tr> <td><b> Color? </b></td> <td> " . colorOrBW( $request['color'] ) . " </td> </tr>
+					<tr> <td><b> Event Name </b></td> <td> $request[event_name] </td> </tr>
+					<tr> <td><b> Begin Date & Time </b></td> <td> $request[begin_date_time] " );
+					
+					if ( $request['begin_am_pm'] == 1 )
+						echo ( "AM" );
+					else
+						echo ( "PM" );
+						
+					echo ( "</td></tr> <tr> <td><b> End Date & Time </b></td> <td> $request[end_date_time] " );
+					
+					if ( $request['end_am_pm'] == 1 )
+						echo ( "AM" );
+					else
+						echo ( "PM" );
+					
+					echo ( "</td> </tr>
+					<tr> <td><b> Event Description </b></td> <td> " . hyphenate( $request['event_description'] ) . "</td> </tr>
+					<tr> <td><b> Event Category </b></td> <td> " . eventCategoryInterpreter ( $request['event_category_id'] ) . " </td> </tr>
+					<tr> <td><b> Event Sponsor Name </b></td> <td> $request[event_sponsor_name] </td> </tr>
+					<tr> <td><b> Event Sponsor Type </b></td> <td>" . eventSponsorInterpreter ( $request['event_sponsor_type'] ) . "</td> </tr>
+					<tr> <td><b> Member Admission </b></td> <td> $request[member] </td> </tr>
+					<tr> <td><b> Student Admission </b></td> <td> $request[student] </td> </tr>
+					<tr> <td><b> Faculty Admission </b></td> <td> $request[faculty] </td> </tr>
+					<tr> <td><b> Public Admission </b></td> <td> $request[public] </td> </tr>
+					<tr> <td><b> Requester Name </b></td> <td> $request[requester_name] </td> </tr>
+					<tr> <td><b> Requester Email </b></td> <td> $request[requester_email] </td> </tr>
+					<tr> <td><b> Requester Phone Number </b></td> <td> $request[requester_phone] </td> </tr>
+					<tr> <td><b> Submitted On </b></td> <td> $request[submitted_on] </td> </tr>				
+				</table>" );
+			}
+			
+			// If its an Other...
+			elseif ( $media_type == 3 )
+			{
+				// Request all its information through a big-ass join
+				$sql = $db->prepare( "
+					SELECT event_name, event_category_id, event_sponsor_name, event_sponsor_type, event_description, begin_date_time, begin_am_pm, end_date_time, end_am_pm, member, student, faculty, public,  requester_name, requester_email, requester_phone, submitted_on, due_on, description, other_started, other_completed, other_archived, completed_on, other_started_on, has_file
+					FROM staff_artist.other_requests 
+					JOIN ( staff_artist.event_dates 
+					JOIN ( staff_artist.event_price 
+					JOIN ( staff_artist.art_requests 
+					JOIN staff_artist.event_information 
+					ON staff_artist.event_information.id = staff_artist.art_requests.event_id  ) 
+					ON staff_artist.event_price.id = staff_artist.art_requests.event_id ) 
+					ON staff_artist.event_dates.id = staff_artist.art_requests.event_id ) 
+					ON staff_artist.other_requests.art_request_id = staff_artist.art_requests.event_id 
+					WHERE staff_artist.art_requests.event_id = $event_id
+				" );
+		
+				$res = $db->execute($sql);
+				
+				if(PEAR::isError($res))
+				{
+					die($res->getMessage());
+				}
+				
+				$request = $res->fetchRow();
+				
+				// Find out if its started or not
+				if ($request['other_started'] == 1)
+				{
+					$is_started = true;
+				}
+				
+				// Display its status of completion and then all other pertainant information
+				if ( $request['other_archived'] == 1 )
+				{
+					echo ( "This request has been ARCHIVED, it was finished as of " . $request['completed_on'] . ". It was completed by " . $completed_by);
+					$is_archived = true;
+				}
+				elseif ( $request['other_completed'] == 1 )
+				{
+					echo ( "This request has been FINISHED as of " . $request['completed_on'] . ". It was completed by " . $completed_by);
+					$is_completed = true;
+				}
+				elseif ($is_started)
+				{
+					echo ( "This request is UNFINISHED but has been started on " . $request['other_started_on'] . ". It was started by " . $started_by);
+					$is_completed = false;
+				}
+				else
+				{
+					echo ( "This request is UNFINISHED and has not been started");
+				}
+				
+				echo ( "<table border=\"1\" size=\"100%\" >
+					<tr> <td> <b>Due On </b></td> <td> $request[due_on] </td> </tr>
+					<tr> <td><b> Request type </b></td> <td> OTHER </td> </tr>
+					<tr> <td><b> Event Name </b></td> <td> $request[event_name] </td> </tr>
+					<tr> <td><b> Begin Date & Time </b></td> <td> $request[begin_date_time] " );
+					
+					if ( $request['begin_am_pm'] == 1 )
+						echo ( "AM" );
+					else
+						echo ( "PM" );
+						
+					echo ( "</td></tr> <tr> <td><b> End Date & Time </b></td> <td> $request[end_date_time] " );
+					
+					if ( $request['end_am_pm'] == 1 )
+						echo ( "AM" );
+					else
+						echo ( "PM" );
+					
+					echo ( "</td> </tr>
+					<tr> <td><b> Description </b></td> <td> " . hyphenate( $request['description'] ) . "</td> </tr>
+					<tr> <td><b> Event Description </b></td> <td> " . hyphenate( $request['event_description'] ) . "</td> </tr>
+					<tr> <td><b> Event Category </b></td> <td> " . eventCategoryInterpreter ( $request['event_category_id'] ) . " </td> </tr>
+					<tr> <td><b> Event Sponsor Name </b></td> <td> $request[event_sponsor_name] </td> </tr>
+					<tr> <td><b> Event Sponsor Type </b></td> <td>" . eventSponsorInterpreter ( $request['event_sponsor_type'] ) . "</td> </tr>
+					<tr> <td><b> Member Admission </b></td> <td> $request[member] </td> </tr>
+					<tr> <td><b> Student Admission </b></td> <td> $request[student] </td> </tr>
+					<tr> <td><b> Faculty Admission </b></td> <td> $request[faculty] </td> </tr>
+					<tr> <td><b> Public Admission </b></td> <td> $request[public] </td> </tr>
+					<tr> <td><b> Requester Name </b></td> <td> $request[requester_name] </td> </tr>
+					<tr> <td><b> Requester Email </b></td> <td> $request[requester_email] </td> </tr>
+					<tr> <td><b> Requester Phone Number </b></td> <td> $request[requester_phone] </td> </tr>
+					<tr> <td><b> Submitted On </b></td> <td> $request[submitted_on] </td> </tr>
+				</table>" );
+			}
+			// Incorrect media type information was sent in thus the request fails and displays a message for it
+			else
+			{
+				echo ( "Invalid request - media type information was not an accepted value" );
+			}
+			
+			// Allow quick links to the current and finished request lists and a button to mark the item as completed
+			echo ( "<a href = \"currentRequests\"> Current Requests </a> - " );
+			echo ( "<a href = \"finishedRequests\"> Finished Requests </a> - " );
+			echo ( "<a href = \"archivedRequests\"> Archived Requests </a> <br />" );
+			
+			if ( $request['has_file'] == 1 )
+			{
+				$sql = $db->prepare( "
+					SELECT file_name, extension, file_comments
+					FROM staff_artist.documents
+					WHERE staff_artist.documents.art_request_id = $event_id
+				" );
+		
+				$res = $db->execute($sql);
+				
+				if(PEAR::isError($res))
+				{
+					die($res->getMessage());
+				}
+				
+				$holder = $res->fetchRow();
+					
+				echo ( "<br /> Files Included - <a href = \"http://campuslife.rit.edu/main/art_request_files/file_uploads/req$event_id.$holder[extension]\"> $holder[file_name]</a> <br />
+					Description - $holder[file_comments] <br />
+				");
+			}
+			/*
+			$sql = $db->prepare( "
+					SELECT comment, completed_by, started_by
+					FROM staff_artist.comments 
+					WHERE staff_artist.comments.art_request_id = $event_id AND staff_artist.comments.request_type = $media_type
+				" );
+		
+			$res = $db->execute($sql);
+			
+			if(PEAR::isError($res))
+			{
+				die($res->getMessage());
+			}
+			
+			$holder = $res->fetchRow();
+			*/
+			
+			// Display the started by textbox if it was not started, or the artists name if it was
+			echo ( "<br /> Started by - " );
+			
+			if ( $is_started == true )
+			{
+				echo ( $started_by . "<br />" );
+			}
+			else
+			{
+				echo("<form action=\"markAsStarted\" method=\"POST\">
+						<input type=\"text\" name=\"artistName\" size=40/>
+						<input type=\"hidden\" name=\"markId\" value=\" " . $event_id . "\"/>
+						<input type=\"hidden\" name=\"markType\" value=\" " . $media_type . " \"/>
+						<br /><input type=\"submit\" value=\"Start\" />
+						</form>");
+			}
+
+			// Display the completed by textbox if it is not completed, or the name of the artist that completed it as well as the option to select as uncomplete if the art request is marked as complete
+			echo ( "<br /> Completed by - " );
+			if ( $is_archived == true )
+			{
+				echo ( $completed_by . "<br />" );
+			}
+			elseif ( $is_completed == true )
+			{
+				echo ( "$completed_by <br />
+					<form action=\"markAsIncomplete\" method=\"POST\">
+						<input type=\"hidden\" name=\"markId\" value=\" " . $event_id . "\"/>
+						<input type=\"hidden\" name=\"markType\" value=\" " . $media_type . " \"/>
+						<input type=\"submit\" value=\"Mark as Incomplete\" />
+					</form>"
+				);
+			}
+			else
+			{
+				echo ( 
+					"<form action=\"markAsCompleted\" method=\"POST\">
+						<input type=\"text\" name=\"artistName\" size=40/>
+						<input type=\"hidden\" name=\"markId\" value=\" " . $event_id . "\"/>
+						<input type=\"hidden\" name=\"markType\" value=\" " . $media_type . " \"/>
+						<br /> <input type=\"submit\" value=\"Mark as Completed\" />
+					</form>"
+				);
+			}
+			
+			// Display the artist comments and comment input
+			echo ( "<br /> Artist Comments <br />" );
+			if ( !$is_archived )
+			{
+				echo ( "<form action=\"updateComments\" method=\"POST\">
+							<textarea cols=\"80\" rows=\"10\" name=\"comments\">$artist_comments</textarea>
+							<input type=\"hidden\" name=\"markId\" value=\" " . $event_id . "\"/>
+							<input type=\"hidden\" name=\"markType\" value=\" " . $media_type . " \"/>
+							<br />
+							<input type=\"submit\" value=\"Update Artist Comments\" />
+						</form>" 
+					);
+			}
+			else
+			{
+				echo ( $artist_comments . "<br />" );
+			}
+			
+			if ( $is_archived == true )
+			{
+			}
+			elseif ( $is_completed == true )
+			{
+				echo (
+					"<br />
+					<form action=\"markAsArchived\" method=\"POST\">
+						<input type=\"hidden\" name=\"markId\" value=\" " . $event_id . "\"/>
+						<input type=\"hidden\" name=\"markType\" value=\" " . $media_type . " \"/>
+						<input type=\"submit\" value=\"Archive this Item\" />
+					</form>"
+				);
+			} 
+		}
+		else
+		{
+			echo ( "No art request job was selected" );
+		}
+		
+		require ('displayRequestsFooter.html');
+	}
+	
+	
+	
+	// Displays a list of outstanding artist requests. 
+	public function currentRequests ()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		require ( 'displayRequestsHeader.html' );
+		
+		global $db;
+		
+		// Checks sent in variables from the URL to see what the list is organized by.  Default is the due date of the request.
+		if ( isset ( $_GET['sortBy'] ) )
+		{
+			switch ( $_GET['sortBy'] )
+			{
+				case "1":
+					$sortBy = "event_name";
+					break;
+				case "2":
+					$sortBy = "has_type";
+					break;
+				case "3":
+					$sortBy = "event_sponsor_name";
+					break;
+				case "4":
+					$sortBy =  "requester_name";
+					break;
+				case "5":
+					$sortBy = "requester_email";
+					break;
+				case "6":
+					$sortBy = "submitted_on";
+					break;	
+				case "7":
+					$sortBy = "due_on";
+					break;
+				default:
+					$sortBy = "due_on";
+					break;
+			}
+		}
+		else
+		{
+			$sortBy = "due_on";
+		}
+		
+		// Gets whether it should be organized by ascending or descending order. Default ascending
+		if ( isset ( $_GET['order'] ) )
+		{
+			if ( $_GET['order'] == "DESC" )
+			{
+				$order = "DESC";
+			}
+			else
+			{
+				$order = "ASC";
+			}
+		}
+		else
+		{
+			$order = "ASC";
+		}
+		
+		$db_connect = mysql_connect( 'localhost', 'cclwww', 'EatYourDat4' ) or die ( mysql_error() );
+		
+		// Huge query that splits grouped information up withing the staff_artist.art_requests table into individual item requests.  Queries are unioned and  recieved only unfinished requests of each type.  Order is assigned at the end of the query outside the unions.
+		$big_request_query = "
+			(	
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_banner AS has_type, banner_completed AS type_completed
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.has_banner != 0 AND staff_artist.art_requests.banner_completed = false
+			)
+			UNION
+			(
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_flyer AS has_type, flyer_completed AS type_completed
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.has_flyer != 0 AND staff_artist.art_requests.flyer_completed = false
+			)
+			UNION
+			(
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_other AS has_type, other_completed AS type_completed
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.has_other != 0 AND staff_artist.art_requests.other_completed = false
+			)
+			
+			ORDER BY $sortBy $order";
+		// Sends query PEAR is not used due to a bizzaro error I did not figure out, but is unessisary as all values  inputted by the user ( for what to order by and ASC and DESC ) are cleaned above.
+		$art_results = mysql_query ( $big_request_query, $db_connect ) or die ( mysql_error() ); 
+		
+		// Close database connection
+		mysql_close ( $db_connect );
+		if(isset($_POST['finishedReq'])){
+		//echo "hi";
+			$this->finished();
+		}
+		if(isset($_POST['deleteReq'])){
+		//echo "hi";
+			$this->deleteEvent();
+		}
+		else{
+		// Outputs the top of the table. Column headers act as links to change order. Switches ASC and DESC by checking what the current key and order are.
+		echo ( "
+			<h1>Current Requests</h1><br />
+			Current Requests - <a href=\"finishedRequests\">Finished Requests</a> - <a href=\"archivedRequests\">Archived Requests</a> <br/>
+			<span class=\"red-font\"><b>Note:- </b>To Archive/Finish an event check the correspoding event name box and then click the Archive/Finish button at the bottom of the page.
+			</span><br /><br />
+			<form action = \"currentRequests\" method = \"POST\">
+			<table border=\"1\">
+			<tr>
+			<th>
+			Check
+			</th>
+				<th>
+					<a href=\"currentRequests?sortBy=1&order=" ); 
+					
+					if ( $sortBy == "event_name" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "event_name" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Event Name</a>
+				</th>
+				<th>
+					<a href=\"currentRequests?sortBy=2&order=" ); 
+					
+					if ( $sortBy == "has_type" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "has_type" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Request Type</a>
+				</th>
+				<th>
+					<a href=\"currentRequests?sortBy=3&order=" ); 
+					
+					if ( $sortBy == "event_sponsor_name" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "event_sponsor_name" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Organization</a>
+				</th>
+				<th>
+					<a href=\"currentRequests?sortBy=4&order=" ); 
+					
+					if ( $sortBy == "requester_name" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "requester_name" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Requester Name</a>
+				</th>
+				<th>
+					<a href=\"currentRequests?sortBy=5&order=" );
+					
+					if ( $sortBy == "requester_email" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "requester_email" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Requester Email</a>
+				</th>
+				<th>
+					<a href=\"currentRequests?sortBy=6&order=" );
+					
+					if ( $sortBy == "submitted_on" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "submitted_on" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Date of Request</a>
+				</th>
+				<th>
+					<a href=\"currentRequests?sortBy=7&order=" );
+					
+					if ( $sortBy == "due_on" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "due_on" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Date Needed By</a>
+				</th>
+			</tr>
+		" );
+		
+		// Loop processes the results of the database query and displays the data.
+		while ( $art_row = mysql_fetch_array ( $art_results ) )
+		{	
+			echo ( "<tr><td><input type=\"checkbox\" name = \"checkArt[]\" value = \"$art_row[event_id]$art_row[has_type]\" /></td> <td>" );
+			if ( $art_row['event_name'] == "" )
+			{
+				echo ( "<a href=\"displayRequest?eventId=$art_row[event_id]&requestType=$art_row[has_type]\">EMPTY INPUT</a>" );
+			}
+			else
+			{
+				echo ( "<a href=\"displayRequest?eventId=$art_row[event_id]&requestType=$art_row[has_type]\">$art_row[event_name]</a> " );
+			}
+				
+			echo ( "</td> <td> ");
+			
+			switch ( $art_row['has_type'] )
+			{
+				case "1":
+					echo ( "Banner" );
+				break;
+				
+				case "2":
+					echo ( "Flyer" );
+				break;
+				
+				case "3":
+					echo ( "Other" );
+				break;
+			}
+			
+			echo ("</td>
+				<td>
+					$art_row[event_sponsor_name]
+				</td>
+				<td>
+					$art_row[requester_name]
+				</td>
+				<td>
+					$art_row[requester_email]
+				</td>
+				<td>
+					$art_row[submitted_on]
+				</td>
+				<td>
+					$art_row[due_on]
+				</td>
+				</tr>
+			");
+		}
+		
+		// Link to page of all the completed requests
+		echo ( "</table> Current Requests - <a href=\"finishedRequests\">Finished Requests</a> - <a href=\"archivedRequests\">Archived Requests</a>");
+		//echo "<br /><input type = 'button' name = 'finishedReq' onclick = 'finished' value = 'Click to Finish events'/>		<input type = 'button' name = 'archivedReq' onclick = 'archived()' value = 'Click to Archive events' />";
+		//echo "<br /><a href = 'finished'>Click to Finish events</a>";
+		echo "<br /><input type = 'submit' name = 'finishedReq' value = 'Click to Finish events'/>";
+		//phpCAS::getUser() gives us the current user....
+		$userName = phpCAS::getUser();
+		if((strcmp($userName,'cclwww') == 0) || (strcmp($userName,'mxhccl')) == 0){
+			echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type = 'submit' name = 'deleteReq'  value = 'Click to Delete events' />";
+		}
+		echo "</form>";
+		require ( "displayRequestsFooter.html" );
+		}
+	}
+	
+	public function finished(){
+		$art_request_eventID = $_REQUEST['checkArt'];
+		$dateApplied = date("Y-m-d H:i:s");
+		foreach($art_request_eventID as $art_eventID){
+			$art_ReqID = substr($art_eventID,0,-1);
+			$art_ReqHasType = substr($art_eventID,-1);
+			switch($art_ReqHasType){
+				case '1':
+					global $db;
+					$db->query("UPDATE staff_artist.art_requests SET banner_completed = '1' WHERE event_id = '$art_ReqID'");
+					$db->query("UPDATE staff_artist.art_requests SET banner_completed_on = '$dateApplied' WHERE event_id = '$art_ReqID'");
+					echo "banner set";
+				break;
+				case '2':
+					global $db;
+					$db->query("UPDATE staff_artist.art_requests SET flyer_completed = '1' WHERE event_id = '$art_ReqID'");
+					$db->query("UPDATE staff_artist.art_requests SET flyer_completed_on = '$dateApplied' WHERE event_id = '$art_ReqID'");
+					echo "flyerr set";
+				break;
+				case '3':
+					global $db;
+					$db->query("UPDATE staff_artist.art_requests SET other_completed = '1' WHERE event_id = '$art_ReqID'");
+					$db->query("UPDATE staff_artist.art_requests SET other_completed_on = '$dateApplied' WHERE event_id = '$art_ReqID'");
+					echo "other set";
+				break;
+			}
+						
+		}
+		
+		header ( "Location: /main/art_request/currentRequests" );
+	}
+	
+	public function deleteEvent(){
+			//phpinfo();
+			$art_request_eventID = $_REQUEST['checkArt'];
+			//print_r($art_request_eventID);
+			global $db;
+			foreach($art_request_eventID as $art_eventID){
+				$art_ReqID = substr($art_eventID,0,-1);
+				$db->query("DELETE FROM staff_artist.art_requests where event_id = '$art_ReqID'");
+				}
+			header ( "Location: /main/art_request/currentRequests" );
+		
+	}
+	public function deleteFinishedEvent(){
+			//phpinfo();
+			$art_request_eventID = $_REQUEST['checkArt'];
+			global $db;
+			foreach($art_request_eventID as $art_eventID){
+				$art_ReqID = substr($art_eventID,0,-1);
+				$db->query("DELETE FROM staff_artist.art_requests where event_id = '$art_ReqID'");
+				}
+			header ( "Location: /main/art_request/finishedRequests" );
+		
+	}
+	public function deleteArchivedEvent(){
+		$art_request_eventID = $_REQUEST['checkArt'];
+		//print_r($art_request_eventID);
+		global $db;
+		foreach($art_request_eventID as $art_eventID){
+			$art_ReqID = substr($art_eventID,0,-1);
+			$db->query("DELETE FROM staff_artist.art_requests where event_id = '$art_ReqID'");
+		}
+		header ( "Location: /main/art_request/archivedRequests" );
+	}
+	
+	public function finishedRequests ()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		require ( 'displayRequestsHeader.html' );
+		
+		global $db;
+		
+		// Checks sent in variables from the URL to see what the list is organized by.  Default is when the request was completed.
+		if ( isset ( $_GET['sortBy'] ) )
+		{
+			switch ( $_GET['sortBy'] )
+			{
+				case "1":
+					$sortBy = "event_name";
+					break;
+				case "2":
+					$sortBy = "has_type";
+					break;
+				case "3":
+					$sortBy = "event_sponsor_name";
+					break;
+				case "4":
+					$sortBy =  "requester_name";
+					break;
+				case "5":
+					$sortBy = "requester_email";
+					break;
+				case "6":
+					$sortBy = "submitted_on";
+					break;	
+				case "7":
+					$sortBy = "completed_on";
+					break;
+				default:
+					$sortBy = "completed_on";
+					break;
+			}
+		}
+		else
+		{
+			$sortBy = "completed_on";
+		}
+		
+		// Gets whether it should be organized by ascending or descending order. Default ascending
+		if ( isset ( $_GET['order'] ) )
+		{
+			if ( $_GET['order'] == "DESC" )
+			{
+				$order = "DESC";
+			}
+			else
+			{
+				$order = "ASC";
+			}
+		}
+		else
+		{
+			$order = "ASC";
+		}
+		
+		// Hueg query that splits grouped information up withing the staff_artist.art_requests table into individual item requests.  Queries are unioned and  recieved only unfinished requests of each type.  Order is assigned at the end of the query outside the unions.
+		$sql = $db->prepare( "
+			(
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_banner AS has_type, banner_completed AS type_completed, banner_completed_on AS completed_on
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.banner_completed = true AND staff_artist.art_requests.banner_archived = 'f'
+			)
+			UNION
+			(
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_flyer AS has_type, flyer_completed AS type_completed, flyer_completed_on AS completed_on
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.flyer_completed = true AND staff_artist.art_requests.flyer_archived = 'f'
+			)
+			UNION
+			(
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_other AS has_type, other_completed AS type_completed, other_completed_on AS completed_on
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.other_completed = true AND staff_artist.art_requests.other_archived = 'f'
+			)
+			ORDER BY $sortBy $order
+		" );
+		
+		$res = $db->execute($sql);
+		
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		if(isset($_POST['finishedReq'])){
+		//echo "hi";
+			$this->archived();
+		}
+		if(isset($_POST['deleteReq'])){
+		//echo "hi";
+			$this->deleteFinishedEvent();
+		}
+		else{
+		// Outputs the top of the table. Column headers act as links to change order. Switches ASC and DESC by checking what the current key and order are.
+		echo ( "
+			<h1>Finished Requests</h1> <br/>
+			
+			<a href=\"currentRequests\">Current Requests</a> - Finished Requests - <a href=\"archivedRequests\">Archived Requests</a>		
+			<form action = \"finishedRequests\" method = \"POST\">
+			<table border=\"1px solid\">
+			<tr>
+				<th>
+				Check
+				</th>
+				<th>
+					<a href=\"finishedRequests?sortBy=1&order=" ); 
+					
+					if ( $sortBy == "event_name" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "event_name" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Event Name</a>
+				</th>
+				<th>
+					<a href=\"finishedRequests?sortBy=2&order=" ); 
+					
+					if ( $sortBy == "has_type" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "has_type" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Request Type</a>
+				</th>
+				<th>
+					<a href=\"finishedRequests?sortBy=3&order=" ); 
+					
+					if ( $sortBy == "event_sponsor_name" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "event_sponsor_name" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Organization</a>
+				</th>
+				<th>
+					<a href=\"finishedRequests?sortBy=4&order=" ); 
+					
+					if ( $sortBy == "requester_name" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "requester_name" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Requester Name</a>
+				</th>
+				<th>
+					<a href=\"finishedRequests?sortBy=5&order=" );
+					
+					if ( $sortBy == "requester_email" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "requester_email" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Requester Email</a>
+				</th>
+				<th>
+					<a href=\"finishedRequests?sortBy=6&order=" );
+					
+					if ( $sortBy == "submitted_on" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "submitted_on" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Date of Request</a>
+				</th>
+				<th>
+					<a href=\"finishedRequests?sortBy=7&order=" );
+					
+					if ( $sortBy == "completed_on" && $order == "ASC" )
+					{
+						echo ( "DESC" );
+					}
+					elseif ( $sortBy == "completed_on" && $order == "DESC" )
+					{
+						echo ( "ASC" );
+					}
+					else
+					{
+						echo ( "ASC" );
+					}
+					
+					echo ( "\">Date Completed On</a>
+				</th>
+			</tr>
+		" );
+		
+		// Loop processes the results of the database query and displays the data.
+		while ( $art_row = $res->fetchRow() )
+		{	
+			echo ( "<tr><td><input type=\"checkbox\" name = \"checkArt[]\" value = \"$art_row[event_id]$art_row[has_type]\" /></td> <td>" );
+			
+			if ( $art_row['event_name'] == "" )
+			{
+				echo ( "<a href=\"displayRequest?eventId=$art_row[event_id]&requestType=$art_row[has_type]\">EMPTY INPUT</a>" );
+			}
+			else
+			{
+				echo ( "<a href=\"displayRequest?eventId=$art_row[event_id]&requestType=$art_row[has_type]\">$art_row[event_name]</a> " );
+			}
+			echo ( "</td> <td>" );
+			
+			switch ( $art_row['has_type'] )
+			{
+				case "1":
+					echo ( "Banner" );
+				break;
+				
+				case "2":
+					echo ( "Flyer" );
+				break;
+				
+				case "3":
+					echo ( "Other" );
+				break;
+			}
+			
+			echo ("</td>
+				<td>
+					$art_row[event_sponsor_name]
+				</td>
+				<td>
+					$art_row[requester_name]
+				</td>
+				<td>
+					$art_row[requester_email]
+				</td>
+				<td>
+					$art_row[submitted_on]
+				</td>
+				<td>
+					$art_row[completed_on]
+				</td>
+				</tr>
+			");
+		}
+		
+		// Link to the page of Current requests
+		echo ( "</table> <a href=\"currentRequests\">Current Requests</a> - Finished Requests - <a href=\"archivedRequests\">Archived Requests</a>");
+		echo "<br /><input type = 'submit' name = 'finishedReq' value = 'Click to Archive events'/>";
+		$user = new User($this->account->getId());
+		$userName = phpCAS::getUser();
+		if($userName == 'cclwww' || $userName == 'mxhccl'){
+		
+			echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type = 'submit' name = 'deleteReq'  value = 'Click to Delete events' />";
+		}
+		echo "</form>";
+		require ( "displayRequestsFooter.html" );
+		}
+	}
+	
+	public function archived(){
+		//echo "hi";
+		$art_request_eventID = $_REQUEST['checkArt'];
+		foreach($art_request_eventID as $art_eventID){
+			$art_ReqID = substr($art_eventID,0,-1);
+			$art_ReqHasType = substr($art_eventID,-1);
+			switch($art_ReqHasType){
+				case '1':
+					global $db;
+					$db->query("UPDATE staff_artist.art_requests SET banner_archived = '1' WHERE event_id = '$art_ReqID'");
+					
+					
+				break;
+				case '2':
+					global $db;
+					$db->query("UPDATE staff_artist.art_requests SET flyer_archived = '1' WHERE event_id = '$art_ReqID'");
+					
+				break;
+				case '3':
+					global $db;
+					$db->query("UPDATE staff_artist.art_requests SET other_archived = '1' WHERE event_id = '$art_ReqID'");
+					
+				break;
+			}
+						
+		}
+		
+		header ( "Location: /main/art_request/finishedRequests" );
+		
+	}
+	public function archivedRequests ()
+	{
+		// Checks if the user is authorized to deal with at certifications by checking the authorized session variable
+		if ( $_SESSION['authorized'] == 1 )
+		{
+		}
+		else
+			header ( "Location: /main/art_request/notArtCertified" );
+		
+		require ( 'displayRequestsHeader.html' );
+		
+		global $db;
+		
+		// Checks sent in variables from the URL to see what the list is organized by.  Default is when the request was completed.
+		if ( isset ( $_GET['sortBy'] ) )
+		{
+			switch ( $_GET['sortBy'] )
+			{
+				case "1":
+					$sortBy = "event_name";
+					break;
+				case "2":
+					$sortBy = "has_type";
+					break;
+				case "3":
+					$sortBy = "event_sponsor_name";
+					break;
+				case "4":
+					$sortBy =  "requester_name";
+					break;
+				case "5":
+					$sortBy = "requester_email";
+					break;
+				case "6":
+					$sortBy = "submitted_on";
+					break;	
+				case "7":
+					$sortBy = "completed_on";
+					break;
+				default:
+					$sortBy = "completed_on";
+					break;
+			}
+		}
+		else
+		{
+			$sortBy = "completed_on";
+		}
+		
+		// Gets whether it should be organized by ascending or descending order. Default ascending
+		if ( isset ( $_GET['order'] ) )
+		{
+			if ( $_GET['order'] == "DESC" )
+			{
+				$order = "DESC";
+			}
+			else
+			{
+				$order = "ASC";
+			}
+		}
+		else
+		{
+			$order = "ASC";
+		}
+		
+		// Hueg query that splits grouped information up withing the staff_artist.art_requests table into individual item requests.  Queries are unioned and  recieved only unfinished requests of each type.  Order is assigned at the end of the query outside the unions.
+		$sql = $db->prepare( "
+			(
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_banner AS has_type, banner_completed AS type_completed, banner_completed_on AS completed_on
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.banner_archived = 1
+			)
+			UNION
+			(
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_flyer AS has_type, flyer_completed AS type_completed, flyer_completed_on AS completed_on
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.flyer_archived = 1
+			)
+			UNION
+			(
+				SELECT event_id, event_name, event_sponsor_name, requester_name, requester_email, submitted_on, due_on, has_other AS has_type, other_completed AS type_completed, other_completed_on AS completed_on
+				FROM staff_artist.art_requests
+				JOIN staff_artist.event_information 
+				ON staff_artist.art_requests.event_id = staff_artist.event_information.id 
+				WHERE staff_artist.art_requests.other_archived = 1
+			)
+			ORDER BY $sortBy $order
+		" );
+		
+		$res = $db->execute($sql);
+		
+		if(PEAR::isError($res))
+		{
+			die($res->getMessage());
+		}
+		if(isset($_POST['deleteReq'])){
+		//echo "hi";
+			$this->deleteArchivedEvent();
+		}
+		else{
+		// Outputs the top of the table. Column headers act as links to change order. Switches ASC and DESC by checking what the current key and order are.
+			echo ( "
+				<h1>Archived Requests</h1> <br/>
+				<span class=\"red-font\"><b>Note:- </b>To Delete an event check the correspoding event name box and then click the Delete button at the bottom of the page.
+			</span><br /><br />
+			<form action = \"archivedRequests\" method = \"POST\">
+				<a href=\"currentRequests\">Current Requests</a> - <a href=\"finishedRequests\">Finished Requests</a> - Archived Requests
+				
+				<table border=\"1\">
+				<tr>
+					<th>
+					Check
+					</th>
+					<th>
+						<a href=\"archivedRequests?sortBy=1&order=" ); 
+						
+						if ( $sortBy == "event_name" && $order == "ASC" )
+						{
+							echo ( "DESC" );
+						}
+						elseif ( $sortBy == "event_name" && $order == "DESC" )
+						{
+							echo ( "ASC" );
+						}
+						else
+						{
+							echo ( "ASC" );
+						}
+						
+						echo ( "\">Event Name</a>
+					</th>
+					<th>
+						<a href=\"archivedRequests?sortBy=2&order=" ); 
+						
+						if ( $sortBy == "has_type" && $order == "ASC" )
+						{
+							echo ( "DESC" );
+						}
+						elseif ( $sortBy == "has_type" && $order == "DESC" )
+						{
+							echo ( "ASC" );
+						}
+						else
+						{
+							echo ( "ASC" );
+						}
+						
+						echo ( "\">Request Type</a>
+					</th>
+					<th>
+						<a href=\"archivedRequests?sortBy=3&order=" ); 
+						
+						if ( $sortBy == "event_sponsor_name" && $order == "ASC" )
+						{
+							echo ( "DESC" );
+						}
+						elseif ( $sortBy == "event_sponsor_name" && $order == "DESC" )
+						{
+							echo ( "ASC" );
+						}
+						else
+						{
+							echo ( "ASC" );
+						}
+						
+						echo ( "\">Organization</a>
+					</th>
+					<th>
+						<a href=\"archivedRequests?sortBy=4&order=" ); 
+						
+						if ( $sortBy == "requester_name" && $order == "ASC" )
+						{
+							echo ( "DESC" );
+						}
+						elseif ( $sortBy == "requester_name" && $order == "DESC" )
+						{
+							echo ( "ASC" );
+						}
+						else
+						{
+							echo ( "ASC" );
+						}
+						
+						echo ( "\">Requester Name</a>
+					</th>
+					<th>
+						<a href=\"archivedRequests?sortBy=5&order=" );
+						
+						if ( $sortBy == "requester_email" && $order == "ASC" )
+						{
+							echo ( "DESC" );
+						}
+						elseif ( $sortBy == "requester_email" && $order == "DESC" )
+						{
+							echo ( "ASC" );
+						}
+						else
+						{
+							echo ( "ASC" );
+						}
+						
+						echo ( "\">Requester Email</a>
+					</th>
+					<th>
+						<a href=\"archivedRequests?sortBy=6&order=" );
+						
+						if ( $sortBy == "submitted_on" && $order == "ASC" )
+						{
+							echo ( "DESC" );
+						}
+						elseif ( $sortBy == "submitted_on" && $order == "DESC" )
+						{
+							echo ( "ASC" );
+						}
+						else
+						{
+							echo ( "ASC" );
+						}
+						
+						echo ( "\">Date of Request</a>
+					</th>
+					<th>
+						<a href=\"archivedRequests?sortBy=7&order=" );
+						
+						if ( $sortBy == "completed_on" && $order == "ASC" )
+						{
+							echo ( "DESC" );
+						}
+						elseif ( $sortBy == "completed_on" && $order == "DESC" )
+						{
+							echo ( "ASC" );
+						}
+						else
+						{
+							echo ( "ASC" );
+						}
+						
+						echo ( "\">Date Completed On</a>
+					</th>
+				</tr>
+			" );
+			
+			// Loop processes the results of the database query and displays the data.
+			while ( $art_row = $res->fetchRow() )
+			{	
+				echo ( "<tr><td><input type=\"checkbox\" name = \"checkArt[]\" value = \"$art_row[event_id]$art_row[has_type]\" /></td> <td>" );
+				
+				if ( $art_row['event_name'] == "" )
+				{
+					echo ( "<a href=\"displayRequest?eventId=$art_row[event_id]&requestType=$art_row[has_type]\">EMPTY INPUT</a>" );
+				}
+				else
+				{
+					echo ( "<a href=\"displayRequest?eventId=$art_row[event_id]&requestType=$art_row[has_type]\">$art_row[event_name]</a> " );
+				}
+				echo ( "</td> <td>" );
+				
+				switch ( $art_row['has_type'] )
+				{
+					case "1":
+						echo ( "Banner" );
+					break;
+					
+					case "2":
+						echo ( "Flyer" );
+					break;
+					
+					case "3":
+						echo ( "Other" );
+					break;
+				}
+				
+				echo ("</td>
+					<td>
+						$art_row[event_sponsor_name]
+					</td>
+					<td>
+						$art_row[requester_name]
+					</td>
+					<td>
+						$art_row[requester_email]
+					</td>
+					<td>
+						$art_row[submitted_on]
+					</td>
+					<td>
+						$art_row[completed_on]
+					</td>
+					</tr>
+				");
+			}
+			
+			// Link to the page of Current requests
+			echo ( "</table> <a href=\"currentRequests\">Current Requests</a> - <a href=\"finishedRequests\">Finished Requests</a> - Archived Requests" );
+			$userName = phpCAS::getUser();
+			
+			if((strcmp($userName,'cclwww') == 0) || (strcmp($userName,'mxhccl')) == 0){
+			echo "<br /><input type = 'submit' name = 'deleteReq'  value = 'Click to Delete events' />";
+		}
+			echo "</form>";
+			require ( "displayRequestsFooter.html" );
+		}
+	}
+	// Function that recieves the data from the form and processes it.
+	public function databaseSubmit()
+	{	$headers = 0;
+	
+		if($_SERVER["REQUEST_METHOD"]!="POST"){
+			header("Location: /main/art_request/displayForm");
+			die;
+		}
+		global $db;
+		
+		$allowed_to_pass = 1;
+		
+		// Get all information from the page
+		$basic_info		= $_POST['art_request'];
+		
+		$banner_info	= $_POST['banner_request'];
+		$flyer_info 	= $_POST['flyer_request'];
+		$other_info	= $_POST['other_request'];
+		
+		$event_info 	= $_POST['event'];
+		
+		$file_info 	= $_POST['file'];
+		
+		$event_cost 	= $_POST['price'];
+		
+		$due_date		= $basic_info["due_on(1i)"] . '-' . $basic_info["due_on(2i)"] . '-' . $basic_info["due_on(3i)"];	
+		
+		$begin_date		= $_POST["begin_date"];
+		$evt_begin_date	= $begin_date["begin_y"] . '-' . $begin_date["begin_m"] . '-' . $begin_date["begin_d"] . ' ' . $begin_date["begin_h"] .':' . $begin_date["begin_min"] . ':00';
+		
+		$end_date		= $_POST["end_date"];
+		$evt_end_date	= $end_date["end_y"] . '-' . $end_date["end_m"] . '-' . $end_date["end_d"] . ' ' . $end_date["end_h"] .':' . $end_date["end_min"] . ':00';
+		
+		//echo '<pre>';print_r($_POST);echo'</pre>'; 
+		// ###################################
+		// ########### Begin Validation ##############
+		// ###################################
+		
+		$persistantData = "";
+		if(isset($_GET['ticket'])){
+			$allowed_to_pass = 0;
+			header ( "Location: /main/art_request/displayForm?s=1&trip=1" . $persistantData );
+			}
+		foreach ($_POST as $name=>$value)
+		{   if(is_array($value)){
+				foreach ($value as $name2=>$value2)
+				{
+					// Clean strings from textareas
+					if (($name2 == 'description') || ($name2 == 'event_description') || ($name2 == 'file_description'))
+					{
+						// for end of line (or begining)
+						$string = trim($value2);
+
+						// from everywhere
+						$string = str_replace("\n", " ", $string);
+						$string = str_replace("\r", " ", $string);
+						$persistantData = $persistantData . "&" . $name2 . "=" . $string;
+					}
+					else
+					{
+						$persistantData = $persistantData . "&" . $name2 . "=" . $value2;
+					}
+					if ($name2 == 'room_ids')
+					{
+						foreach ($value2 as $name3=>$value3)
+						{
+							if ($name3 == '0')
+							{
+								$location = 'lobby';
+							} 
+							if ($name3 == '1')
+							{
+								$location = 'commons';
+							}
+							if ($name3 == '2')
+							{
+								$location = 'gw_hall';
+							}
+							$persistantData = $persistantData . "&" . $location . "=" . $value3;
+						}
+					}
+				}
+			}
+		}
+		if ( isset ( $_POST["banner_requested"] ) )
+		{
+			$persistantData = $persistantData . "&banner_requested=" . $_POST["banner_requested"];
+		}
+		if ( isset ( $_POST["flyer_requested"] ) )
+		{
+			$persistantData = $persistantData . "&flyer_requested=" . $_POST["flyer_requested"];
+		}
+		if ( isset ( $_POST["LCD_requested"] ) )
+		{
+			$persistantData = $persistantData . "&LCD_requested=" . $_POST["LCD_requested"];
+		}
+		if ( isset ( $_POST["other_requested"] ) )
+		{
+			$persistantData = $persistantData . "&other_requested=" . $_POST["other_requested"];
+		}
+		foreach ( $basic_info as $vals )
+		{
+			if ( $vals == "" || strlen($vals) < 1)
+			{
+				$allowed_to_pass = 0;
+				header ( "Location: /main/art_request/displayForm?s=1&trip=1" . $persistantData );
+			}
+		}
+		
+		if ( isset ( $_POST["banner_requested"] ) )
+		{
+			if ( $banner_info["banner_width_length"] == "Other" )
+			{
+				if ( $banner_info['banner_width'] == "" || $banner_info['banner_length'] == "" )
+				{
+					$allowed_to_pass = 0;
+					header ( "Location: /main/art_request/displayForm?s=1&trip=2" . $persistantData  );
+				}
+			}
+			if ( !isset ( $banner_info['room_ids'][0] ) && !isset ( $banner_info['room_ids'][1] ) && !isset ( $banner_info['room_ids'][2] ))
+			{
+				$allowed_to_pass = 0;
+				header ( "Location: /main/art_request/displayForm?s=1&trip=3" . $persistantData  );
+			}
+		}
+		
+		if ( isset ( $_POST["flyer_requested"] ) )
+		{
+			if ( !isset ( $flyer_info['color'] ) )
+			{
+				$allowed_to_pass = 0;
+				header ( "Location: /main/art_request/displayForm?s=1&trip=4" . $persistantData  );
+			}
+			if ( $flyer_info['flyer_width_length'] == 3 && ( $flyer_info['flyer_width'] == "" || $flyer_info['flyer_length'] == "" ) )
+			{
+				$allowed_to_pass = 0;
+				header ( "Location: /main/art_request/displayForm?s=1&trip=5" . $persistantData  );
+			}
+		}
+		
+		if ( isset ( $_POST["other_requested"] ) )
+		{
+			if ( $other_info['description'] == "" )
+			{
+				$allowed_to_pass = 0;
+				header ( "Location: /main/art_request/displayForm?s=1&trip=6" . $persistantData  );
+			}
+		}
+		
+		foreach ( $event_info as $field )
+		{
+			if ( $field == "" || $field == null)
+			{
+				$allowed_to_pass = 0;
+				header ( "Location: /main/art_request/displayForm?s=1&trip=7" . $persistantData  );
+			}
+		}
+		
+		if ( $evt_end_date < $evt_begin_date )
+		{
+			$allowed_to_pass = 1;
+			//header ( "Location: /main/art_request/displayForm?s=2&trip=8" . $persistantData  );
+		}
+		
+		foreach ( $event_cost as $field )
+		{
+			if ( $field == "" )
+			{
+				$allowed_to_pass = 0;
+				header ( "Location: /main/art_request/displayForm?s=1&trip=9" . $persistantData );
+			}
+		}
+		
+		if (is_uploaded_file($_FILES['uploaded_file']['tmp_name']))
+		{
+			$file_sent = 1; 
+						
+		}
+		else
+		{
+			$file_sent = 0;
+		}
+		
+		if ( $file_sent == 1 && $_FILES['uploaded_file']['size'] < 2097152 ) #2097152 is 2 megs in bytes
+		{	
+		
+			$file_ext = explode ( ".", $_FILES['uploaded_file']['name'] );
+		
+			$fs = $file_ext[count( $file_ext ) - 1];
+			$fs = strtolower($fs);
+		 	if ( $fs == "jpg" || $fs == "jpeg" || $fs == "gif" || $fs == "png" || $fs == "ai" || $fs == "psd" || $fs == "txt" || $fs == "pdf" || $fs == "zip" || $fs == "7z" )
+			{
+				
+			}
+			else
+			{
+				$allowed_to_pass = 0;
+				header ( "Location: /main/art_request/displayForm?s=4&trip=11" . $persistantData  );
+			}
+		} else if ($file_sent == 1 && $_FILES['uploaded_file']['size'] >= 2097152) {
+			$allowed_to_pass = 0;
+			header ( "Location: /main/art_request/displayForm?s=3&trip=10" . $persistantData  );
+		}
+		else if ($file_sent != 0)
+		{
+			$allowed_to_pass = 0;
+			header ( "Location: /main/art_request/displayForm?s=3&trip=10" . $persistantData  );
+		}
+		
+
+		// #################################
+		// ######### End validation ###############
+		// #################################
+		
+		
+		if ( $allowed_to_pass == 1 )
+		{  
+			// Start email body text
+			$body = "";
+
+			$body = $body . "New art request created by : " . $basic_info['requester_name'] . "<br>";
+			$body = $body . "DCE account: " . phpCAS::getUser() . "<br>E-mail: " . $basic_info["requester_email"] . "<br>";
+			$body = $body . "Phone #: " . $basic_info["requester_phone"] . "<br><br>";
+			$body = $body . "IP Address: " . $_SERVER['REMOTE_ADDR'] . "<br><br>";
+			
+			// checks if a banner was requested
+			if ( isset ( $_POST["banner_requested"] ) )
+			{	
+				$banner_req	= 1;
+				$banner_rooms	= $_POST["banner_request"]["room_ids"];
+			}
+			else
+			{
+				$banner_req = 0;
+			}
+			
+			// checks if a flyer was requested
+			if ( isset ( $_POST["flyer_requested"] ) )
+			{	
+				$flyer_req	= 2;
+			}
+			else
+			{
+				$flyer_req = 0;
+			}
+			
+			// checks if a LCD was requested
+			if ( isset ( $_POST["LCD_requested"] ) )
+			{	
+				$LCD_req	= 4;
+			}
+			else
+			{
+				$LCD_req = 0;
+			}
+
+			
+			// checks if an other was requested
+			if ( isset ( $_POST["other_requested"] ) )
+			{	
+				$other_req	= 3;
+			}
+			else
+			{
+				$other_req = 0;
+			}
+			
+						// checks if a logo was requested
+			if ( isset ( $_POST["logo_requested"] ) )
+			{	
+				$logo_req	= 5;
+				$other_info['logo']=$_POST['logo_request']['description'];
+			}
+			else
+			{
+				$logo_req = 0;
+			}
+			
+			// checks if a tent was requested
+			if ( isset ( $_POST["tent_requested"] ) )
+			{	
+				$tent_req	= 6;
+			}
+			else
+			{
+				$tent_req = 0;
+			}
+			
+			// checks if a ticket  was requested
+			if ( isset ( $_POST["ticket_requested"] ) )
+			{	
+				$ticket_req	= 7;
+			}
+			else
+			{
+				$ticket_req = 0;
+			}
+			
+			// checks if a postcard was requested
+			if ( isset ( $_POST["postcard_requested"] ) )
+			{	
+				$postcard_req	= 8;
+			}
+			else
+			{
+				$postcard_req = 0;
+			}
+			
+			// Get all generic info for a request and place it into the staff_artist.art_requests table
+			$price		= $_POST["price"];
+			
+			$right_now 	= date ( 'Y-m-d G:i:s' );
+			/**
+			//$sql = $db->prepare( "INSERT INTO staff_artist.art_requests ( submitted_by_dce, requester_name, requester_email, requester_phone, has_flyer, has_banner, has_LCD, has_other, submitted_on, due_on, has_file ) VALUES ( ?, ?,?,?,?,?,?,?,?,?,? )" );
+			
+			
+			//$data = array ( phpCAS::getUser(), $basic_info['requester_name'], $basic_info["requester_email"], $basic_info["requester_phone"],$flyer_req, $banner_req,$LCD_req, $other_req, $right_now, $due_date, $file_sent );
+			//$res = $db->execute($sql,$data);
+			
+			if(PEAR::isError($res))
+			{
+				die($res->getMessage());
+			}
+			**/
+			$body = $body . "Submitted on: " . $right_now . "<br>";
+			$body = $body . "Due date: " . $due_date . "<br><br>";
+			
+			// ############################ //
+			// Get the highest id value from the autoincrementing staff_artist.art_requests table.  This ensures that the correct index is used as foreign keys onto other tables.
+			// This $new_id is used as a foriegn key for all other tables and is generally referenced by other tables as art_request_id
+			// ############################ //
+			/**
+			$sql = $db->prepare( "SELECT id FROM staff_artist.art_requests WHERE id = ( SELECT MAX(id) FROM staff_artist.art_requests )" );
+			
+			$res = $db->execute($sql);
+			
+			if(PEAR::isError($res))
+			{
+				die($res->getMessage());
+			}
+			
+			$new_row = $res->fetchRow();
+			$new_id = $new_row['id'];
+			
+			$sql = $db->prepare( "UPDATE staff_artist.art_requests SET event_id = '$new_id' WHERE id = '$new_id'" );
+			
+			$res = $db->execute($sql);
+			
+			if(PEAR::isError($res))
+			{
+				die($res->getMessage());
+			}
+			**/
+			// Get all information pertainent to banners if a banner was requested.  Place nessisary information into the staff_artist.banner_requests and staff_artist.banner_requests_rooms.
+			if ( $banner_req == 1 )
+			{	
+				if ( $banner_info["banner_width_length"] != "Other" )
+				{
+					$ban_width = 3;
+					$ban_length = 6;
+				}
+				else
+				{
+					$ban_width = $banner_info["banner_width"];
+					$ban_length = $banner_info["banner_length"];
+				}
+				/**
+				$sql = $db->prepare( "INSERT INTO staff_artist.banner_requests ( art_request_id, width, length, number ) VALUES ( ?,?,?,? )" );
+				
+				$data = array ( $new_id, $ban_width, $ban_length, $banner_info['number']);
+				$res = $db->execute($sql,$data);
+				if(PEAR::isError($res))
+				{
+					die($res->getMessage());
+				}
+				**/
+				// Add the banner information to the body of the email if a banner was requested.
+				$body = $body . "Request type: Banner<br>";
+				$body = $body . "\tBanner width: " . $ban_width . "<br>";
+				$body = $body . "\tBanner length: " . $ban_length . "<br>";
+				
+				$lobby = false;
+				$dining_commons = false;
+				$gw_hall=false;
+				
+				$body = $body . "<br>";
+				if ( isset ( $banner_rooms[0] ) )
+				{	
+					$body = $body . "\tLocation: SAU Lobby<br>";
+					$lobby = true;
+				}
+				else
+				{
+					$lobby = false;
+				}
+				
+				if ( isset ( $banner_rooms[1] ) )
+				{   
+					$body = $body . "\tLocation: SDC Lobby<br>";
+					$dining_commons = true;
+				}
+				else
+				{
+					$dining_commons = false;
+				}
+				
+				if ( isset ( $banner_rooms[2] ) )
+				{	
+					$body = $body . "\tLocation: Grace Watson Hall<br>";
+					$gw_hall = true;
+				}
+				else
+				{
+					$gw_hall = false;
+				}
+				$body = $body . "\n";
+				
+			}
+			
+			// Get all information pertainent to flyers if a flyer was requested.  Place nessisary information into the staff_artist.flyer_requests.
+			if ( $flyer_req == 2 )
+			{	
+				if ( $flyer_info["flyer_width_length"] == 1 )
+				{
+					$fly_width = 8.5;
+					$fly_length = 11;
+				}
+				else if ( $flyer_info["flyer_width_length"] == 2 )
+				{
+					$fly_width = 11;
+					$fly_length = 17;
+				}
+				else
+				{
+					$fly_width = $flyer_info["flyer_width"];
+					$fly_length = $flyer_info["flyer_length"];
+				}
+				if ( $flyer_info["color"] ){
+					$fly_color="Color";
+				} else{
+					$fly_color="Black And White";
+				}
+					
+				// Add the flyer information to the body of the email if a flyer was requested.
+				$body = $body . "Request type: Flyer\n";
+				$body = $body . "\tFlyer width: " . $fly_width . "<br>";
+				$body = $body . "\tFlyer length: " . $fly_length . "<br>";
+				$body = $body . "\tFlyer type: " . $fly_color . "<br><br>";
+
+			}
+			
+			//Get all information pertainant to the others if a LCD was requested
+			if ( $LCD_req == 4 ) {
+				// Add other information to the body of the email if other was requested.
+				$body = $body . "Request type: LCD\n";
+			}
+			
+			// Get all information pertainent to others if a other was requested.  Place nessisary information into the staff_artist.other_requests.
+			if ( $other_req == 3 )
+			{	
+				// Add other information to the body of the email if other was requested.
+				$body = $body . "Request type: Other\n";
+				$body = $body . "\tOther Description:\n\t\t" . $other_info['description'] . "\n\n";
+			}
+			
+			if( $logo_req == 5)
+			{
+				$body = $body. "Request type : Logo\n";
+				$body = $body . "\tLogo Description:\n\t\t" . $other_info['logo'] . "\n\n";
+			}
+			if ($tent_req == 6){
+				$body = $body. "Request type : Tent\n";
+			}
+			if ($ticket_req == 7){
+				$body = $body. "Request type : Ticket\n";
+			}
+			if ($postcard_req == 8){
+				$body = $body. "Request type : Postcard\n";
+			}
+			
+			// Add event information to the body of the email
+			$body = $body . "<br>Event Information<br>";
+			$body = $body . "\tEvent Name: " . $event_info['event_name'] . "<br>";
+			$body = $body . "\tEvent Location: " . $event_info['event_location'] . "<br>";
+			$body = $body . "\tEvent Sponsor: " . $event_info['sponsor_category'] . "<br>";
+			$body = $body . "\tEvent Sponsor Name: " . $event_info['sponsor_name'] . "<br>";
+			$body = $body . "\tEvent Begin Date: " . $evt_begin_date . $begin_date['begin_am_pm'] . "<br>";
+			$body = $body . "\tEvent End Date: " . $evt_end_date . $end_date['end_am_pm'] . "<br>";
+			$body = $body . "\tEvent Description: " . $event_info['event_description'] . "<br>";
+			
+			// Put all file information into the database
+			if ( $file_sent == 1  )
+			{	
+				$num=1;
+				foreach($_FILES as $file){
+					if ($file['tmp_name'] > '') { 
+						$target_path = "/var/www/data-dist/main/art_request_files/file_uploads/";
+						$newName=strtr($file['name']," ","_");
+						list($newName,$trash)=explode(".",$newName);
+						$uploaded_filename= phpCAS::getUser().".".$num.".".$newName ."." . $fs; 
+						$target_path = $target_path . $uploaded_filename;
+						$uploaded_file_link="http://campuslife.rit.edu/main/art_request_files/file_uploads/".$uploaded_filename;
+						$body=$body."Link to Uploaded File: ".$uploaded_file_link."\n\n";
+						move_uploaded_file( $file['tmp_name'], $target_path );
+						$num++;
+						}
+				}
+				
+
+			}
+			
+			// Add price information to the body of the email
+			$body = $body . "Pricing\n";
+			$body = $body . "\tMember price: " . $price['member'] . "\<br>";
+			$body = $body . "\tStudent price: " . $price['student'] . "<br>";
+			$body = $body . "\tStaff price: " . $price['staff'] . "<br>";
+			$body = $body . "\tPublic price: " . $price['public'] . "<br>";
+			
+			$basic_info		= $_POST['art_request'];
+		
+			$banner_info	= $_POST['banner_request'];
+			$flyer_info 	= $_POST['flyer_request'];
+			$other_info		= $_POST['other_request'];
+			
+			$event_info 	= $_POST['event'];
+			
+			$file_info 		= $_POST['file'];
+			
+			$event_cost 	= $_POST['price'];
+			
+			$due_date		= $basic_info["due_on(1i)"] . '-' . $basic_info["due_on(2i)"] . '-' . $basic_info["due_on(3i)"];	
+			
+			$begin_date		= $_POST["begin_date"];
+			$evt_begin_date	= $begin_date["begin_y"] . '-' . $begin_date["begin_m"] . '-' . $begin_date["begin_d"] . ' ' . $begin_date["begin_h"] .':' . $begin_date["begin_min"] . ':00';
+			
+			$end_date		= $_POST["end_date"];
+			$evt_end_date	= $end_date["end_y"] . '-' . $end_date["end_m"] . '-' . $end_date["end_d"] . ' ' . $end_date["end_h"] .':' . $end_date["end_min"] . ':00';
+			
+			// Adds ending to mail body
+			$body = $body . "Your staff artist request has been made. Please expect to be contacted by the Center for Campus Life if there are any further questions.";
+			// Sends the email 
+			$userMail = phpCAS::getUser() . "@rit.edu";
+			/* Send to addresses:
+				- CCL staff artist: artccl@rit.edu
+				- Matt: mxhccl@rit.edu
+				- User that submitted request
+			*/
+			
+			$Name = phpCAS::getUser(); //senders name
+			$email = $userMail; //senders e-mail adress
+			$subject = "New art request"; //subject
+			$recipient = "$email, mktgccl@rit.edu, radccl@rit.edu"; 
+			require_once("Mailer.php");
+			$mailer = new Mailer();
+			$header = "From: ". $email . ">\r\n"; //optional headerfields
+			$mailer->setSubject($subject);
+			$mailer->setFrom('Center For Campus Life <cclwww@rit.edu>');
+			$mailer->setBCC($recipient);
+			$mailer->setHTMLBody($body);
+			$result = $mailer->send();
+			if(PEAR::isError($result)) {
+				self::$errors[] = "Failed to send e-mail. {$result->getMessage()}: {$result->getUserInfo()}";
+				$mailer->setBCC("$email");
+				$result = $mailer->send();
+				if (PEAR::isError($result)) {
+					self::$errors[] = "Failed to send email backup";
+				}
+			}
+			
+			// Redirect to the data submitted page.
+			header( 'Location: /main/art_request/requestSubmitted' );
+		}
+	}
+	
+	// Logs the user out of the system
+	public function logout() 
+	{
+	echo "not here yet";
+	}
+}
+
+?>

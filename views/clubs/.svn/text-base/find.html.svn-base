@@ -1,0 +1,25 @@
+<?php require('subHeader.html'); ?>
+
+
+<form method="GET">
+	<strong>Search for a Club</strong>
+	<input name="searchClub" type="text" id="searchClub" size="30" maxlength="30" onKeyUp="userTyped( this.value )" autocomplete="off""/>
+	<div id="resultsHolder"></div>
+</form>
+<br/>
+<img src="images/link.gif" border="0" alt="click link" align="left"/>&nbsp;<a href="clubs/all">All Clubs List</a>
+<br/><br/>
+
+<img src="images/link.gif" border="0" alt="click link" align="left"/>&nbsp;<a href="clubs/category?id=1&name=Career Related">Career Related</a><br/><br/>
+<img src="images/link.gif" border="0" alt="click link" align="left"/>&nbsp;<a href="clubs/category?id=5&name=Cultural">Cultural</a><br/><br/>
+<img src="images/link.gif" border="0" alt="click link" align="left"/>&nbsp;<a href="clubs/category?id=2&name=Hobby and Special Interest">Hobby and Special Interest</a><br/><br/>
+<img src="images/link.gif" border="0" alt="click link" align="left"/>&nbsp;<a href="clubs/category?id=3&name=Music Related">Music Related</a><br/><br/>
+<img src="images/link.gif" border="0" alt="click link" align="left"/>&nbsp;<a href="clubs/category?id=6&name=Religious">Religious</a><br/><br/>
+<img src="images/link.gif" border="0" alt="click link" align="left"/>&nbsp;<a href="clubs/category?id=4&name=Sports">Sports</a><br/>
+
+
+
+
+
+
+<?php require('subFooter.html'); ?>

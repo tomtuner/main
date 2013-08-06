@@ -1,0 +1,29 @@
+<?php
+
+$userTyped = $_GET['userTyped'];
+$typeLength = strlen( $userTyped );
+
+$responseText = "";
+
+//A super simple search v1.1
+while( $row = $result->fetchRow() )
+{
+	//case insensitive version of strpos
+	//searches for the typed string somewhere in the organization's name and returns location
+	//must use !== and === as the first character returns 0 which does not mean false!
+	if( stripos($row['name'],$userTyped) !== false)
+	{
+		$responseText .=  $row['name'] . " || \n";
+		$responseText .=  $row['id'] . " ||| \n";
+	}
+}
+
+if($responseText == "")
+{
+	$responseText .= "No Results Found!";
+}
+
+echo $responseText;
+
+?>
+

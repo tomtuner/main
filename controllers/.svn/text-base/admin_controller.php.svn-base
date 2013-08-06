@@ -1,0 +1,241 @@
+<?php
+
+
+/**
+ * AdminController
+ * This class handles the logic of all admin functions
+ *  - Content Management
+ *  - Navigation Management
+ */
+class AdminController extends Controller {	
+	public function __before() {
+		// Implemented an access feature that keeps out non-allowed DCE users of the admin controls. If you want to allow someone to have access, go to the admin panel and click Users and Groups and then Edit the user. 
+		// Select the CMS permission group and give them full permissions to the CMS access permission.
+		global $db;
+		$handle = "cms_access";
+		
+		$usr = phpCAS::getUser();
+		
+		$sql = "SELECT value FROM auth.user_permissions, auth.users, auth.permissions WHERE auth.user_permissions.permission_id=auth.permissions.id AND auth.users.id=auth.user_permissions.user_id AND auth.users.username='{$usr}' AND auth.permissions.handle='{$handle}'";
+		
+		$verified = $db->getRow($sql);
+		
+		if ($usr == 'cclwww') $verified = true;
+
+		if (!isset($verified)) {
+			require('views/admin/denied.html');
+			die();
+		}
+	}
+	
+	/**
+	 * Display the index page.
+	 */
+	 public function index() {
+		
+		$page_title = array('Admin');
+		require('views/admin/index.html');
+	}
+	
+	/**
+	 * Display content list page
+	 */
+	public function page() {
+		$page_title = array('Admin - Available Content');
+		
+		$pages = Page::getList();
+		
+		require('views/admin/page.html');
+		//$this->render();
+	}
+	
+	/**
+	 * Given an ID, load the content into an edit form
+	 */
+	public function editPage() {
+		
+		
+		$page = Page::getList("id = ".ID);
+		if (sizeof($page) > 0) {
+				$page_title = array('Admin - Edit Page - '.$page[0]->getTitle());
+				
+				
+				
+				require('views/admin/editpage.html');
+		} else {
+			echo "This ID does not exist.";
+			
+		}
+		
+	}
+	
+	/**
+	 * Display the form for a  new content page
+	 */
+	public function newpage() {
+		$page_title = array('Admin - New Page');
+		$page = array( new Page );
+		require('views/admin/addpage.html');
+	}
+	
+	
+	/**
+	 * This function is responsible for all form processing.
+	 */
+	public function process() {
+			if (isset($_POST["saveEdit"])) {
+				$page = Page::getList("id = ".ID);
+				$this->savePage($page[0]);
+				
+				$this->redirect("admin/page");
+			} elseif (isset($_POST["saveNewPage"])) {
+				$page = new Page();
+				
+				$this->savePage($page);
+				
+				$this->redirect("admin/page");
+				
+			} elseif (isset($_POST["saveNewNav"])) {
+				
+				$navigation = new Navigation();
+				$this->saveNavigation($navigation);
+				$this->redirect("admin/navigation");
+				
+			} elseif (isset($_POST["deleteNav"])) {
+				$this->deleteNavigation($_POST['deleteBox']);
+				$this->redirect("admin/navigation");
+				
+				
+			}
+	
+	}// end process
+
+	/**
+	 * Convenience method for saving page objects.
+	 */
+	private function savePage($page) {
+		$page->setTitle($_POST["title"]);
+				$page->setContent($_POST["content"]);
+				if(isset($_POST["useview"])) {
+					$page->setUseview(1);
+				} else {
+					$page->setUseview(0);
+				}
+				
+				// @TODO:  this needs to be hooked into CAS for user info
+				$page->setLastmodifiedby("1");
+				//2007-04-26 12:48:21
+				$page->setLastmodifieddate(date("Y-m-d H:i:s"));
+				
+				$location = split("/",$_POST["location"]);
+				
+				$page->setController($location[0]);
+				$page->setAction($location[1]);
+				
+				$page->save();
+	}
+	
+	/**
+	 * Given an ID, this will remove a content page from the database.
+	 */
+	public function deletePage() {
+		$page_title = array('Admin - Delete Page');
+		if (isset($_POST["delete"])) {
+			$page = Page::getList("id = ".$_POST["id"]);
+			$page[0]->delete();
+			$this->redirect("admin/page");
+		} else {
+			
+			require('views/admin/deletepage.html');
+		}
+	}
+	
+	/**
+	 * Display the list of navigation items
+	 */
+	public function navigation()
+	{
+		$page_title = array('Admin - Navigation');
+		
+		$navigation = Navigation::getOrderedList();
+		require('views/admin/navigation.html');
+	}
+	
+	/**
+	 * Display the help for navigation items
+	 */
+	public function navigationHelp()
+	{
+		$page_title = array('Admin - Navigation Help');
+		
+		require('views/admin/navigationHelp.html');
+	}
+	
+	/**
+	 * Display the add navigation form
+	 */
+	public function addNavigation()
+	{
+		$page_title = array('Admin - Add Navigation');
+		
+		
+		
+		require('views/admin/addNavigation.html');
+	
+	
+	}
+	
+	/**
+	 * Method to save navigation objects.
+	 */
+	public function saveNavigation($navigation)
+	{
+		$navigation->setParent($_POST["parent"]);
+		$navigation->setWeight($_POST["weight"]);
+		$navigation->setLabel($_POST["label"]);
+		$navigation->setUrl($_POST["url"]);
+		$navigation->save();
+		
+	
+	}
+	
+	/**
+	 * Method to delete navigation objects.
+	 * $ids is an array of the navigation id's to be deleted
+	 */
+	public function deleteNavigation($ids)
+	{
+		foreach($ids as $id)
+		{
+			$navs = Navigation::getList();
+			foreach($navs as $myNav)
+			{
+				//delete parents
+				if($myNav->getId()==$id)
+				{
+					$myNav->delete();
+				}
+				//delete children
+				if($myNav->getParent()==$id)
+				{
+					$myNav->delete();
+				}
+			}
+		}
+	
+	}
+	
+	/**
+	 * Method to view/edit user permissions
+	 */
+	public function permission()
+	{
+		$page_title = array('Admin - Permissions');
+		//$permissionList = Permission::getList();
+		require('views/admin/permission.html');
+	
+	}
+	
+}
+
+?>

@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+		<meta name="Author" content="The Center for Campus Life"/><title>RIT - Center for Campus Life</title>
+		<base href="<?php echo 'http://'. $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) .'/'; ?>" />
+		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://campuslife.rit.edu/main/rss/"/>
+		<link rel="stylesheet" type="text/css" href="style_sheets/news.css"/>
+		
+		<!--
+			<script type="text/javascript" src="javascript/yui/yahoo/yahoo.js"></script>
+			<script type="text/javascript" src="javascript/yui/event/event.js"></script>
+			<script type="text/javascript" src="javascript/yui/dom/dom.js"></script>
+			<script type="text/javascript" src="javascript/yui/animation/animation.js"></script>
+			<script type="text/javascript" src="javascript/findClub.js"></script>
+			<script type="text/javascript" src="javascript/framework/prototype.js"></script>
+			<script type="text/javascript" src="javascript/base.js"></script>
+			<script type="text/javascript" src="javascript/general.js"></script> 
+		-->
+		
+		<?php
+			include ( 'mobile_detect.php');
+			
+			$ans = detect_mobile_device ();
+			
+			if ( $ans == true )
+			{
+				echo ( "<link rel='stylesheet' type='text/css' href='style_sheets/handheld.css'/> ");
+			}
+			else if ( $ans == false )
+			{
+				echo ( "<link rel='stylesheet' type='text/css' href='style_sheets/base.css'/>
+					<link rel='stylesheet' type='text/css' href='style_sheets/subBase.css'/>
+					<script type=\"text/javascript\" src=\"javascript/yui/yahoo/yahoo.js\"></script>
+					<script type=\"text/javascript\" src=\"javascript/yui/event/event.js\"></script>
+					<script type=\"text/javascript\" src=\"javascript/yui/dom/dom.js\"></script>
+					<script type=\"text/javascript\" src=\"javascript/yui/animation/animation.js\"></script>
+					<script type=\"text/javascript\" src=\"javascript/findClub.js\"></script>
+					<script type=\"text/javascript\" src=\"javascript/framework/prototype.js\"></script>
+					<script type=\"text/javascript\" src=\"javascript/base.js\"></script>
+					<script type=\"text/javascript\" src=\"javascript/general.js\"></script> ");
+				
+				echo ( "<script language=\"javascript\" type=\"text/javascript\">
+					<!--
+						if( getInternetExplorerVersion() == 6)
+						{
+							document.write(\"<link rel='stylesheet' type='text/css' href='style_sheets/IE6_base.css'/>\");
+							document.write(\"<link rel='stylesheet' type='text/css' href='style_sheets/IE6_subBase.css'/>\");
+						}
+						else
+						{
+							document.write(\"<link rel='stylesheet' type='text/css' href='style_sheets/base.css'/>\");
+							document.write(\"<link rel='stylesheet' type='text/css' href='style_sheets/subBase.css'/>\");
+						}
+					--> 
+				</script>
+				<script language=\"javascript\" type=\"text/javascript\">
+				<!--
+					function hideItems ()
+					{");
+					if ($info_on == 'general' || $info_on == '')
+					{
+					echo ("document.getElementById( \"specific_RIT\" ).style.display = 'none';");
+					}
+					
+					echo ("}\nfunction toggleVisible( idToggle, idElement, isDropDown)
+					{
+						if ( isDropDown == 'true' ){
+							var index = document.getElementById( idElement ).selectedIndex;
+							if ( index == 0 ){
+								document.getElementById( idToggle ).style.display = 'none';
+							} else {
+								document.getElementById( idToggle ).style.display = '';
+							}
+						} else {
+							if ( document.getElementById( idToggle ).style.display == '' )
+							{
+								document.getElementById( idToggle ).style.display = 'none';
+							}
+							else if ( document.getElementById( idToggle ).style.display == 'none' )
+							{
+								document.getElementById( idToggle ).style.display = '';
+							}
+						}
+					}
+			
+					function copyAddress( id )
+					{
+						if (document.getElementById( id ).checked)
+						{
+							document.getElementById( \"current_street\" ).value=document.getElementById( \"permanent_street\" ).value;
+							document.getElementById( \"current_city\" ).value = document.getElementById( \"permanent_city\" ).value;
+							document.getElementById( \"current_state\" ).selectedIndex = document.getElementById( \"permanent_state\" ).selectedIndex;
+							document.getElementById( \"current_zip\" ).value = document.getElementById( \"permanent_zip\" ).value;
+						} else
+						{
+							document.getElementById( \"current_street\" ).value = \"\";
+							document.getElementById( \"current_city\" ).value = \"\";
+							document.getElementById( \"current_state\" ).selectedIndex = 0;
+							document.getElementById( \"current_zip\" ).value = \"\";
+						}
+					}
+				-->
+				</script>");
+			}
+		?>
+	</head>
+<body onclick="offFocus()" onload="hideItems()">
+<div id="page">
+	<div id="pageBack">
+		<div id="nav">
+			<div id="navigation">
+			<!-- Begin Navigation -->
+				<div id="cclLogo"><a href="/main"><img src="images/cclLogo.jpg" alt="RIT Center for Campus Life" class="ccllogo" border="0"/></a></div>
+					<?php
+						include("navigation.html");
+					?>
+				<!-- End Navigation -->
+				<!-- Club of the day beginning-->
+					<div id="clubday"><img src="images/club-box5_02.jpg"/><div id="clubdayContent"><?php
+					//include("club_of_the_day.txt");
+					$table = array();
+					$file = file("club_of_the_day.txt");
+					foreach($file as $id => $item)
+					$table[$id] = explode(",",$item);
+
+					/*echo "<pre>";
+					print_r($table);
+					echo "</pre>";*/
+
+					$today = date("m/d/Y");
+					for ($row = 0; $row < count($file); $row++){
+						for ($col = 0; $col < count(explode(",",$item)); $col++){
+							if(strcmp($today,$table[$row][0] )==0){
+								echo "<b>" . $table[$row][1] . "</b>";
+								echo '<br/>';
+								echo '<a href="'.$table[$row][2].'">Visit Club Website</a>';
+								break;
+							}
+						}
+					}
+				?></div></div><!--End of Club of the day  -->
+			</div>
+		<div id="contactInfo">
+					<div style="padding-left:10px">
+						<strong>Office Hours:</strong><br/>
+						Monday - Friday<br/>
+						8:30 AM to 4:30 PM<br/>
+						(p) 585.475.7058<br/>
+						(f) 585.475.7019<br/><br/>
+						<a class="contactLink" href="about/profstaff"><strong>Staff Directory</strong></a>
+					</div>
+		</div>
+		<div id="navBottom">&nbsp;</div>
+	</div>
+		<div id="right">
+			<!-- Begin Right Column-->
+			<div id="header">
+				<a href="http://www.rit.edu/"><img alt="RIT Home" src="images/RITLogo.jpg" border="0"/></a>
+			<!-- Begin Header -->
+				<form id="searchbox_016792319780221422966:zlqjppyxsiy" action="http://google.com/cse">
+					<ul>
+								<li><a href="http://www.rit.edu/">RIT Home</a></li>
+								<li><a href="http://www.rit.edu/Index/">RIT A-Z Site Index</a></li>
+								<li><a href="http://events.rit.edu/">RIT Events Calendar</a></li>
+								<li><a href="http://www.rit.edu/Search/">RIT Search</a></li>
+								
+								<a href="http://www.google.com/cse?cx=016792319780221422966:zlqjppyxsiy&amp;cof=FORID:0">CCL Search</a>						
+									<input type="hidden" name="cx" value="016792319780221422966:zlqjppyxsiy" />
+									<input type="hidden" name="cof" value="FORID:0" />
+									<input name="q" type="text" size="20" id="cclSearchBox" onclick="resetSearchValue()" value="Search CCL Site"/>&nbsp;&nbsp;
+					</ul>
+				</form>
+			<!-- end header -->				
+			</div> 
+			<?php
+				$globalPage = split( "/",$_SERVER['REQUEST_URI'] );
+				print "<img src='images/Headers/$globalPage[2].jpg' alt='$globalPage[2]' height='120' width='720' />";
+			?>
+			<!--
+			<div id="flashBlog">
+<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="720" height="120">
+					<param name="movie" value="flash/FlashBanner.swf" /> 
+					<param name="quality" value="high" />
+					<param name="bgcolor" value="#FFFFFF" />
+
+					<object data="flash/FlashBanner.swf" width="720" height="120" type="application/x-shockwave-flash">
+						 <param name="quality" value="high" />
+
+						 <param name="bgcolor" value="#FFFFFF" />
+						 <param name="pluginurl" value="http://www.macromedia.com/go/getflashplayer" />
+					</object>
+					
+			 </object> </div>
+			 -->
+			<div id="leftside">
+				<div id="leftTitle"><h2><?php if (isset($page_title[0])) {echo $page_title[0]; } else { echo "Oops!";}?></h2></div>
+				<div id="content">
+				&nbsp;<br/>

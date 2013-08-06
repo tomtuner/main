@@ -1,0 +1,90 @@
+<?php require_once('subHeader.html') ?>
+	    
+		
+          <tr>
+		  <td><table width="100%" cellpadding="0" cellspacing="0">
+			<strong>2007-08 Student Alumni Union (SAU) Hours </strong>
+		  </table></td>
+				<td><table width="100%" cellpadding="0" cellspacing="0">
+					<tr><br/>
+						<td width="386"><i>SAU Information Desk Hours</i></td>
+						<td width="80">Open</td>
+						<td width="79">Close</td>
+	                  </tr>
+					<tr >
+						<td>Sunday </td>
+						<td>10:00 AM </td>
+						<td>10:00 PM </td>
+					</tr>
+					<tr >
+						<td>Monday &amp; Tuesday </td>
+	                    <td>8:00 AM </td>
+						<td>11:30 PM </td>
+					</tr>
+					<tr >
+						<td>Wednesday &amp; Thursday </td>
+						<td>8:00 AM </td>
+						<td>1:30 AM </td>
+					</tr>
+					<tr >
+						<td>Friday </td>
+						<td>8:00 AM </td>
+						<td>3:00 AM </td>
+					</tr>
+					<tr >
+						<td>Saturday </td>
+						<td>9:30 AM </td>
+						<td>3:00 AM </td>
+					</tr>
+				</table></td>
+			</tr>
+			<br/>
+	        <tr> 
+                <td><table width="100%" cellpadding="0" cellspacing="0">
+				  <tr>
+					<td width="386"><i>Academic Quarter Business Hours</i></td>
+					<td width="80">Open</td>
+					<td width="79">Close</td>
+                 </tr>
+                  <tr >
+                    <td>Sunday </td>
+                    <td>7:00 AM </td>
+                    <td>10:00 PM </td>
+                  </tr>
+                  <tr >
+                    <td>Monday &amp; Tuesday </td>
+                    <td>7:00 AM </td>
+                    <td>11:30 PM </td>
+                  </tr>
+                  <tr >
+                    <td>Wednesday &amp; Thursday </td>
+                    <td>7:00 AM </td>
+                    <td>1:30 AM </td>
+                  </tr>
+                  <tr >
+                    <td>Friday </td>
+                    <td>7:00 AM </td>
+                    <td>3:00 AM </td>
+                  </tr>
+				  <tr >
+                    <td>Saturday </td>
+                    <td>7:00 AM </td>
+                    <td>3:00 AM </td>
+                  </tr>
+				</table></td>
+			</tr>
+	
+		<br/><br/>
+		For <strong>Summer/Break Hours</strong> please contact <br/>the SAU Information Desk at 585.475.6991 <br/>
+		or look for the posted hours at the Information Desk <br/>
+		located in the SAU (04) 1320.
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+<?php require_once('subFooter.html') ?>

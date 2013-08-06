@@ -1,0 +1,256 @@
+/*  BASE STYLES */
+p{
+	margin:0;
+	padding:0;
+}
+
+BODY {
+	margin:0;
+	padding: 0;
+	background-image:url(../images/pixelBack5.gif);
+	font-family:Arial,Helvetica,sans-serif;
+}
+
+A, A:visited {
+	color: #412315;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration:underline;
+}
+
+a[onmouseover] { cursor:pointer; }
+
+h1,h2,h3,h4 {
+	margin:0px;
+}
+
+h1{
+	font-size:18px;
+	color:#412315;	
+}
+
+h2{
+	font-size:18px;
+	color:#FFFFFF;
+}
+
+h3{
+	font-size:14px;
+	color:#FFFFFF;
+}
+h4{
+	font-size:12px;
+	color:#412315;
+}
+
+/* STRUCTURE STYLES */
+
+/*  This style holds the parent structure for the whole page */
+#page {
+	width:980px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#pageBack { /* fixes background problem in FireFox by adding Float */
+	background-image:url("../images/bodyBackground.jpg");
+	background-repeat: repeat-y;
+	float:left;
+	padding-left: 10px;
+}
+
+/* This style is for the right parent side column, that contains blog, content, and the small widgets */
+#main {
+	float: left;
+	width: 980px;
+	background-color: #F4F2E3;
+	/*background-image:url(../images/contentBack3.jpg);*/
+	background-repeat:repeat-y;
+}
+
+#bar {
+	width: 980px;
+}
+
+#requestTable {
+	padding-left: 10px; 
+	padding-top: 20px;
+	padding-bottom: 20px; 
+	float: left;
+}
+
+table {
+	width: 960px;
+	border-width: 1px;
+	border-style: solid;
+}
+
+#rightBottom {
+	width:980px;
+	height:50px;
+	/* background-image:url(../images/contentBottom2.jpg);
+	background-repeat:no-repeat; */
+	float:left;
+	background-color: #422517;
+}
+
+#header {
+	width: 980px;
+	height: 40px;
+	margin: 0px 0 0px 0;
+	float:left;
+	background-color: #412315;
+	padding-top: 10px;
+	
+}
+
+#footer {
+	width: 980px;
+	padding: 20px 0 20px 0;
+	color:#412315;
+	font-size:10px;
+	clear:left;
+}
+
+/* HEADER STYLES */
+
+#header a {
+	font-size: 12px;
+	color:#FFFFFF;
+	
+}
+
+#header ul {
+	float:right;
+	margin-top: 0;
+}
+
+#header ul li{
+	display:inline;
+	list-style-image:none;
+	margin-right:5px;
+	padding-right:5px;
+	border-right: 1px solid #fff;
+}
+
+#header ul li.last {
+	border-right: 0;
+}
+
+
+#header img {
+	float:right;
+	margin:0 12px 0 0;
+} 
+
+ul.courtesyNav {
+	margin-left: 0; 
+	padding-left: 0;
+	float:right;
+}
+
+ul.courtesyNav li {
+	display:inline;
+	list-style-image:none;
+	margin-right:5px;
+	padding-right:5px;
+	border-right: 1px solid #FFFFFF;
+}
+
+ul.courtesyNav li a:hover{
+	text-decoration:underline;
+}
+
+
+#adTextTop a {
+	background-image:url(../images/faqBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:220px;
+	float:left;
+	margin-top:20px;
+	padding: 10px 0 0 70px;
+}
+#adTextTop a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+#adTextMiddle a {
+	background-image:url(../images/applyBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:220px;
+	float:left;
+	padding: 10px 0 0 70px;
+}
+#adTextMiddle a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+#adTextBottom a {
+	background-image:url(../images/aimBack.jpg);
+	background-repeat:no-repeat;
+	height:60px;
+	width:220px;
+	float:left;
+	padding: 10px 0 0 70px;
+}
+#adTextBottom a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+#adTextForum a {
+	background-image:url(../images/forumBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:220px;
+	float:left;
+	padding: 10px 0 0 70px;
+}
+#adTextForum a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+
+#adTextBlog a {
+	background-image:url(../images/blogBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:220px;
+	float:left;
+	padding: 10px 0 0 70px;
+}
+#adTextBlog a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+
+.adText{
+	font-size:12px;
+	font-weight:bold;
+	margin:0px;
+	padding-left:10px;
+}
+
+.adLink{
+	font-size:18px;
+	font-weight:bold;
+	color:#412315;
+	margin:0px;
+}
+a.footerLink { color:#FFFFFF;}
+a.specialLink { color:#412315; }
+
+a.specialLink:hover{color:#FFFFFF;}
+
+a.contactLink { color:#412315; text-decoration:none; }
+
+a.contactLink:hover{ color:#412315; text-decoration:underline; }
+
+#about, #clubs, #fratsorlife, #specialevents, #services, #advisorinfo, #sau, #techcrew {
+	height: 0;
+	opacity: 0;
+	display: none;
+}

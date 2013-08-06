@@ -1,0 +1,26 @@
+<?php require_once('subHeader.html') ?>
+
+<strong>Reserve one of these rooms for your event today!</strong>
+<br/><br/>Click on the links below to find out information on room occupancy, special features, and room diagrams.<br/><br/><br/>	
+<?php
+	//echo count($roomBuildings);
+	while ($rb = $roomBuildings->fetchRow()) {
+		echo "<strong>". $rb['name'] . "</strong><br /><br />";
+		
+		$buildingRooms = $db->query("SELECT * FROM ccl.saurooms WHERE saurooms.saubuilding_id = " . $rb['id']  . " AND saurooms.displayInDescriptionList = 1");
+		while ($bRoom = $buildingRooms->fetchRow()) {
+			echo  "<img src='images/link.gif' align='left' border='0' alt='click link'/> &nbsp;<a href='sau/roomDetails?id= " . $bRoom['ID'] . "'>" . $bRoom['Name'] . "</a><br/><br/>";
+		}
+		
+	}
+	
+	/*
+	while( $row = $allRooms->fetchRow() )
+	{
+		echo  "<img src='images/link.gif' align='left' border='0' alt='click link'/> &nbsp;<a href='sau/roomDetails?id= " . $row['ID'] . "'>" . $row['Name'] . "</a><br/><br/>";
+	}
+	*/
+	
+?>
+
+<?php require_once('subFooter.html') ?>

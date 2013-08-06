@@ -1,0 +1,56 @@
+<?php require('admin_header.html'); ?>
+
+<head>
+<script language="JavaScript" type="text/javascript">
+//Added by AK  on Feb 11 2009
+var arrInput = new Array(0);
+var arrInputValue = new Array(0);
+
+function addMoreFiles() {
+	arrInput.push(arrInput.length);
+	arrInputValue.push("");
+	display();
+}
+
+function display() {
+	document.getElementById('AreaAddMore').innerHTML="";
+	for (intI=0;intI<arrInput.length;intI++) {
+		document.getElementById('AreaAddMore').innerHTML+=createInput(arrInput[intI], arrInputValue[intI]);
+	}
+}
+
+function saveValue(intId,strValue) {
+	arrInputValue[intId]=strValue;
+}  
+
+function createInput(id,value) {
+	count = parseInt(id)+2;
+	if ( count < 10 ){
+		count = count + "&nbsp;&nbsp;";
+	} 
+	count = count +"&nbsp;";
+	return "#"+ count +"<input type='file' name='sent_file" + id +"' onChange='javascript:saveValue("+ id +",this.value)' size=90 ><br>";
+}
+</script>
+</head>
+<body>
+<form enctype="multipart/form-data" action="admin/processuploadfile" method="POST">
+<strong> File Uploads </strong>
+
+		
+<div>
+<input type="hidden" name="MAX_FILE_SIZE" value="31457280" />
+Choose file(s) to upload: <br/>
+#1&nbsp;&nbsp;&nbsp;<input  type="file" name=upload size==90/><br />
+</div>
+<div id="AreaAddMore"><br/>
+</div>
+<input type="Button" name="uploadMore" value="Add More" id="addFiles" onclick="addMoreFiles()" />
+<div>
+<strong>All files must be 2MB or smaller.</strong>
+<br /><strong>All spaces will be replaced with underscores!</strong>
+</div>
+</body>
+<input name="commit" type="submit" value="Submit" />
+
+<?php require('admin_footer.html'); ?>

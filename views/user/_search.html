@@ -1,0 +1,7 @@
+<form method="get" action="user/results">
+	<fieldset>
+		<label for="search" class="field">Search for user</label>
+		<input type="text" name="search" id="search" value="<?php if(isset($_GET["search"])) { echo $_GET["search"]; } ?>" size="20" maxlength="200" class="expand" />
+		<input type="submit" name="submit" value="Search" />
+	</fieldset>
+</form>

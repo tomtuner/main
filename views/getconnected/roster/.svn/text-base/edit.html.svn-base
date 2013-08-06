@@ -1,0 +1,96 @@
+<?php require('greekHeader.html'); ?>
+<?php require('getconnected_start.html'); ?>
+<script type="text/javascript">
+ function verify() {
+ 	if(document.getElementById("position").value != 1){ 
+ 		var answer = confirm("Changing the position of president will also change your access to this site.  Only the member marked as president will have access.\n\nAre you sure you wish to proceed with this change?");
+ 		if (answer) {
+ 			return true;
+ 		} else {
+ 			return false;
+ 		}
+ 	} 
+ }	
+</script>
+<form action="roster/process/<?php echo ID; ?>" method="post">
+<table class="list">
+	<tr>
+		<th>Name</th>
+	</tr>
+	<tr>
+		<td>First:&nbsp;<input name="first_name" disabled="true" type="text" size="15" value="<?php echo $user->getFirstname();?>" />
+		&nbsp;&nbsp;Last:&nbsp;<input name="last" disabled="true" type="text" size="25" value="<?php echo $user->getLastname();?>" /></td>
+	</tr>
+
+	<tr>
+		<th>Phone Number</th>
+	</tr>
+
+	<tr>
+		<td><input name="phone" type="text" size="30" value="<?php echo $user->getPhone();?>"/></td>
+	</tr>
+	<tr>
+		<th>Address</th>
+	</tr>
+	<tr>
+		<td><textarea name="address"><?php echo $user->getAddress();?></textarea></td>
+
+	</tr>
+	<tr>
+		<th>Email</th>
+	</tr>
+	<tr>
+		<td><input name="email" id="email" type="text" size="30" value="<?php echo $user->getEmail();?>"/></td>
+	</tr>
+	<tr>
+		<th>Position</th>
+	</tr>
+	<tr>
+		<td>
+		<select name="position" id="position">
+			
+		<?php
+		if (!$user->getPosition()) {
+				echo "<option value=\"\" selected=\"selected\">Select a position</option>";
+			}
+		foreach ($positions as $position) {
+			
+			$selected = "";
+			if ($position->getId() == $user->getPosition()) {
+				$selected = " selected=\"selected\"";
+			}
+			echo "<option value=\"{$position->getId()}\"$selected>{$position->getLabel()}</option>\n";
+		}
+		?>
+		</select>	
+		
+		</td>
+	</tr>
+	<tr>
+		<th>Status</th>
+	</tr>
+	<tr>
+		<td>
+			<select name="status">
+				<?php
+				if ($user->getStatus() == "") {
+					echo "<option value=\"\" selected=\"selected\">Select a status</option>";
+				}
+				foreach($statusList as $status) {
+					$selected = "";
+					if ($user->getStatus() == $status["id"]) {
+						$selected = " selected=\"true\"";
+					}
+					echo "<option value=\"{$status['id']}\"$selected>{$status['status']}</option>\n";
+				}
+				?>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td><input type="submit" <?php if ($user->getPosition() == 1){echo "onclick=\"return verify()\"";} ?> name="saveEdit" value="Save Changes" /></td>
+	</tr>
+</table>
+</form>
+<?php require('getconnected_end.html'); ?>
+<?php require('greekFooter.html'); ?>

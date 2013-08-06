@@ -1,0 +1,73 @@
+</div> <!-- end content -->
+			</div>
+			<div id="rightside">
+				<!-- Beging Right Side Widgets -->
+				<div id="contentNews">
+					<div id="tabs">
+						<ul>
+							<li id="tabHeader1" class="activeHeader"><a href="javascript:toggleTab(1,2,0,false)">Events</a></li>
+							<li id="tabHeader2" class="links"><a href="javascript:toggleTab(2,2,0,false)">Links</a></li>
+						</ul>
+					  </div>
+					  <div id="tabscontent">
+							<div id="tabContent1" class="tabContent" style="display: block;">
+								<div>		
+								<strong>Event highlights...</strong>
+								 <br/><br/>
+								 <ul id="eventList">
+									<script type="text/javascript">
+									<!--
+										// Nifty ajax loader for the most recent 7 events 
+										getAjaxPage("index/loadevents","eventList");
+									-->
+									</script>
+								 </ul>
+								 </div>
+							</div>
+
+	
+							<div id="tabContent2" class="tabContent" style="display: none;">								
+								<div>																
+								<strong>Check out these quick links!</strong>
+								 <br/><br/>
+								 <ul>
+									<li><a href="http://cab.rit.edu">College Activities Board</a></li>
+									<li><a href="http://campuslife.rit.edu/GLBT/">GLBT Center</a></li>
+									<li><a href="http://www.ntid.rit.edu/current/student_life.php">NTID Student Life</a></li>
+									<li><a href="http://www.rit.edu/~ocasawww/">OCASA</a></li>
+									<li><a href="http://campuslife.rit.edu/leadership/">RLI &amp; CSC</a></li>
+									<li><a href="http://campuslife.rit.edu/thesource/">The Source</a></li>
+									<li><a href="http://www.sg.rit.edu/">Student Government</a></li>									<li><a href="http://www.rit.edu/~311www/facilities_slc.php3">Student Life Center</a></li>
+								 </ul>
+								 </div>
+							</div>
+					</div><!--End of tabscontent-->
+				
+				</div> <!-- end contentNews -->
+				<div id="contentEVR">
+					
+					<div id="evrText">
+						<h1><a href="sau/evr">Plan Your Event</a></h1>
+						<h3>EVR&#8212;Event Registration</h3>
+						<br/>
+						<h4><a href="http://campuslife.rit.edu/evr">Register your event</a> online now!<br/>
+						Not EVR certified? <a href="http://campuslife.rit.edu/evr">Get trained here</a>.</h4>
+					</div>
+				</div>
+				<div id="adTextTop"><a class="adLink specialLink" href="about/FAQ">FAQ<span class="adText">Center for Campus Life</span></a></div>
+				<div id="adTextMiddle"><a class="adLink specialLink" href="about/jobs">APPLY!<span class="adText">CCL Employment</span></a></div>
+				<div id="adTextBottom"><a class="adLink specialLink" href="aim:addbuddy?screenname=EventsatRIT">AIM<span class="adText">Add EventsatRIT</span></a></div>
+				<div id="adTextRequest"><a class="adLink specialLink" href="about/artistrequests">FLYERS!<span class="adText">Artist Requests</span></a></div>
+				<!--<div id="adTextBlog"><a class="adLink specialLink" href="">BLOGS<span class="adText">Student Views</span></a></div>-->
+<!--<div id="adTextForum"><a class="adLink specialLink" href="">FORUM<span class="adText">Have a Question?</span></a></div>-->
+			</div><!-- end right side -->
+		</div>
+		<div id="rightBottom">&nbsp;</div>
+		<div id="footer" style="float: left;">Rochester Institute of Technology, One Lomb Memorial Drive, Rochester, NY 14623-5603
+			<br/>© Rochester Institute of Technology. All Rights Reserved | <a class="footerLink" href="http://www.rit.edu/disclaimer.html" target="_blank">Disclaimer</a> | <a class="footerLink" href="http://www.rit.edu/copyright.html" target="_blank">Copyright Infringement</a><br/>
+			Questions or concerns? Send us <a class="footerLink" href="http://www.rit.edu/ask/" target="_blank">feedback</a>. Telephone: 585-475-2411</div>
+		<div id="clear" style="display:block; ">&nbsp;</div>
+	</div>
+	&nbsp; &nbsp;
+</div>
+</body></html>

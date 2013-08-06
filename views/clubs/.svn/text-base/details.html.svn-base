@@ -1,0 +1,61 @@
+<?php require('subHeader.html'); ?>
+<br/>
+
+<?php
+$html = "<strong>" . $_GET['clubName']. "</strong><br/><br/>";
+
+echo "<table cellpadding=\"5\" cellspacing=\"3\" class=\"clubDetails\">\n";
+foreach ($foo as $clubDetails) 
+{
+	//Handle the URL in DB. Some are in 'httP://' and some are in 'www.'
+	$dbUrl = split( "//", $clubDetails->getWebSite() );
+	if( isset($dbUrl[1]) )
+	{
+		$correctedUrl = "http://" . $dbUrl[1];
+	}
+	else
+	{
+		$correctedUrl = "";
+	}
+	
+	$html .= <<<EOL
+	<tr>
+		<td colspan=\"2\">{$clubDetails->getAcronym()}</td>
+	</tr>
+	<tr>
+		<td colspan=\"2\">{$clubDetails->getDescription()}</td>
+	</tr>
+	<tr>
+		<td>General Club E. Mail</td>
+		<td><a href="mailto:{$clubDetails->getEmail()}"">{$clubDetails->getEmail()}</a></td>
+	</tr>
+	<tr>
+		<td width=\"150\">Meeting Day</td>
+		<td>{$clubDetails->getMeetingDay()}</td>
+	</tr>
+	<tr>
+		<td>Meeting Time</td>
+		<td>{$clubDetails->getMeetingTime()}</td>
+	</tr>
+	<tr>
+		<td>Meeting Location</td>
+		<td>{$clubDetails->getMeetingLoc()}</td>
+	</tr>
+	<tr>
+		<td>Meeting Frequency</td>
+		<td>{$clubDetails->getMeetingFreq()}</td>
+	</tr>
+	<tr>
+		<td><br/><br/><a href="{$correctedUrl}">Website</a></td>
+	</tr>
+	
+EOL;
+}
+
+echo $html ;
+
+echo "</table>\n";
+
+?>
+
+<?php require('subFooter.html'); ?>

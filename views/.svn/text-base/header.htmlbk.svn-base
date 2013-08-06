@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+	<head>
+		<title><?php echo $this->pageTitle($page_title); ?></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<base href="<?php echo 'http://'. $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) .'/'; ?>" />
+		<link rel="stylesheet" type="text/css" href="style_sheets/shared.css" />
+		<script type="text/javascript" src="javascript/behaviour.js"></script>
+		<script type="text/javascript" src="javascript/shared.js"></script>
+	
+	</head>
+	<body>
+		<div id="container">
+			<h1><?php echo $this->pageTitle($page_title); ?></h1>
+			
+			
+			<div id="content">
+				

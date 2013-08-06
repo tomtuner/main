@@ -1,0 +1,91 @@
+<?php
+
+class LoveDayController extends Controller
+{
+	public function loveProcess()
+	{
+		$to1 = 'mxhccl@rit.edu';
+		$to2 = 'cclga@rit.edu';
+		$subject = 'Love Day Form Email';
+		$message = "";
+		
+		$message .= "Name: " . $_POST['name'] . "\n";
+		$message .= "Email: " . $_POST['email'] . "\n";
+		$message .= "Club Name: " . $_POST['club'] . "\n";
+		$message .= "Title Within Club: " . $_POST['title'] . "\n";
+		$message .= "Location: " . $_POST['location'] . "\n";
+		$message .= "Event Description: " . $_POST['eventDesc'] . "\n";
+		
+		$headers = 'From: loveDayForm@rit.edu';
+		
+		echo ( $message );
+		
+		if ( mail($to1, $subject, $message, $headers ) )
+		{ 
+			echo ( "mail was sent to GA");
+		}
+		else
+		{
+			echo ("mail to GA failed" );
+		}
+		
+		if ( mail($to2, $subject, $message, $headers ) )
+		{ 
+			echo ( "mail was sent to Matt");
+		}
+		else
+		{
+			echo ("mail to Matt failed" );
+		}
+		
+		header ( "Location: loveDaySubmitted" );
+	}
+	
+	public function loveDayForm()
+	{
+		$page_title = array('Love Day Form');
+	
+		require ( "subHeader.html" );
+		
+		echo ( "
+		<p>The Center for Campus Life dedicates Love Day to sharing the pleasures of higher education with more than 100 fifth and sixth graders from Rochester city schools.</p>
+			<p>We invite your club/organization to \"Spread a little love around\" at this year's Love Day, which will be from 10 AM to 2 PM on Wednesday, February 13, 2008. During Club Time (11:30 to 12:30), the children are divided into groups and visit clubs for educational activities.</p>
+			<p>Past club activities have included science experiments, learning sign language, computer design, face painting, cookie baking, and arts &amp; crafts. Bear in mind that these are only suggestions - It is up to you to be creative and decide what your club would like to do. The only requirements are that the activity should be suitable for fifth and sixth graders, and it should have educational value. The deadline for group registration is Friday, February 1, 2008.</p>
+			<p>Thank you in advance for your participation!</p>
+		");
+		
+		echo ("
+			<form action=\"loveday/loveProcess\" method=\"POST\">
+				Name <br />
+				<input size=\"40\" type=\"text\" name=\"name\"> </input> <br />
+				Email <br />
+				<input size=\"40\" type=\"text\" name=\"email\"> </input> <br />
+				Club / Organization <br />
+				<input size=\"40\" type=\"text\" name=\"club\"> </input> <br />
+				Title within Club / Organization <br />
+				<input size=\"40\" type=\"text\" name=\"title\"> </input> <br />
+				Event Location <br />
+				<input size=\"40\" type=\"text\" name=\"location\"> </input> <br />
+				Event Description <br />
+				<textarea cols=\"40\" rows=\"10\" name=\"eventDesc\"> </textarea> <br />
+				<input type=\"submit\" value=\"Submit Form\"/>
+			</form>
+		");
+		
+		require ( "subFooter.html" );
+	}
+	
+	public function loveDaySubmitted()
+	{
+		$page_title = array('Love Day Form Submitted');
+		
+		require ( "subHeader.html" );
+		
+		echo ( "Your love day form has been submitted" );
+		
+		require ( "subFooter.html" );
+	}
+}
+
+
+?>

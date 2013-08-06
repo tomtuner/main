@@ -1,0 +1,64 @@
+function userTyped( whichWord )
+{	
+	if( whichWord == '' || whichWord == ' ')
+	{
+		var noResults = new Array();
+		noResults[0] = "Please type to begin search..";
+		displayResults( noResults )
+	}
+	else
+	{
+		new Ajax.Request('clubs/all?mode=search&userTyped='+whichWord,
+		{
+			method:'get',
+			onSuccess: function(transport){
+			var response = transport.responseText || "No response text";
+			var clubNameId = response.split("|||");
+			displayResults(clubNameId);
+	    },
+	    onFailure: function(){ alert('Problem in connecting to the Server !') }
+		});		
+	}
+}
+
+function displayResults( clubNameId )
+{
+	onFocus();
+	document.getElementById("resultsHolder").innerHTML = "";
+	for(i=0; i<clubNameId.length; i++)
+	{
+		var results = clubNameId[i].split("||");
+		document.getElementById("resultsHolder").innerHTML += "<div id='clubResults" + i + "' style='padding-left: 2px;' onclick='clicked(" + results[1] + ", this.firstChild.nodeValue)'onmouseover='onSelection(this)' onmouseout='offSelection(this)'>" + results[0] + "</div>";
+	}
+}
+
+function onSelection( which )
+{
+	which.style.backgroundColor = "#FF9900";
+}
+
+function offSelection( which )
+{
+	which.style.backgroundColor = "#FFFFFF";
+}
+
+function clicked( clubId, clubName )
+{
+	this.window.open("http://campuslife.rit.edu/main/clubs/details?clubId=" + clubId + "&clubName=" + clubName, "_self");
+}
+
+function offFocus()
+{
+	if(document.getElementById("resultsHolder"))
+	{
+		document.getElementById("resultsHolder").style.display = "none";
+	}	
+}
+
+function onFocus()
+{
+	//document.getElementById("resultsHolder").style = "display: block; width: 200px;";
+	document.getElementById("resultsHolder").style.display = "block";
+	document.getElementById("resultsHolder").style.width = "60%";
+}
+

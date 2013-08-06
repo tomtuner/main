@@ -1,0 +1,10 @@
+<?php require('admin_header.html'); ?>
+<?php $page = new Page(ID); ?>
+Are you sure you want to delete this page?
+
+<form action="admin/deletePage" method="POST" />
+	<input type="hidden" name="id" value="<?php echo ID; ?>" />
+	<input type="submit" name="delete" value="Yes" />
+</form>
+
+<?php require('admin_footer.html'); ?>

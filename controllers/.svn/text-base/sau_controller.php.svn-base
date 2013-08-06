@@ -1,0 +1,73 @@
+<?php
+
+class SauController extends Controller 
+{
+	public function reservation()
+	{
+		$page_title = array("Services | SAU Reservation");
+			
+		require('views/sau/reservation.html');
+	}
+	
+	public function building()
+	{
+		$page_title = array("Services | Building Services");
+		
+		global $db;
+		$result = $db->query("SELECT * FROM ccl.idaphone WHERE in_sau='1' ORDER BY " . $_GET['sort']);
+		
+		require('views/sau/building.html');
+	}
+	
+	public function buildingDetails()
+	{
+		$page_title = array("Services | Building Services | Details");
+		
+		global $db;
+		$result = $db->query("SELECT * FROM ccl.idaphone WHERE ID=" . $_GET['id']);
+		
+		require ("views/sau/buildingDetails.html");
+	}
+	
+	public function mailReservation()
+	{
+		//No title required. This is a logic page
+		require ("views/sau/mailReservation.html");
+	}
+	
+	public function hours()
+	{
+		$page_title = array("SAU | Hours of Operation");
+		
+		require("views/sau/hours.html");
+	}
+	
+	public function evr()
+	{
+		$page_title = array("Services | Event Registration");
+		
+		require("views/sau/evr.html");
+	}
+	
+	public function roomDetails()
+	{
+		$page_title = array("Room Descriptions | Details");
+		
+		global $db;
+		$result = $db->query("SELECT * FROM ccl.saurooms WHERE ID=" . $_GET['id']);
+		
+		require("views/sau/roomDetails.html");
+	}
+	
+	public function descriptions()
+	{
+		$page_title = array("Room Descriptions");
+		
+		global $db;
+		$result = $db->query("SELECT * FROM ccl.saurooms WHERE displayInDescriptionList=1 ORDER BY Name");
+		
+		require("views/sau/descriptions.html");
+	}
+}
+
+?>

@@ -1,0 +1,27 @@
+<?php
+
+$userTyped = $_GET['userTyped'];
+$typeLength = strlen( $userTyped );
+
+$responseText = "";
+
+//A super simple search
+while( $row = $result->fetchRow() )
+{
+	//Handle lower case and upper case
+	if( strtolower(substr($row['name'], 0, $typeLength)) == $userTyped || substr($row['name'], 0, $typeLength) == $userTyped )
+	{
+		$responseText .=  $row['name'] . " || \n";
+		$responseText .=  $row['id'] . " ||| \n";
+	}
+}
+
+if($responseText == "")
+{
+	$responseText .= "No Results Found!";
+}
+
+echo $responseText;
+
+?>
+

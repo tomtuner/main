@@ -1,0 +1,54 @@
+<?php require('subHeader.html'); ?>
+
+<table class="aboutDetails" cellspacing="15">
+<?php
+foreach ($foo as $user) 
+{
+	//admin/users_groups/photos/5.jpg
+	
+	$fullname = $user->getFirstName() . " " . $user->getLastName();
+	$videphone = "";
+	
+	if($fullname == "Karey Pine")
+	{
+		$videphone = "(vp) 866.602.6794";
+	}//if
+	else
+	{
+		$videphone = "";
+	}
+	
+	
+	$html = <<<EOL
+	<tr>
+		<td><strong>{$user->getFirstName()}&nbsp;{$user->getLastName()}</strong><br/><i>{$user->getTitle()}</i><br/></td>
+		<td rowspan="2"><img src="http://campuslife.rit.edu/main/images/proStaff/{$user->getImgloc()}" height="180"/></td>
+	</tr>
+	<tr>
+		<td>(e) <a href="mailto:{$user->getEmail()}">{$user->getEmail()}</a><br/>(p) 585.475.{$user->getPhone()}
+		<br /> $videphone
+		
+		
+		<br/><br/><br/><br/><br/></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<strong>About {$user->getFirstName()}:</strong><br />
+			
+			{$user->getCredentials()}
+			
+			{$user->getBiography()} 
+			
+			<strong>Office Hours</strong>:&nbsp;{$user->getOfficeHours()}
+			<strong>Office Location</strong>:&nbsp;{$user->getOfficeLocation()}
+			
+		</td>
+	</tr>
+EOL;
+echo $html;
+}
+
+?>
+</table>
+
+<?php require('subFooter.html'); ?>

@@ -1,0 +1,31 @@
+
+#leftside {
+	width: 430px;
+	margin: 0 0 0 0;
+	float: left;
+}
+
+#leftTitle {
+	background-image:url(../images/subpages/subPageTitleBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:430px;
+	padding: 5px 0 0 20px;
+	float:left;
+}
+#content {
+	color: #412315;
+	padding: 10px 0 20px 20px;
+	width:390px;
+	font-size:14px;
+	line-height:18px;
+}
+
+#bar{
+	background-image:url(../images/subpages/orangeBar.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:720px;
+	padding: 3px 0 0 20px;
+	float:left;
+}

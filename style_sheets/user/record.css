@@ -1,0 +1,22 @@
+#scores {
+	margin-top: 0.5em;
+}
+
+div.score {
+	float: left;
+	padding: 0.5em 0px;
+}
+
+div.score .field {
+	margin-top: 0px;
+}
+
+
+span.block {
+	float: left;
+	margin-right: 40px;
+}
+
+div.clear {
+	clear: left;
+}

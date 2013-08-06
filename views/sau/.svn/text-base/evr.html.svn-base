@@ -1,0 +1,82 @@
+<?php require_once('subHeader.html') ?>
+<strong>Event Registration</strong>
+		<p>Event Registration, also known as EVR, is a process that helps students plan safe and organized activities.  It helps students request services and educated students on how to program successful events.</p>
+		<p>The Event Registration Office is located behind the Information Desk in the lobby of the Student Alumni Union and is open from 1:00 PM to 4:00 PM Monday through Friday during the academic year.</p>
+		<br/>
+	
+		<strong>Event Registration On-line</strong>
+
+		<p>A new option to the event registration system is an on-line intake process that can be done at any time of day, from any location whether on-campus or off-campus, by simply having internet accessibility.  That's right, EVR 24/7, 365 days of the year!</p>
+		<p>The process is very similar to our face-to-face intake.  Those students who are EVR Certified can simply click the <a href="http://campuslife.rit.edu/evr/">EVR on-line</a> link and register their event.  A Campus Life staff member will then review the event, follow up with any necessary questions, and send out the event to begin the confirmation process.</p>
+		<br/>
+		<strong>Not Certified?</strong>
+		<p>Don't worry!  When you log in using your DCE username and password, if you do not register in our system as already being certified, you can become EVR Certified on line too!  Once you have completed the certification process, you will continue on and be able to register your event.</p>
+		<p>It's important to keep in mind is that on-line intakes will only be accepted if the Responsible Representative is registering the event at least eight (8) days prior to the actual event date.</p>
+
+		<p><img src="images/icon_acrobat.gif" border="0" alt="adobe pdf" /> More details on <a href= "
+		../sau/evr/resources/EVR.pdf" target="_blank"><strong>Event Registration</strong></a>.</p>
+		
+		<a name="dates"></a>
+		<br/>
+		<strong>Upcoming EVR Certification Dates <i>Coming Soon!</i></strong>
+		<br/><br/>
+	
+		<!--<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+		<tr>
+
+			<td class="bgcolor">
+			<table width="100%"  border="0" cellspacing="1" cellpadding="3">
+			<tr>
+				<td>Date</td>
+				<td>Time &amp; Location</td>
+			</tr>
+			<tr>
+
+				<td class="bgwhite">March 21, 2007</td>
+				<td class="bgwhite">3pm-4pm<br />
+				  Alumni Room, SAU </td>
+			</tr>
+			<tr>
+				<td class="bgwhite">April 12, 2007</td>
+				<td class="bgwhite">10am-11am<br />
+
+				  Alumni Room, SAU </td>
+			</tr>
+			<tr>
+				<td class="bgwhite">May 8 , 2007</td>
+				<td class="bgwhite">1pm-2pm<br />
+				  Alumni Room, SAU </td>
+			</tr>
+
+			</table>
+			</td>
+		</tr>
+		</table> -->
+		<br/><br/>
+		<strong>Information for Successful On Campus Event Planning</strong>
+	  <p>
+		<img src="images/icon_acrobat.gif" border="0" alt="adobe pdf" /><a href="http://campuslife.rit.edu/sau/evr/resources/Promotion%20Distribution%20Form.pdf" target="_blank"> Center for Campus Life Promotion Distribution Form</a><br />
+		<img src="images/icon_acrobat.gif" border="0" alt="adobe pdf" /><a href="http://campuslife.rit.edu/sau/evr/resources/Contract%20Request%20Form.pdf"> Contract Request Form</a><br/>		
+		<img src="images/icon_acrobat.gif" border="0" alt="adobe pdf" /><a href="http://campuslife.rit.edu/sau/evr/resources/Transportation.pdf" target="_blank"> How to Obtain Transportation for an RIT Event</a><br />
+
+<!--		<a href="resources/Promotions%20Contacts.pdf" target="_blank">On Campus Promotion Contacts</a><br /> -->
+		
+		<img src="images/icon_acrobat.gif" border="0" alt="adobe pdf" /><a href="http://campuslife.rit.edu/sau/evr/resources/Advertising%20Policy.pdf" target="_blank"> Posting Procedures for Advertisements &amp Announcements</a><br />
+		<img src="images/icon_acrobat.gif" border="0" alt="adobe pdf" /><a href="http://campuslife.rit.edu/sau/evr/resources/Roomscontact.pdf"> RIT Campus Facility Reservation Contacts</a><br/>
+		<img src="images/icon_acrobat.gif" border="0" alt="adobe pdf" /><a href="http://campuslife.rit.edu/sau/evr/resources/SAU%20Display%20Case%20Policy.pdf" target="_blank"> SAU Display Case Policy</a><br />
+		<img src="images/icon_acrobat.gif" border="0" alt="adobe pdf" /><a href="http://campuslife.rit.edu/sau/evr/resources/Reservations.pdf" target="_blank"> SAU Room Reservations Information</a><br />
+		
+		
+
+		
+		
+		<br/><img src="images/link.gif" border="0" alt="click link" align="left"/>&nbsp;<a href="sau/descriptions">SAU Room Diagrams</a><br />
+	</p>
+   
+	<?php require_once('subFooter.html') ?><?php require_once('subHeader.html') ?>
+
+	
+	
+		
+   
+	<?php require_once('subFooter.html') ?>

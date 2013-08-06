@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+		<meta name="Author" content="The Center for Campus Life"/>
+		<title>RIT - Center for Campus Life</title>
+		<!--<base href="<?php //echo 'http://'. $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) .'/'; ?>" />-->
+		<!-- <base href="http://campuslife.rit.edu:81/main/views/" />  -->
+		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://campuslife.rit.edu:81/main/rss/"/>
+		<link rel="stylesheet" type="text/css" href="http://campuslife.rit.edu:81/main/style_sheets/artrequestbase.css"/>
+		<link rel="stylesheet" type="text/css" href="http://campuslife.rit.edu/main/style_sheets/subBase.css"/>
+		<link rel="stylesheet" type="text/css" href="http://campuslife.rit.edu/style_sheets/news.css"/>
+		<link rel="stylesheet" type="text/css" href="http://campuslife.rit.edu/main/style_sheets/content.css"/>
+		<script type="text/javascript" src="javascript/yui/yahoo/yahoo.js"></script>
+		<script type="text/javascript" src="javascript/yui/event/event.js"></script>
+		<script type="text/javascript" src="javascript/yui/dom/dom.js"></script>
+		<script type="text/javascript" src="javascript/yui/animation/animation.js"></script>
+		<script type="text/javascript" src="javascript/general.js"></script>
+		<script type="text/javascript" src="javascript/findClub.js"></script>
+		<script type="text/javascript" src="javascript/framework/prototype.js"></script>
+		<script type="text/javascript" src="javascript/base.js"></script>
+	</head>
+<body onclick="offFocus()">
+<div id="page">
+	<div id="pageBack">
+		<div id="main">
+			<!-- Begin Right Column-->
+			<div id="header">
+				<a href="http://www.rit.edu/">
+					<img alt="RIT Home" src="http://campuslife.rit.edu:81/main/images/RITLogo.jpg" border="0"/>
+				</a>
+			<!-- Begin Header -->
+				<ul>
+						<li><a href="http://www.rit.edu/">RIT Home</a></li>
+						<li><a href="http://www.rit.edu/Search/">RIT Search</a></li>
+						<li><a href="http://www.rit.edu/Index/">RIT A-Z Site Index</a></li>
+						<li class="last"><a href="http://events.rit.edu/">RIT Events Calendar</a></li>
+				</ul>
+			</div> <!-- end header -->
+			<div id="requestTable">

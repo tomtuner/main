@@ -1,0 +1,25 @@
+<?php require_once('subHeader.html') ?>
+
+<table class="aboutDetails" cellspacing="15">
+<tr align="left">
+<th><a href="sau/building?sort=Place">Location</a></th>
+<th><a href="sau/building?sort=sau_level">Level</a></th>
+<th><a href="sau/building?sort=sau_room_num">Room Number</a></th>
+</tr>
+
+<?php
+
+	$levels = array (
+		1 => 'SAU Lobby',
+		2 => 'RITreat',
+		3 => 'Mezzanine Level',
+		4 => 'A Level',
+	);
+	while( $row = $result->fetchRow() )
+	{
+		echo "<tr><td><a href='sau/buildingDetails?id=" . $row['ID'] . "'>" . $row['Place'] . "</td><td>" . $levels[$row['sau_level']] . "</td><td>" . $row['sau_room_num'] . "</td></tr>";
+	}
+	
+?>
+</table>
+<?php require_once('subFooter.html') ?>

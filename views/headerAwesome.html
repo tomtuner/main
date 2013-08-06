@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<!--this is headerAwesome.html   This is for the main page, and is built for everything except IE-->
+	<head>
+	<meta name="google-site-verification" content="OKOMA_J-oD-H3Y4hvCeXNLHEAau50CnGiymaixRbXO8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+		
+		<meta name="Author" content="The Center for Campus Life"/><title>RIT - Center for Campus Life</title>
+		<base href="<?php echo 'http://'. $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) .'/'; ?>" />
+		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://campuslife.rit.edu/main/rss/"/>
+		<link rel="stylesheet" type="text/css" href="style_sheets/news.css"/>
+		<link rel="shortcut icon" href="images/favicon.gif" type="image/x-icon" />
+		<link rel="stylesheet" href="style_sheets/jd.gallery.css" type="text/css" media="screen" charset="utf-8" />
+		<script src="javascript/mootools-1.2.1-core-yc.js" type="text/javascript"></script>
+		<script src="javascript/mootools-1.2-more.js" type="text/javascript"></script>
+		<script src="javascript/jd.gallery.js" type="text/javascript"></script>
+		<script src="javascript/jd.gallery.transitions.js" type="text/javascript"></script>
+		<script type="text/javascript" src="javascript/yui/yahoo/yahoo.js"></script>
+		<script type="text/javascript" src="javascript/yui/event/event.js"></script>
+		<script type="text/javascript" src="javascript/yui/dom/dom.js"></script>
+		<script type="text/javascript" src="javascript/yui/animation/animation.js"></script>
+      <script type="text/javascript" src="javascript/event_ajax.js"></script>
+      <script type="text/javascript" src="javascript/general.js"></script>
+	  <script type="text/javascript" src="javascript/base.js"></script>
+	  <script type="text/javascript" src="framework/prototype.js"></script>
+		<script type="text/javascript" src="javascript/findClub.js"></script>
+		<link rel='stylesheet' type='text/css' media='handheld' href='style_sheets/handheld.css'/>
+		<link rel='stylesheet' type='text/css' media='screen' href='style_sheets/base.css'/>
+		<?php /*
+		<!--<script language="javascript" type="text/javascript">
+			<!--
+			if( getInternetExplorerVersion() == 6)
+			{
+				document.write("<link rel='stylesheet' type='text/css' href='style_sheets/IE6_base.css'/>\n");
+			}
+			else
+			{
+				document.write("<link rel='stylesheet' type='text/css' media='handheld' href='style_sheets/handheld.css'/>\n");
+				document.write("<link rel='stylesheet' type='text/css' media='screen' href='style_sheets/base.css'/>\n");
+			}
+			
+		</script>-->	*/ ?>
+	</head>
+	<body>
+	<!-- <div id="about">asdas</div> -->
+<div id="page">
+	<div id="pageBack">
+		<div id="nav">
+			<div id="navigation">
+			<!-- Begin Navigation -->
+				<div id="cclLogo"><a href="/main">
+				<img src="images/cclLogo.jpg" alt="RIT Center for Campus Life" class="ccllogo" border="0"/></a></div>
+					<?php
+						include("navigation.html");
+					?>
+				<!-- End Navigation -->
+				<!--Club of the day beginning ~solo-->
+					<div id="clubday"><img src="images/club-box5_02.jpg"/><div id="clubdayContent"><?php
+					//include("club_of_the_day.txt");
+					$table = array();
+					$file = file("club_of_the_day.txt");
+					foreach($file as $id => $item)
+					$table[$id] = explode(",",$item);
+
+					/*echo "<pre>";
+					print_r($table);
+					echo "</pre>";*/
+
+					$today = date("m/d/Y");
+					for ($row = 0; $row < count($file); $row++){
+						for ($col = 0; $col < count(explode(",",$item)); $col++){
+							if(strcmp($today,$table[$row][0] )==0){
+								echo "<b>" . $table[$row][1] . "</b>";
+								echo '<br/>';
+								echo '<a href="'.$table[$row][2].'">Visit Club Website</a>';
+								break;
+							}
+						}
+					}
+				?></div></div><!--End of Club of the day  -->
+			</div>
+		<div id="contactInfo">
+			<div style="padding-left:10px">
+					<strong>Office Hours:</strong><br/>
+					Monday - Friday<br/>
+					8:30 AM to 4:30 PM<br/>
+					(p) 585.475.7058<br/>
+					(f) 585.475.7019<br/><br/>
+					<a class="contactLink" href="http://campuslife.rit.edu/main/about/profstaff"><strong>Staff Directory</strong></a>
+			</div>		
+		</div>
+		<div id="navBottom">&nbsp;<br/><br/>
+		<?php if (date("W") > 17 && time() < mktime(0, 0, 0, 8, 29, date("Y"))): ?>
+		
+		<!--
+		<div>
+				<a href="http://www.rit.edu/studentaffairs/SAGraduateAssistantships.php"><img src="images/ga_flyer.png" width=180 border=0></a>
+		</div>
+		-->
+		<?php endif; ?>
+		</div>
+	</div>
+		<div id="right">
+			<!-- Begin Right Column-->
+			<div id="header">
+				<a href="http://www.rit.edu/"><img alt="RIT Home" src="images/RITLogo.jpg" border="0"/></a>
+			<!-- Begin Header -->
+				<form id="searchbox_016792319780221422966:zlqjppyxsiy" action="http://google.com/cse">
+					<ul>
+								<li><a href="http://www.rit.edu/">RIT Home</a></li>
+								<li><a href="http://www.rit.edu/Index/">RIT A-Z Site Index</a></li>
+								<li><a href="http://events.rit.edu/">RIT Events Calendar</a></li>
+								<li><a href="http://www.rit.edu/Search/">RIT Search</a></li>
+								
+								<a href="http://www.google.com/cse?cx=016792319780221422966:zlqjppyxsiy&amp;cof=FORID:0">CCL Search</a>						
+									<input type="hidden" name="cx" value="016792319780221422966:zlqjppyxsiy" />
+									<input type="hidden" name="cof" value="FORID:0" />
+									<input name="q" type="text" size="20" id="cclSearchBox" onclick="resetSearchValue()" value="Search CCL Site"/>&nbsp;&nbsp;
+					</ul>
+				</form>
+			<!-- end header -->				
+			</div> 
+			<div id="flashBlog">
+				<div id="BannerRotator">
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/BannerRotator/Slide1.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/BannerRotator/Slide2.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/BannerRotator/Slide3.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/BannerRotator/Slide4.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/BannerRotator/Slide5.jpg" class="full" />
+					</div>
+				</div>
+			</div>	
+			<div id="leftside">
+				<script type="text/javascript">
+					function startGallery() {
+						var myGallery = new gallery($('CampusLifeMainPageMiddle'), {
+							timed: true,
+							showArrows: false,
+							showInfopane: false,
+							showCarousel: false,
+							embedLinks: true,
+							defaultTransition: "fadeslideleft",
+							delay: 3000
+		
+							});
+					}
+					function startGallery1() {
+						var myGallery = new gallery($('BannerRotator'), {
+							timed: true,
+							showArrows: false,
+							showInfopane: false,
+							showCarousel: false,
+							embedLinks: true,
+							defaultTransition: "fadeslideleft",
+							delay: 3777
+
+							});
+					}
+					window.addEvent('domready', startGallery);
+					window.addEvent('domready', startGallery1);
+				</script>
+				<div id="CampusLifeMainPageMiddle">
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/CampusLifeMainMiddle/Slide0.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/CampusLifeMainMiddle/Slide1.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/CampusLifeMainMiddle/Slide2.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/CampusLifeMainMiddle/Slide3.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/CampusLifeMainMiddle/Slide4.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/CampusLifeMainMiddle/Slide5.jpg" class="full" />
+					</div>
+					<div class="imageElement">
+						<a href="#" title="open image" class="open"></a>
+						<img src="images/CampusLifeMainMiddle/Slide6.jpg" class="full" />
+					</div>
+				</div>
+				
+				<div id="content">
+					<!-- BEGIN CONTENT -->

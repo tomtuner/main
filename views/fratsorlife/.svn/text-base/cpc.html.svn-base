@@ -1,0 +1,35 @@
+<?php require('subHeader.html'); ?>
+<strong>College Panhellenic Council</strong><br/><br/>
+The CPC is the programming and 
+governing body of the five National Panhellenic Conference sororities,
+one National Latina sorority and one local sorority at RIT.
+Every woman who joins one of these organizations becomes a member 
+of the College Panhellenic Council. The council consists of a delegate 
+from each chapter and 6 executive officers. The council meets weekly 
+to strengthen ties of communication between the chapters. The group has 
+received recognition at the local level for excellence in community service, 
+scholastic achievement, and public relations.
+<br/><br/>
+Throughout the year, the Panhellenic Council provides opportunities 
+for interaction among all members to strengthen Greek sisterhood by 
+sponsoring many activities including recruitment, philanthropic and 
+community service projects, speakers, faculty appreciation days, 
+award recognition dinners, Greek Weekend, Greek Carnival and much more.
+<br/><br/><br/>
+
+<table border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td valign="left" width="100">Advisor:<br/><br/></td>
+		<td><a href="mailto:slkrla@rit.edu">Sharon Kompalla</a><br/><br/></td>
+	</tr>
+	<tr>
+		<td valign="left">President:<br/><br/></td>
+		<td><a href="mailto:angeldelanote@gmail.com">Angelina Faulkner</a><br/><br/></td>
+	</tr>
+</table>
+<br/>
+What is College Panhellenic Council up to? <br/>
+Find out at our <a href=http://rit.facebook.com/group.php?gid=2201959881><strong>Facebook page!</strong></a>
+
+
+<?php require('subFooter.html'); ?>

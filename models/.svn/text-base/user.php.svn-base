@@ -1,0 +1,323 @@
+<?php
+
+class InvalidUserException extends Exception {}
+
+class User extends Model {
+	public $custom_config = array(
+		'database' => 'users',
+	);
+	protected $relationships = array(
+		'CertificationScore' => 'has_many',
+		'Certification' => 'has_one',
+		'member' => 'has_many'
+	);
+	protected $id;
+	protected $username;
+	protected $first_name;
+	protected $last_name;
+	protected $email;
+	protected $phone;
+	protected $level;
+	protected $supervisor;
+	protected $supervisor_id;
+	protected $certified;
+	protected $certification;
+	protected $organizations;
+	protected $organization_ids;
+	protected $events;
+	protected $past_events;
+	protected $event_ids;
+	protected $associated_events;
+	protected $associated_event_ids;
+	protected $organization_events;
+	protected $organization_event_ids;
+	protected static $supervisors;
+	protected static $supervisor_ids;
+	protected $status;
+	protected $position;
+	protected $positionLabel;
+	protected $address;
+	protected $org_id;
+	protected $statusLabel;
+
+
+
+	const LEVEL_USER = 1;
+	const LEVEL_CAB = 2;
+	const LEVEL_INTAKE = 3;
+	const LEVEL_SUPERVISOR = 4;
+	const LEVEL_ADMIN = 5;
+
+	public function __construct($id = 0, $org_id = 0) {
+		global $db;
+
+		parent::__construct($id, $org_id);
+
+		// If we're dealing with a username passed in, we'll try to find the
+		// user.
+		if(!is_numeric($id) && !empty($id)) {
+			$id = $db->getOne("SELECT id
+				FROM users.users
+				WHERE username = '". $db->escapeSimple($id) ."'");
+			if(!$id) {
+				throw new InvalidUserException();
+			}
+		}
+
+		if($id != 0) {
+			if ($org_id != 0) {
+				$this->org_id = $org_id;
+				$query = "SELECT u.id as user_id, u.username, u.first_name, u.last_name, gs.status, gu.status_id, gu.position_id, gp.label as positionLabel, gu.phone, gu.address, gu.email FROM users.users AS u 
+LEFT JOIN getconnected.users AS gu ON u.id = gu.user_id 
+LEFT JOIN organizations.members AS om ON om.user_id = u.id 
+LEFT JOIN getconnected.positions as gp ON gp.id = gu.position_id 
+LEFT JOIN getconnected.status as gs ON gs.id = gu.status_id
+WHERE u.id = ". intval($id) ." AND om.org_id = ".intval($org_id);
+
+
+				$row = $db->getRow($query);
+				
+			
+			} else {
+				$row = $db->getRow("SELECT *
+				FROM users.users AS u
+					LEFT JOIN getconnected.users AS gu ON u.id = gu.user_id
+				WHERE u.id = ". intval($id));
+			}
+			
+			
+			// FIXME
+		
+			if(!$row) {
+				$this->id = 0;
+				$this->first_name = "DANGER";
+				$this->last_name = "WILL ROBINSON!";
+				return true;
+			}
+			$this->id = $row['user_id'];
+			
+			$this->username = $row['username'];
+			$this->first_name = $row['first_name'];
+			$this->last_name = $row['last_name'];
+			
+			//$this->statusLabel = $row['status'];
+			
+		
+			if ($org_id != 0) {
+				// check if there is a removal request(s) for this user
+				// in this orginization
+				$query = "select id from getconnected.removerequests where user_id = $id AND org_id = $org_id";
+				$result = $db->getOne($query);				
+				$this->removeRequest = null;
+				if ($result) {
+					
+					$this->removeRequest = new RemoveRequest($result);
+				}
+				
+				// get the position of this user in the fraternity
+				$this->position = $row["position_id"];
+				$this->positionLabel = $row["positionLabel"];
+				
+				$this->email = $row["email"];
+				$this->address = $row["address"];
+				$this->phone = $row["phone"];
+				$this->status = $row["status_id"];
+			}
+		}
+	}
+
+	public function save() {
+		global $db;
+
+		// we do NOT want to save information to the global users database!
+		// but we can save contact information to our local users database,
+		// and are allowed to update the organizations.members table.
+		
+		// @TODO ability to create new years, and prepopulate neccessary
+		// information
+		
+		// **
+		// before we proceed with saving, check to see if they have an entry in the local user table
+		$query = "select id from getconnected.users where user_id = ".ID." and org_id = {$this->org_id}";
+		$localid = $db->getOne($query);
+		
+		$query = "";
+		if ($localid) {
+			$query = "UPDATE getconnected.users 
+								SET phone = '{$this->phone}', address = '{$this->address}', 
+								email = '{$this->email}', position_id = '{$this->position}' , status_id = '{$this->status}' 
+								WHERE id = $localid";
+		} else {
+			$query = "insert into getconnected.users VALUES('','{$this->id}','{$this->org_id}','{$this->position}','{$this->status}','{$this->phone}','{$this->address}','{$this->email}','0')";
+		}
+		
+
+		
+		$res = $db->query($query);
+		if (PEAR::isError($res)) {
+	    die($res->getMessage());
+		}
+	
+	}
+
+	public function getId() {
+		return $this->id;
+	}
+
+	public function getUsername() {
+		return $this->username;
+	}
+
+	public function setUsername($username) {
+		try {
+			$username = $this->parseString($username);
+
+			if(strlen($username) >= 4 && strlen($username) <= 8) {
+				$this->username = $username;
+			} else {
+				throw new InputException();
+			}
+		} catch(Exception $e) {
+			throw new InputException('The username is invalid.');
+		}
+	}
+
+	public function getFirstName() {
+		return $this->first_name;
+	}
+
+	public function setFirstName($first_name) {
+		try {
+			$this->first_name = $this->parseString($first_name);
+		} catch(StringEmptyException $e) {
+			throw new InputException('The first name must not be blank.');
+		}
+	}
+
+	public function getLastName() {
+		return $this->last_name;
+	}
+
+	public function setLastName($last_name) {
+		try {
+			$this->last_name = $this->parseString($last_name);
+		} catch(StringEmptyException $e) {
+			throw new InputException('The last name must not be blank.');
+		}
+	}
+
+	public function getFullName() {
+		return $this->first_name .' '. $this->last_name;
+	}
+
+	public function getOrderedFullName() {
+		return "{$this->getLastName()}, {$this->getFirstName()}";
+	}
+
+	public function getEmail() {
+		return $this->email;
+	}
+	
+	public function getStatus() {
+			return $this->status;
+	}
+
+	public function getPhone() {
+		return $this->formatPhone($this->phone);
+	}
+
+	public function setPhone($phone) {
+		try {
+			$this->phone = $this->parsePhone($phone);
+		} catch(StringEmptyException $e) {
+		} catch(PhoneFormatException $e) {
+			throw new InputException('The phone number you entered does not appear to be valid.');
+		}
+	}
+
+
+
+	public function getOrganizations() {
+		if(!isset($this->organizations)) {
+			$this->organizations = array();
+			foreach($this->getOrganizationIds() as $id) {
+				$this->organizations[] = new Organization($id);
+			}
+		}
+
+		return $this->organizations;
+	}
+
+
+
+	public function getOrganizationIds() {
+		if(!isset($this->organization_ids)) {
+			global $db;
+
+			$this->organization_ids = array();
+			if($this->id) {
+				$this->organization_ids = $db->getCol("SELECT org_id
+					FROM organizations.members
+					WHERE user_id = {$this->getId()} AND position_id != 0");
+			}
+		}
+
+		return $this->organization_ids;
+	}
+
+
+	public function getRemoveRequest() {
+		return $this->removeRequest;
+	}
+	
+	public function getPosition() {
+			return $this->position;
+	}
+	
+	public function getPositionLabel() {
+		global $db;
+		$query = "select label from getconnected.positions where id = '{$this->position}'";
+
+		$this->positionLabel = $db->getOne($query);
+		return $this->positionLabel;
+	}
+	
+	public function getAddress() {
+			return $this->address;
+	}
+	
+	public function setPosition($position) {
+	
+		$this->position=$position;
+	}
+	
+	public function setAddress($address) {
+		$this->address = $address;
+	}
+	
+	public function setEmail($email) {
+		$this->email = $email;
+	}
+	
+	public function getStatusLabel() {
+		global $db;
+		$query = "select status from getconnected.status where id = '{$this->status}'";
+
+		$this->statusLabel = $db->getOne($query);
+		return $this->statusLabel;
+	}
+
+	
+	public function setStatus($status) {
+		$this->status = $status;
+	}
+	
+	
+
+
+	protected function comparable() {
+		return $this->getLastName() .', '. $this->getFirstName();
+	}
+}
+
+?>

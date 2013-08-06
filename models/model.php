@@ -1,0 +1,675 @@
+<?php
+
+class EvrException extends Exception {}
+class InputException extends EvrException {}
+class SaveException extends EvrException {}
+class SqlException extends SaveException {}
+class StringEmptyException extends Exception {}
+class IntZeroException extends Exception {}
+class IntLengthException extends Exception {}
+class IntSizeException extends Exception {}
+class FloatZeroException extends Exception {}
+class EmailFormatException extends Exception {}
+class PhoneFormatException extends Exception {}
+class CountryException extends Exception {}
+class StateException extends Exception {}
+class ZipFormatException extends Exception {}
+
+abstract class Model {
+	public static $config;
+	protected $data;
+	protected static $lists;
+	public static $sqlDump = array();
+
+	private static function loadConfig($class) {
+		// Make sure we don't load a class's config twice. This may seem silly
+		// since we check each variable indidivually, so there shouldn't be
+		// much overhead, but it's particularly needed so we don't prepend the
+		// database to the table name multiple times (if this loadConfig is
+		// called multiple times).
+		if(!isset(self::$config[$class]['loaded'])) {
+			// Let's see if the class has any custom configuration.
+			if(!isset(self::$config[$class])) {
+				$class_vars = get_class_vars($class);
+				if(isset($class_vars['custom_config'])) {
+					self::$config[$class] = $class_vars['custom_config'];
+				}
+			}
+
+			if(!isset(self::$config[$class]['table'])) {
+				self::$config[$class]['table'] = Inflector::tableize($class);
+			}
+
+			// If we're using another database, prepend it to the table's
+			// string.
+			if(isset(self::$config[$class]['database'])) {
+				self::$config[$class]['table'] = self::$config[$class]['database'] .'.'. self::$config[$class]['table'];
+			}
+
+			if(!isset(self::$config[$class]['sequence'])) {
+				self::$config[$class]['sequence'] = Inflector::sequenceize(self::$config[$class]['table']);
+			}
+
+			if(!isset(self::$config[$class]['primary_key'])) {
+				self::$config[$class]['primary_key'] = 'id';
+			}
+
+			if(!isset(self::$config[$class]['key'])) {
+				self::$config[$class]['key'] = Inflector::sequenceize(self::$config[$class]['table']);
+			}
+
+			self::$config[$class]['loaded'] = true;
+		}
+	}
+
+	public function __construct($id = 0) {
+		global $db;
+
+		$class = get_class($this);
+		self::loadConfig($class);
+
+		// Setup the relationship configuration.
+		if(!isset($this->relationships)) {
+			$this->relationships = array();
+		}
+		foreach($this->relationships as $rel_class => $relationship) {
+			self::loadConfig($rel_class);
+
+			if(is_string($relationship)) {
+				$this->relationships[$rel_class] = array('type' => $relationship);
+			}
+
+			if(!isset($this->relationships[$rel_class]['table'])) {
+				$this->relationships[$rel_class]['table'] = ($this->relationships[$rel_class]['type'] == 'has_and_belongs_to_many') ? Inflector::singularize(Inflector::tableize($class)) .'_'. Inflector::singularize(Inflector::tableize($rel_class)) .'_link' : self::$config[$rel_class]['table'];
+			}
+
+			if(!isset($this->relationships[$rel_class]['primary_key'])) {
+				$this->relationships[$rel_class]['primary_key'] = self::$config[$rel_class]['primary_key'];
+			}
+
+			if(!isset($this->relationships[$rel_class]['key'])) {
+				$this->relationships[$rel_class]['key'] = Inflector::sequenceize(Inflector::tableize($class));
+			}
+
+			if(!isset($this->relationships[$rel_class]['self_key'])) {
+				$this->relationships[$rel_class]['self_key'] = Inflector::sequenceize(Inflector::tableize($rel_class));
+			}
+
+			if(!isset($this->relationships[$rel_class]['sort']) && isset(self::$config[$rel_class]['sort'])) {
+				$this->relationships[$rel_class]['sort'] = self::$config[$rel_class]['sort'];
+			}
+
+			if($this->relationships[$rel_class]['type'] == 'belongs_to' && is_subclass_of($this, $rel_class)) {
+				$select_joins = "{$this->relationships[$rel_class]['table']}.*, ";
+			}
+		}
+
+		$this->data = array();
+		if($id != 0) {
+			$row = $db->getRow("SELECT *
+				FROM ". self::$config[$class]['table'] ."
+				WHERE ". self::$config[$class]['primary_key'] ." = ". intval($id));
+			if(PEAR::isError($row)) {
+				$e = new SqlException($row->getMessage() .': '. $row->getUserInfo());
+				Controller::$errors[] = $e;
+				throw $e;
+			}
+
+			if($row) {
+				foreach($row as $column => $value) {
+					$this->data[$column] = $value;
+				}
+			}
+		}
+
+		// For new, or non-existant objects, fetch the columns, and set the
+		// data for each of these to null. That way an accessor method won't
+		// bomb out when it doesn't find anything matching in the data array.
+		#return;
+		if(empty($this->data)) {
+			$result = $db->query("SHOW COLUMNS FROM ". self::$config[$class]['table']);
+			if (PEAR::isError($result)) die($result->getMessage());
+			while($row = $result->fetchRow()) {
+				$this->data[$row['Field']] = $row["Default"];
+			}
+		}
+	}
+
+	/**
+	 * Grossly complex magic to make calls to non-existing methods work.
+	 *
+	 * This is the big papa method. It essentially tries to figure out what
+	 * data members to return or set based on the data that belongs to this
+	 * object, or the relationships that it has.
+	 *
+	 * @param string $name
+	 * @param array $value
+	 */
+	public function __call($name, $value) {
+		// First handle the possibility of a boolean accessor method (where
+		// we'll be saying isXxx, rather than getXxx).
+		$action = substr($name, 0, 2);
+
+		if($action == 'is') {
+			$method = substr($name, 2);
+			$column = Inflector::underscore($method);
+
+			if(array_key_exists($column, $this->data)) {
+				return (bool) $this->getColumn($column);
+			} else {
+				// We'll also provide an "is" method for relationships, just to
+				// check of their existance (does the lighter thing of just
+				// seeing if any ids pop up).
+				$class = $method;
+				if(isset($this->relationships[$class])) {
+					$ids = $this->getRelationshipIds($class);
+					return (bool) $ids[0];
+				}
+			}
+		}
+
+		// Now handle the normal getter and setter methods.
+		$action = substr($name, 0, 3);
+		$method = substr($name, 3);
+		$column = Inflector::underscore($method);
+		if($this instanceof Navigation){
+			foreach($this->data as $key=>$data){
+				#error_log("Solo this->data contains $key => $data class = ".get_class($this));
+			}
+		}
+		
+		if($action == 'get') {
+			// If this is simply an accessor method for a data member, return
+			// it.
+			if(array_key_exists($column, $this->data)) {
+				return $this->getColumn($column);
+			} else {
+				// If we're not accessing a data member, then we're probably
+				// trying to grab a relationship, so figure that out.
+				$class = $method;
+
+				// For has_one and belongs_to relationships, the call should be
+				// singular to match with our singular definition.
+				if(isset($this->relationships[$class])) {
+					return $this->getRelationships($class);
+				} else {
+					// But for has_many and has_and_belongs_to_many, the call
+					// will be pluralized, so we need to singularize it before
+					// we find a match.
+					$class = Inflector::singularize($class);
+					if(isset($this->relationships[$class])) {
+						return $this->getRelationships($class);
+					} else {
+						// There's also the possibility that we're attempting
+						// to grab only the ids for the relationship. By this
+						// point, Id/Ids will be singularized, and the base of
+						// it should always be singular, so it's just a matter
+						// of stripping out the tailing Id.
+						$class = preg_replace("/Id$/", '', $class);
+						if(isset($this->relationships[$class])) {
+							$ids = $this->getRelationshipIds($class);
+							if(in_array($this->relationships[$class]['type'], array('has_one', 'belongs_to'))) {
+								return $ids[0];
+							} else {
+								return $ids;
+							}
+						}
+					}
+				}
+			}
+		}
+		else if($action == 'set') {
+			// We could also be trying to set data. It will either be a case of
+			// directly setting a data member, or we could also be setting
+			// relationship data for belongs_to relationships.
+			#error_log("$name entered set");
+			if(array_key_exists($column, $this->data) || array_key_exists($column, $this->rules)) {
+				#error_log("Solo: $name first returned true".__FILE__.__LINE__);
+				return $this->setColumn($column, $value[0]);
+			} else {
+				#error_log("Solo: $name first returned false".__FILE__.__LINE__);
+				$rel_class = Inflector::camelize(str_replace('_ids', '', $column));
+				if(isset($this->relationships[$rel_class])) {
+					return $this->setRelationshipData($rel_class, $value[0]);
+				}
+			}
+		}
+
+		$parent_class = get_parent_class($this);
+		
+		if($parent_class != "Model") {
+			$parent = call_user_func(array($this, "get{$parent_class}"));
+			return call_user_func_array(array($parent, $name), $value);
+		}
+		error_log(__FILE__.__LINE__.$name."INVALID CALL ");
+		echo $name .' INVALID CALL!';
+	}
+
+	protected function getColumn($column) {
+		if(isset($this->data[$column])) {
+			return $this->data[$column];
+		}
+
+		$parent_class = get_parent_class($this);
+		if($parent_class != "Model") {
+			$parent = call_user_func(array($this, "get{$parent_class}"));
+			return call_user_func(array($parent, "getColumn"), $column);
+		}
+	}
+
+	private function getRelationshipIds($rel_class) {
+		$class = get_class($this);
+		self::loadConfig($class);
+		self::loadConfig($rel_class);
+
+		if(!isset($this->relationships[$rel_class]['ids'])) {
+			global $db;
+
+			$sort = (isset(self::$config[$rel_class]['sort']) && self::$config[$rel_class]['sort'] != 'to_string') ? " ORDER BY ". self::$config[$rel_class]['sort'] : '';
+			$this->relationships[$rel_class]['ids'] = array();
+			switch($this->relationships[$rel_class]['type']) {
+				case 'belongs_to':
+					$this->relationships[$rel_class]['ids'][] = $this->data[$this->relationships[$rel_class]['self_key']];
+					break;
+				case 'has_and_belongs_to_many':
+					if($this->getId()) {
+						$this->relationships[$rel_class]['ids'] = $db->getCol("SELECT {$this->relationships[$rel_class]['self_key']}
+							FROM {$this->relationships[$rel_class]['table']}
+							WHERE {$this->relationships[$rel_class]['key']} = {$this->getId()}");
+					}
+					break;
+				case 'has_many':
+					if($this->getId()) {
+						$this->relationships[$rel_class]['ids'] = $db->getCol("SELECT {$this->relationships[$rel_class]['primary_key']}
+							FROM {$this->relationships[$rel_class]['table']}
+							WHERE {$this->relationships[$rel_class]['key']} = {$this->getId()}$sort");
+					}
+					break;
+				case 'has_one':
+					if(array_key_exists($this->relationships[$rel_class]['self_key'], $this->data)) {
+						$this->relationships[$rel_class]['ids'][] = $this->data[$this->relationships[$rel_class]['self_key']];
+					} else {
+						if($this->getId()) {
+							$assoc_id = Inflector::sequenceize(self::$config[$class]['table']);
+							$this->relationships[$rel_class]['ids'][] = $db->getOne("SELECT id
+								FROM ". self::$config[$rel_class]['table'] ."
+								WHERE $assoc_id = ". $this->getId() . $sort);
+						}
+					}
+					break;
+			}
+		}
+
+		return $this->relationships[$rel_class]['ids'];
+	}
+
+	protected function getRelationships($rel_class) {
+		global $db;
+
+		// If we don't have any objects, try fetching the related ids, and then
+		// create the objects.
+		if(empty($this->relationships[$rel_class]['objects'])) {
+			$this->relationships[$rel_class]['objects'] = array();
+			foreach($this->getRelationshipIds($rel_class) as $id) {
+				$this->relationships[$rel_class]['objects'][] = new $rel_class($id);
+			}
+		}
+
+		// If this is a has_one or belongs_to relationship, we should only
+		// return a single object, otherwise, we'll return an array of
+		// associated objects.
+		if(in_array($this->relationships[$rel_class]['type'], array('has_one', 'belongs_to'))) {
+			// In the event that we haven't found anything, create an empty
+			// object to return.
+			if(empty($this->relationships[$rel_class]['objects'])) {
+				$this->relationships[$rel_class]['objects'][] = new $rel_class();
+			}
+
+			return $this->relationships[$rel_class]['objects'][0];
+		} else {
+			return $this->relationships[$rel_class]['objects'];
+		}
+	}
+
+	public function set($data = array()) {
+		foreach($data as $column => $value) {
+			try {
+				call_user_func(array($this, 'set'. Inflector::camelize($column)), $value);
+			} catch(Exception $e) {
+				Controller::$errors[] = $e;
+			}
+		}
+
+		if(!empty(Controller::$errors)) {
+			throw new InputException();
+		}
+	}
+
+
+
+
+	protected function sort($a, $b) {
+		$a = $a->comparable();
+		$b = $b->comparable();
+
+		if($a == $b) {
+			return 0;
+		}
+		return ($a < $b) ? -1 : 1;
+	}
+
+	public function __toString() {
+		if((isset($this->data) && array_key_exists('name', $this->data)) || method_exists($this, 'getName')) {
+			return $this->getName();
+		}
+	}
+
+	protected function comparable() {
+		return $this->__toString();
+	}
+
+	public function isRequired($column) {
+		return isset($this->rules[$column]) && isset($this->rules[$column]["error"]);
+	}
+
+	protected function setColumn($column, $value) {
+		if(isset($this->rules[$column])) {
+			if(is_string($this->rules[$column])) {
+				$this->rules[$column] = array($this->rules[$column]);
+			}
+
+			try {
+				$this->data[$column] = call_user_func(array($this, 'parse'. ucfirst($this->rules[$column]['type'])), $value);
+			} catch(Exception $e) {
+				if(isset($this->rules[$column]['error'])) {
+					$e = new InputException($this->rules[$column]['error']);
+					Controller::$errors[] = $e;
+					throw $e;
+				} else {
+					$this->data[$column] = (isset($this->rules[$column]['empty'])) ? $this->rules[$column]['empty'] : null;
+				}
+			}
+		} else {
+			$this->data[$column] = $value;
+		}
+
+		// If we've set a relationship's id, reset the objects stored, so we
+		// grab a fresh copy in the case things changed.
+		$rel_class = substr(Inflector::classify($column), 0, -2);
+		if(isset($this->relationships[$rel_class])) {
+			$this->relationships[$rel_class]['ids'] = null;
+			$this->relationships[$rel_class]['objects'] = array();
+		}
+	}
+
+	private function setRelationshipData($rel_class, $value) {
+		try {
+			$this->relationships[$rel_class]['ids'] = $this->parseInt($value);
+		} catch(IntZeroException $e) {
+			$this->relationships[$rel_class]['ids'] = array();
+		}
+
+		$this->relationships[$rel_class]['objects'] = array();
+	}
+
+	public function getId() {
+		$class = get_class($this);
+		return $this->data[self::$config[$class]['primary_key']];
+	}
+
+
+	public function save($id = 0) {
+		global $db;
+		$class = get_class($this);
+
+		if($this->data[self::$config[$class]['primary_key']]) {
+			$result = $db->autoExecute(self::$config[$class]['table'], $this->data, DB_AUTOQUERY_UPDATE, self::$config[$class]['primary_key'] .' = '. $this->data[self::$config[$class]['primary_key']]);
+		} else {
+			// We'll assume that we're only dealing with a sequence primary key
+			// if we have the default "id" column.
+			if(self::$config[$class]['primary_key'] == 'id') {
+				$this->data[self::$config[$class]['primary_key']] = $db->nextId(self::$config[$class]['sequence']);
+			}
+
+			if($id) {
+				$this->data[self::$config[$class]['primary_key']] = $id;
+			}
+
+			$result = $db->autoExecute(self::$config[$class]['table'], $this->data, DB_AUTOQUERY_INSERT);
+		}
+
+		if(PEAR::isError($result)) {
+			$e = new SqlException($result->getMessage() .': '. $result->getUserInfo());
+			Controller::$errors[] = $e;
+			throw $e;
+		}
+
+		if($this->getId() && isset($this->relationships)) {
+			$key = Inflector::sequenceize(self::$config[$class]['table']);
+			foreach($this->relationships as $rel_class => $relationship) {
+				switch($relationship['type']) {
+					case 'belongs_to':
+						#$parent = call_user_func(array($this, 'get'. $rel_class));
+						#$parent->save();
+						break;
+					case 'has_and_belongs_to_many':
+						$link_table = Inflector::singularize(self::$config[$class]['table']) ."_". Inflector::singularize(Inflector::tableize($rel_class)) .'_link';
+						$ids = call_user_func(array($this, "get{$rel_class}Ids"));
+
+						if($this->getId()) {
+							$result = $db->query("DELETE FROM {$this->relationships[$rel_class]['table']} WHERE {$this->relationships[$rel_class]['key']} = ". $this->getId());
+						}
+
+						foreach($ids as $id) {
+							$result = $db->query("INSERT INTO {$this->relationships[$rel_class]['table']}({$this->relationships[$rel_class]['key']}, {$this->relationships[$rel_class]['self_key']}) VALUES({$this->getId()}, $id)");
+						}
+						break;
+					case 'has_many':
+						break;
+					case 'has_one':
+						break;
+				}
+
+				if(isset($result) && PEAR::isError($result)) {
+					$e = new SqlException($result->getMessage() .': '. $result->getUserInfo());
+					Controller::$errors[] = $e;
+					throw $e;
+				}
+			}
+		}
+	}
+
+	public function delete() {
+		if($this->getId()) {
+			global $db;
+			$class = get_class($this);
+			$result = $db->query("DELETE FROM ". self::$config[$class]['table'] ." WHERE id = ". $this->getId() ." LIMIT 1");
+			if(PEAR::isError($result)) {
+				throw new SqlException("{$result->getMessage()}<br />{$result->getUserInfo()}");
+			}
+		}
+	}
+
+	protected static function getList($class, $conditions = '') {
+		if(!isset(self::$lists[$class])) {
+			self::loadConfig($class);
+			global $db;
+
+			self::$lists[$class] = array();
+			$where = ($conditions) ? " WHERE $conditions" : '';
+			$sort = (isset(self::$config[$class]['sort']) && self::$config[$class]['sort'] != 'to_string') ? ' ORDER BY '. self::$config[$class]['sort'] : '';
+		
+			$ids = $db->getCol('SELECT '. self::$config[$class]['primary_key'] .'
+				FROM '. self::$config[$class]['table'] . $where . $sort);
+				
+			//echo 'SELECT '. self::$config[$class]['primary_key'] .' FROM '. self::$config[$class]['table'] . $where . $sort;
+				
+			if(!PEAR::isError($ids)) {
+				foreach($ids as $id) {
+					self::$lists[$class][] = new $class($id);
+				}
+			}
+
+			if(isset(self::$config[$class]['sort']) && self::$config[$class]['sort'] == 'to_string') {
+				usort(self::$lists[$class], array($class, 'sort'));
+			}
+		}
+
+		return self::$lists[$class];
+	}
+
+	protected function parseString($string) {
+		if(empty($string)) {
+			throw new StringEmptyException();
+		}
+
+		return trim($string);
+	}
+
+	protected function parseInt($int) {
+		if(is_array($int)) {
+			$int = array_map('intval', $int);
+			$int = array_filter($int);
+			if(empty($int)) {
+				throw new IntZeroException();
+			}
+		} else {
+			$int = intval($int);
+			if($int == 0) {
+				throw new IntZeroException();
+			}
+		}
+
+		return $int;
+	}
+
+	protected function parseFloat($float) {
+		$float = floatval(preg_replace("/[^\d.]/", '', $float));
+		if(!$float) {
+			throw new FloatZeroException();
+		}
+
+		return $float;
+	}
+
+	protected function parseCost($cost, $ignore = false) {
+		try {
+			$cost = $this->parseFloat($cost);
+			$cost = floatval(number_format($cost, 2, '.', ''));
+		} catch(FloatZeroException $e) {
+			if(!$ignore) {
+				throw $e;
+			}
+		}
+
+		return $cost;
+	}
+
+	protected function parseBool($bool) {
+		return($bool) ? 1 : 0;
+	}
+
+	protected function parseEmail($email) {
+		try {
+			$email = $this->parseString($email);
+
+			// The bare minimal of e-mail validation.
+			if(!strpos($email, '@')) {
+				throw new EmailFormatException();
+			}
+		} catch(Exception $e) {
+			throw $e;
+		}
+
+		return $email;
+	}
+
+	protected function parsePhone($phone) {
+		$phone = preg_replace("/\D/", '', $phone);
+
+		switch(strlen($phone)) {
+			case 0:
+				$phone = "";
+				break;
+			case 4:
+				$phone = "585475$phone";
+				break;
+			case 5:
+				$phone = "58547$phone";
+				break;
+			case 7:
+				$phone = "585$phone";
+				break;
+			case 10:
+				break;
+			default:
+				throw new PhoneFormatException();
+				break;
+		}
+
+		return $phone;
+	}
+
+	protected function parseBinary($data) {
+		return $data;
+	}
+
+	protected function parseTime($data) {
+		if(is_numeric($data)) {
+			return intval($data);
+		} else {
+			if(isset($data['hour'])) {
+				// Manage the stupid stupid 12 hour format.
+				if($data['ampm'] == 'am' && $data['hour'] == 12) {
+					$data['hour'] = 0;
+				} else if($data['ampm'] == 'pm' && $data['hour'] < 12) {
+					$data['hour'] += 12;
+				}
+			} else {
+				$data['hour'] = 0;
+				$data['minute'] = 0;
+			}
+
+			return mktime($data['hour'], $data['minute'], 0, $data['month'], $data['day'], $data['year']);
+		}
+	}
+
+	protected function parseCountry($country) {
+		if(!in_array($country, array_keys(Location::$countries))) {
+			throw new CountryException();
+		}
+
+		return $country;
+	}
+
+	protected function parseState($state) {
+		if(!in_array($state, array_keys(Location::$states))) {
+			throw new StateException();
+		}
+
+		return $state;
+	}
+
+	protected function parseZip($zip) {
+		try {
+			$zip = $this->parseInt($zip);
+			if(strlen($zip) != 5) {
+				throw new IntLengthException();
+			}
+		} catch(Exception $e) {
+			throw $e;
+		}
+
+		return $zip;
+	}
+
+	protected function formatPhone($phone) {
+		if(!empty($phone)) {
+			return substr($phone, 0, 3) .'-'. substr($phone, 3, 3) .'-'. substr($phone, 6, 4);
+		} else {
+			return '';
+		}
+	}
+}
+
+?>

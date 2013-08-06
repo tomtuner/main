@@ -1,0 +1,10 @@
+<?php require_once('subHeader.html') ?>
+
+<?php
+	while( $row = $result->fetchRow() )
+	{
+		echo "<a href='sau/roomDetails?id=" . $row['ID'] . "'>" . $row['Name'] ." </a><br />";
+	}
+?>
+
+<?php require_once('subFooter.html') ?>

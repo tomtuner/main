@@ -1,0 +1,39 @@
+<?php require('admin_header.html'); ?>
+<?if(isset($message)){
+	echo "<h3>$message</h3>";
+} ?>
+<table>
+<form method=post action='admin/processChangeAccess'>
+<tr>
+<td>Add a user by RIT Computer Account</td><td> <input type=text name=username size=10> <input type=hidden name=allow value=1><input type=submit></td>
+</tr>
+</form>
+<form method=post action='admin/processChangeAccess'>
+<tr>
+<td>Remove a user by RIT Computer Account</td><td> <input type=text name=username size=10> <input type=hidden name=allow value=0><input type=submit></td>
+</tr>
+</table>
+</form>
+<h2>Users with access to the CMS</h2>
+<?
+echo "<table>";
+$cols=5;
+$iterations = sizeof($users)/$cols;
+$arrayobject = new ArrayObject($users);
+$iterator = $arrayobject->getIterator();
+
+for($i=0;$i<$iterations;$i++){
+	echo "<tr>";
+	for($j=0;$j<=($cols-1);$j++){
+		$num=$i*$cols+$j;
+		if($num<=sizeof($users)){//dont loop 
+			echo "<td>".$iterator->current()."</td>";
+			$iterator->next();
+		}
+	}
+	echo "</tr>";
+}
+echo "</table>";
+?>
+
+<?php require('admin_footer.html'); ?>

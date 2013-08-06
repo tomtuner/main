@@ -1,0 +1,15 @@
+<?php require('subHeader.html'); ?>
+
+
+<?php
+while( $row = $result->fetchRow() )
+{
+	echo "<a href='clubs/details?clubId=" .  $row['id'] . "&clubName=" . urldecode($row['name']) . "'>" . $row['name'] . "</a><br/>";
+}
+if( isset($_GET['name']) && $_GET['name'] == "Sports")
+{
+	print "<br />For Varsity Sports go to <a href=\"http://www.ritathletics.com/index.asp\"> <strong>RIT Intercollegiate Athletics.</strong></a>";
+}
+?>
+
+<?php require('subFooter.html'); ?>

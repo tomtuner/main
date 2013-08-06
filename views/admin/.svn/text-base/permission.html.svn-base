@@ -1,0 +1,39 @@
+<?php require('admin_header.html'); ?>
+
+<h2>Edit Permissions</h2>
+<!-- Here we start the form for the list of all permissions -->
+<form action="admin/process" method="post">
+	<table cellspacing="1" width="100%" colspacing="0" style="background: #CCC">
+		<tr>
+			<th>Name</th>
+			<th>Edit Content</th>
+			<th>Edit Users</th>
+			<th>Delete</th>
+		</tr>
+		
+		<?php
+		/*foreach ($permissionList as $myPermission) 
+		{
+			
+			$html = <<<EOL
+					<tr style="background: #FFF">
+						<td>{$myPermission->getName()}</td>
+						<td>{$myPermission->getEditContent()}</td>
+						<td>{$myPermission->getEditUsers()}</td>
+					</tr>	
+EOL;
+			
+			echo $html;
+	
+		}*/
+		?>
+	</table>
+<input type="submit" name="deleteUsers" value="Delete Selected Users" />
+</form>
+
+
+
+
+
+
+<?php require('admin_footer.html'); ?>

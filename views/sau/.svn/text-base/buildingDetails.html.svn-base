@@ -1,0 +1,24 @@
+<?php require_once('subHeader.html') ?>
+
+<?php
+
+$levels = array (
+	1 => 'SAU Lobby',
+	2 => 'RITreat',
+	3 => 'Mezzanine Level',
+	4 => 'A Level',
+);
+
+$row = $result->fetchrow();
+echo "<strong>" . $row['Place'] . "</strong><br /><br/><br />";
+echo "<strong>Location</strong>: " . $levels[$row['sau_level']] . ", " . $row['sau_room_num'] . "<br/><br/>";
+echo "<strong>Phone</strong>: " . $row['Phone'] . "<br/><br/>";
+echo "<strong>Website</strong>: <a href='" . $row['URL'] . "' target='_self'>" . $row['URL'] . "</a><br/><br/>";
+echo "<strong>Academic hours</strong>: " . $row['academic_hours'] . "<br/><br/>";
+echo "<strong>Summer hours</strong>: " . $row['summer_hours'] . "<br/><br/><br/>";
+echo $row['sau_description'] . "<br/><br/><br/>";
+echo "<img src='http://campuslife.rit.edu/sau/building_services/images/{$row['ID']}.JPG' /><br/><br/><br/><img src='images/link.gif' border='0' align='left'alt='click link'/>&nbsp; <a href='sau/building?sort=Place'>Back to Building Services</a>";
+?>
+
+
+<?php require_once('subFooter.html') ?>

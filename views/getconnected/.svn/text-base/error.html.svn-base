@@ -1,0 +1,13 @@
+<?php require('header.html'); ?>
+<?php require('getconnected_start.html'); ?>
+
+<h2 class="error">Error!</h2>
+
+<p>
+<?php echo $error; ?>
+</p>
+
+<a href="javascript:history.back()">Back</a>
+
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

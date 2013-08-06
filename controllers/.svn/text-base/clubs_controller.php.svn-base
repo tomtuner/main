@@ -1,0 +1,135 @@
+<?php
+
+class ClubsController extends Controller
+{
+	public function find()
+	{
+		$page_title = array('Find a Club');
+		
+		require('views/clubs/find.html');
+	}
+	
+	public function all()
+	{
+		$page_title = array('Find a Club | All Clubs List');
+		
+		global $db;
+		$sql = "SELECT organizations.organizations.name, organizations.organizations.id FROM organizations.organizations INNER JOIN newclubs.club_profile ON organizations.organizations .id=newclubs.club_profile.id AND newclubs.club_profile.inactive=0 WHERE newclubs.club_profile.show_web = 1 ORDER BY organizations.organizations.name";
+		$result = $db->query($sql);
+	
+		//For AJAX search page
+		if( isset($_GET['mode']) )
+		{
+			require('views/clubs/search.html');
+		}
+		//All club list  page
+		else
+		{
+			require('views/clubs/all.html');
+		}
+	}
+	
+	public function category()
+	{
+		$join_title = "Find a Club | " . $_GET['name'];
+		$page_title = array( $join_title );
+		
+		global $db;
+		$sql = "SELECT organizations.organizations.name, organizations.organizations.id FROM organizations.organizations INNER JOIN newclubs.club_profile ON organizations.organizations .id=newclubs.club_profile.id AND newclubs.club_profile.category_id=" . $_GET['id'] . " AND newclubs.club_profile.inactive=0 AND newclubs.club_profile.show_web = 1 ORDER BY organizations.organizations.name";
+		$result = $db->query($sql);
+			
+		require('views/clubs/all.html');
+	}
+	
+	public function fair() {
+		$page_title = array('Club Fair Registration');
+		
+		require("views/clubs/fair.html");
+	}
+	
+	public function submitFairRequest() {
+		if (isset($_POST["submitted"])) {
+			foreach ($_POST as $key => $value) {
+				$$key = $value;
+			}
+			
+			//Error checking
+			if (empty($organization_name)) $_POST["errors"][] = "An organization name is required!";
+			if (empty($responsible_rep)) $_POST["errors"][] = "A responsible rep is required!";
+			if (empty($email)) {
+				$_POST["errors"][] = "An email is required!";
+			} else {
+				if (!preg_match("/[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/", $email)) {
+					$_POST["errors"][] = "You entered an invalid email!";
+				}
+			}
+			
+			if (empty($phone)) {
+				$_POST["errors"][] = "A phone number is required!";
+			} else {
+				if (!preg_match("/([0-9]{3})-([0-9]{3})-([0-9]{3})/", $phone)) {
+					$_POST["errors"][] = "You entered an invalid phone number!";
+				}
+			}
+		
+			if (!isset($_POST["errors"])) {
+				$request = new FairRequest();
+				$request->setOrganizationName($organization_name);
+				$request->setResponsibleRep($responsible_rep);
+				$request->setEmail($email);
+				$request->setPhone($phone);
+				$request->setPowerSource($power_source);
+				$request->setOtherRequests($other_requests);
+				$request->setDate(date("Y-m-d",time()));
+				$request->save();
+				
+				$need_power = ($power_source) ? "Yes" : "No";
+				
+				//mail to Jess
+				$message = "New Club Fair Registration Request!\r\n\r\n"
+						. "Organization: $organization_name\r\n\r\n"
+						. "Responible Rep: $responsible_rep\r\n\r\n"
+						. "Email: $email\r\n\r\n"
+						. "Phone: $phone\r\n\r\n"
+						. "Power Source? $need_power\r\n\r\n"
+						. "Other Requests:\r\n\r\n$other_requests\r\n\r\n"
+						. "Date: ".date("Y-m-d",time())."\r\n";
+				
+				$to = "jrbccl@rit.edu";
+				$subject = "New Club Fair Registration Request!";
+				$headers = "From: cclwww@rit.edu" . "\r\n" .
+						"Reply-To: cclwww@rit.edu" . "\r\n";
+				
+				mail($to,$subject,$message,$headers);
+				
+				$this->redirect("clubs/fairRequestSuccess");
+				//$this->fairRequestSuccess();
+			} else {
+				$this->fair();
+			}
+		}
+	}
+	
+	public function fairRequestSuccess() {
+		$page_title = array('Club Fair Registration Success!');
+		require("views/clubs/fairRequestSuccess.html");
+	}
+	
+	public function details()
+	{
+		$page_title = array('Find a Club');
+		$join_details = "id=" . $_GET['clubId'];
+		$foo = DetailsClubs::getList( $join_details );
+		
+		require('views/clubs/details.html');
+	}
+	
+	public function resources()
+	{
+		$page_title = array('Resources');
+		
+		require('views/clubs/resources.html');
+	}
+}
+
+?>

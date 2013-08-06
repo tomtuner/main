@@ -1,0 +1,15 @@
+<?php echo (phpCAS::getUser()." has changed your page". $page->getTitle." Located at http://www.campuslife.rit.edu/main/".$page->getController()."/".$page->getAction()."."); ?> 
+This page was last changed by <?php echo ($owner." at ".$changed.".". phpCAS::getUser());?> will now receive change notifications
+
+You can login to the CMS admin at HTTP://campuslife.rit.edu/main/admin/ using your RIT Computer Account
+
+Thank you
+
+Web Development CMS bot
+
+
+####Tech Notes####
+<?php echo $_SERVER['REMOTE_ADDR']." ".$_SERVER['REMOTE_HOST']." ".date("Y-M-d H:i:s",$startTime);
+
+#that date is in a format that the log checker @ sandbox/log.php can understand.
+?>

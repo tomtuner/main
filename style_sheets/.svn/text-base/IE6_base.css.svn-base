@@ -1,0 +1,412 @@
+/*  BASE STYLES */
+body {
+	margin:0;
+	padding: 0;
+	background-image:url(../images/pixelBack5.gif);
+	font-family:Arial,Helvetica,sans-serif;
+}
+
+a, a:visited {
+	color: #412315;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration:underline;
+}
+
+h1,h2,h3,h4 {
+	margin:0px;
+}
+
+h1{
+	font-size:18px;
+	color:#412315;
+}
+
+h2{
+	font-size:18px;
+	color:#FFFFFF;
+}
+
+h3{
+	font-size:14px;
+	color:#FFFFFF;
+}
+h4{
+	font-size:12px;
+	color:#412315;
+}
+
+/* STRUCTURE STYLES */
+
+/*  This style holds the parent structure for the whole page */
+#page {
+	margin-left: auto;
+	margin-right: auto;
+	width: 980px;
+}
+
+#pageBack { /* fixes background problem in FireFox by adding Float */
+	background-image:url("../images/bodyBackground.jpg");
+	background-repeat: repeat-y;
+	float:left;
+}
+
+/*positions holder for navigation*/
+#nav {
+	float:left;
+	width:200px;
+}
+
+/*main navigation properties*/
+#navigation {
+	margin-left: 15px;
+	float: left;
+	width: 200px;
+	height:580px;
+	background-image:url(../images/navBack.jpg);
+	background-repeat:no-repeat;
+}
+
+/* This style is for the right parent side column, that contains blog, content, and the small widgets */
+#right {
+	float: left;
+	width: 740px;
+	background-image:url(../images/contentBack3.jpg);
+	background-repeat:repeat-y;
+}
+
+#rightBottom {
+	width:740px;
+	height:50px;
+	background-image:url(../images/contentBottom2.jpg);
+	background-repeat:no-repeat;
+	float:left;
+	margin: 0 0 0 115px;
+}
+
+#header {
+	width: 720px;
+	height: 40px;
+	margin: 0px 0 0px 0;
+	float:left;
+	background-color: #412315;
+	padding-top: 10px;
+}
+
+#leftside {
+	width: 430px;
+	margin: -4px 0 0px 0;
+	float: left;
+}
+
+#content {
+	color: #412315;
+	padding: 0 0 20px 20px;
+	width:390px;
+	font-size:14px;
+	float:left;
+	margin:0px;
+}
+
+#rightside {
+	float:left;
+	width: 280px;
+	margin: -4px 0 0px 0;
+	
+}
+
+#footer {
+	width: 740px;
+	margin-left:115px;
+	padding: 20px 0 20px 0;
+	color:#412315;
+	font-size:10px;
+	clear:left;	
+}
+
+/* This style is used structurally to clear the right floating layers so that the footer is always at the bottom of the content */
+#clear {
+	clear: right;
+}
+
+
+/* HEADER STYLES */
+
+#header a {
+	font-size: 12px;
+	color: #FFFFFF;
+	
+}
+
+#header ul {
+	float:right;
+	margin-top: 0;
+}
+
+#header ul li{
+	display:inline;
+	list-style-image:none;
+	margin-right:5px;
+	padding-right:5px;
+	border-right: 1px solid #FFFFFF;
+}
+
+#header ul li.last {
+	border-right: 0;
+}
+
+#header img {
+	float:right;
+	margin:0 12px 0 0;
+} 
+
+ul.courtesyNav {
+	margin-left: 0; 
+	padding-left: 0;
+	float:right;
+}
+
+ul.courtesyNav li {
+	display:inline;
+	list-style-image:none;
+	margin-right:5px;
+	padding-right:5px;
+	border-right: 1px solid #FFFFFF;
+}
+
+ul.courtesyNav li a:hover{
+	text-decoration:underline;
+}
+
+/* NAVIGATION STYLES */
+
+#cclLogo {
+	margin:50px 0 20px 17px;
+	width: 150px;
+	height: 100px;
+}
+
+#navigation ul.navigation {
+	margin: 0; 
+	padding-left: 0;
+	list-style-image: none;
+	list-style: none;
+
+}
+
+#navigation ul.navigation li ul {
+	margin-top: 15px;
+	margin-bottom: 5px;
+	list-style:none;
+	color:#412315;
+	
+}
+
+#navigation ul.navigation li ul a, #navigation ul.navigation li ul a:visited {
+	color:#412315;
+}
+
+#navigation ul.navigation li ul li {
+	margin: 0px;
+	padding: 0px;
+	text-indent: 0;
+	margin-left: -20px;
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+
+#navigation ul.navigation li.parent {
+	margin-bottom:7px;
+	margin-left:0px;
+	padding-left:10px;
+	padding-top:5px;
+	background-image:url(../images/navButton.jpg);
+	background-repeat:no-repeat;
+	padding-bottom: 10px;
+	display: block;	
+}
+
+#navigation li.parent a:visited, #navigation li.parent a {
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:14px;
+	color:#FFFFFF;
+	text-decoration: none;
+}
+
+#navBottom {
+	float:left;
+	background-image:url(../images/navBottom.jpg);
+	background-repeat:no-repeat;
+	margin-left:15px;
+	width:200px;
+	height:20px;
+}
+
+#contactInfo {
+	background-image:url(../images/navBack.jpg);
+	background-repeat:no-repeat;
+	background-position: 0px -10px;
+	width:190px;
+	margin: 0px 0 0 15px;
+	padding: 13px 0px 10px 10px;
+	font-size:12px;
+	color:#412315;
+	float:left;
+}
+
+
+/* WIDGETS */
+#flashBlog {
+	width:720px;
+	height:120px;
+	background-image:url(../images/fans.jpg);
+	float:left;
+}
+
+#contentFlash{
+	background-image:url(../images/flashBack.jpg);
+	background-repeat:no-repeat;
+	height:280px;
+	width:420px;
+	margin: 0 0 20px 0;
+	float:left;
+}
+
+#contentFlash object{
+	margin:5px;
+}
+
+#contentNews {
+	float:left;
+	background-image:url(../images/newsBack2.jpg);
+	background-repeat:no-repeat;
+	height:280px;
+	width: 290px;
+}
+
+#contentEVR {
+	background-image:url(../images/evrBack.jpg);
+	background-repeat:no-repeat;
+	margin:20px 0 0 0;
+	width:290px;
+	height:100px;
+	float:left;
+}
+
+#evrText {
+	height:100px;
+	float:left;
+	margin-left:36px;
+	margin-top:5px;
+}
+
+#evrText h2 a:hover{
+	text-decoration:none;
+}
+
+#pawPrint {
+	width:40px;
+	height:40px;
+	float:left;
+	margin:10px 0 0 10px;
+}
+
+#adTextTop a {
+	background-image:url(../images/faqBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:220px;
+	float:left;
+	margin-top:20px;
+	padding: 10px 0 0 70px;
+}
+
+#adTextTop a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+
+#adTextMiddle a {
+	background-image:url(../images/applyBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:220px;
+	float:left;
+	padding: 10px 0 0 70px;
+}
+
+#adTextMiddle a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+
+#adTextBottom a {
+	background-image:url(../images/aimBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:220px;
+	float:left;
+	padding: 10px 0 0 70px;
+}
+
+#adTextBottom a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+
+#adTextRequest a {
+	background-image:url(../images/requestBack.jpg);
+	background-repeat:no-repeat;
+	height:30px;
+	width:220px;
+	float:left;
+	padding: 10px 0 0 70px;
+}
+
+#adTextRequest a:hover {
+	background-position: -290px 0px;
+	text-decoration:none;
+}
+
+.adText{
+	font-size:12px;
+	font-weight:bold;
+	margin:0px;
+	padding-left:10px;
+}
+
+.adLink{
+	font-size:18px;
+	font-weight:bold;
+	color:#412315;
+	margin:0px;
+}
+
+a.specialLink { color:#412315; }
+
+a.footerLink { color:#FFFFFF;}
+
+a.specialLink:hover{color:#FFFFFF;}
+
+a.specialLink:visited { color:#412315; }
+
+a.contactLink { color:#412315; text-decoration:none; }
+
+a.contactLink:hover{ color:#412315; text-decoration:underline; }
+
+a.contactLink:visited { color:#412315; }
+
+
+#about, #clubs, #fratsorlife, #specialevents, #services, #advisorinfo, #sau, #techcrew {
+	height: 0;
+	opacity: 0;
+	display: none;
+}
+
+#cclSearchBox
+{
+	border: #999 solid 1px;
+	font-size: 9px;
+}

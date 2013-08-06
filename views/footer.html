@@ -1,0 +1,126 @@
+</div> <!-- end content -->
+			</div>
+			<div id="rightside">
+				<!-- Beging Right Side Widgets -->
+				<div id="contentNews">
+					<div id="tabs">
+						<!--
+						<ul>
+							<li id="tabHeader1" class="activeHeader"><a href="javascript:toggleTab(1,3,0,false)">Events</a></li>
+							<li id="tabHeader2" class="news"><a href="javascript:toggleTab(2,3,0,false)"></a></li>
+							<li id="tabHeader3" class="links"><a href="javascript:toggleTab(3,3,0,false)">Links</a></li>
+						</ul>
+						-->
+					  </div>
+					  <div id="tabscontent">
+							<div id="tabContent1" class="tabContent" style="display: block;">
+								<div>
+								<br /><br />
+								<strong>Event highlights...</strong>
+								 <br/><br/>
+								 <ul id="eventList">
+								<?php
+								/*
+								include_once "XML/RSS.php";
+								$rss = new XML_RSS("http://events.rit.edu/web_service/rss_feed.cfm?categories=4%2C8%2C1%2C14%2C9%2C13");
+								$rss->parse();
+								
+								foreach ($rss->getItems() as $item) {
+								  echo "<span style='font-weight:bold;font-color:#412315;'><li><a href=\"" . $item['link'] . "\">" . $item['title'] . 
+								"</a></li></span>\n";
+								  echo substr_replace($item['pubdate'] ,"",-13);
+								}
+								echo "</ul>\n";
+								*/
+								?>
+								<script type="text/javascript">
+									<!--
+										// Nifty ajax loader for the most recent 7 events 
+										getAjaxPage("index/loadevent","eventList");
+									-->
+								</script>
+								 </ul>
+								 </div>
+							</div>
+	
+						<!--	<div id="tabContent2" class="tabContent" style="display: none;">								
+								<div>															
+								<strong>What's happening in CCL?</strong>
+								 <br/>
+								 <br/>
+								 <ul>
+									<li><strong>8.10.07</strong> - Welcome new CCL Grads!</li>
+									<li><strong>9.07.07</strong> - New CCL website launched</li>
+									<li><strong>9.21.07</strong> - More news goes here</li>
+								 </ul>
+								</div>
+							</div>-->
+	
+							<div id="tabContent3" class="tabContent" style="display: none;">								
+								<div>																
+								<strong>Check out these quick links!</strong>
+								 <br/><br/>
+								 <ul>
+									<li><a href="http://cab.rit.edu">College Activities Board</a></li>
+									<li><a href="http://www.ntid.rit.edu/current/student_life.php">NTID Student Life</a></li>
+									<li><a href="http://www.rit.edu/~ocasawww/">OCASA</a></li>
+									<li><a href="http://campuslife.rit.edu/leadership/">RLI &amp; CSC</a></li>
+									<li><a href="http://campuslife.rit.edu/thesource/">The Source</a></li>
+									<li><a href="http://www.sg.rit.edu/">Student Government</a></li>								
+									<li><a href="http://www.rit.edu/~311www/facilities_slc.php3">Student Life Center</a></li>
+								 </ul>
+								 </div>
+							</div>
+					</div><!--End of tabscontent-->
+				
+				</div> <!-- end contentNews -->
+
+				<div id="theLink">
+					<a href="http://thelink.rit.edu/" target="_blank"><img src="/main/images/LinkLogo.png" width="290" style="padding-top:20px;"/></a>
+				</div>
+
+				<div id="contentEVR">
+					
+					<div id="evrText">
+						<h1><a href="http://campuslife.rit.edu/evr"><u>Register Your Event</u></a></h1>
+						<h3>EVR&#8212;Event Registration</h3>
+						<br/>
+						<h4>Learn <a href="sau/evr"><u>how EVR works</u></a>.<br/>
+						Not EVR certified? <a href="http://campuslife.rit.edu/evr"><u>Get trained here</u></a>.</h4>
+					</div>
+				</div>
+				
+				
+				<div id="adTextTop"><a class="adLink specialLink" href="about/FAQ">FAQ<span class="adText">Center for Campus Life</span></a></div>
+				<div id="adPosting"><a class="adLink specialLink" href="uploads/Publicity_Distribution_Form.pdf">Posting Guidelines<span class="adText">Sau and Campus Center</span></a></div>
+				<div id="adTextMiddle"><a class="adLink specialLink" href="about/jobs">APPLY!<span class="adText">CCL Employment</span></a></div>
+				<!-- Aim Link Removed At Ryan's Request, uncomment to put it back -->
+				<!-- 
+				<div id="adTextBottom"><a class="adLink specialLink" href="aim:addbuddy?screenname=EventsatRIT">AIM<span class="adText">Add EventsatRIT</span></a></div>
+				-->
+				<div id="adStaffArtist"><a class="adLink specialLink" href="http://campuslife.rit.edu/art_request/">Request Artwork<span class="adText">Request Artwork</span></a></div>
+				<!--<div id="studentAffairsGAEmployment"><a class="adLink specialLink" href="http://www.rit.edu/studentaffairs/SAGraduateAssistantships.php">GA Employment<br/><span class="adText">We're hiring Graduate Assistants!</span></a></div>-->
+				<div id="adFinanceCertification"><a class="adLink specialLink" href="http://campuslife.rit.edu/cfc/cfc.swf">Finance Certification<br /><span class="adText">Become financially certified</span></a></div>
+				<div id="adRLI"><a class="adLink specialLink" href="http://campuslife.rit.edu/leadership/index.php">RIT Leadership Institute<br /><span class="adText">Become A Leader</span></a></div>
+				
+				<!--
+				<div align="center">
+				<a href="http://www.rit.edu/studentaffairs/SAGraduateAssistantships.php"><img src="images/ga_flyer.png"></a></div>
+				</div>--> <!-- end ad box -->
+
+				
+				
+				<!--<div id="adTextBlog"><a class="adLink specialLink" href="">BLOGS<span class="adText">Student Views</span></a></div>-->
+<!--<div id="adTextForum"><a class="adLink specialLink" href="">FORUM<span class="adText">Have a Question?</span></a></div>-->
+			</div><!-- end right side -->
+		</div>
+		<div id="rightBottom"></div>
+		<div id="footer" style="float: left;">Rochester Institute of Technology, One Lomb Memorial Drive, Rochester, NY 14623-5603
+			<br/>&copy; Rochester Institute of Technology. All Rights Reserved | <a class="footerLink" href="http://www.rit.edu/disclaimer.html" target="_blank">Disclaimer</a> | <a class="footerLink" href="http://www.rit.edu/copyright.html" target="_blank">Copyright Infringement</a><br/>
+			Questions or concerns? Send us <a class="footerLink" href="http://www.rit.edu/ask/" target="_blank">feedback</a>. Telephone: 585-475-2411<br/>
+			</div>
+		<div id="clear" style="display:block; ">&nbsp;</div>
+	</div>
+	&nbsp; &nbsp;
+</div>
+</body></html>

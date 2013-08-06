@@ -1,0 +1,14 @@
+<?php require('header.html'); ?>
+<?php require('getconnected_start.html'); ?>
+<form action="roster/add" method="post">
+<table class="list">
+	<tr>
+		<th>DCE Information</th>
+	</tr>
+	<tr>
+		<td><p>Please enter the DCE login name of the user you wish to add below.</p><br /><input type="text" name="dce" value="" /><input type="submit" name="checkDCE" value="Check DCE" /></td>
+	</tr>
+</table>
+</form>
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

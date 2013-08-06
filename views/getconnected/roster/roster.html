@@ -1,0 +1,66 @@
+<?php require('header.html'); ?>
+<?php require('rosterHeader.html'); ?>
+
+
+
+
+	
+	<form action="roster.php?mode=requestrmv&multi=1" name="multiremove" id="multiremove" method="post">
+	<table class="list hover">
+	<tr>
+		<td colspan="7" align="right"><a href="roster/add">Add new member</a></td>
+	</tr>
+	<tr>
+		<th>Last</th>
+		<th>First</th>
+		<th>Position</th>
+		<th>Status</th>
+		<th>Last Modified</th>
+		<th>Delete</th>
+		<th>Edit</th>
+	</tr>
+	<?php
+
+	foreach ($roster as $member) 
+	{
+		
+		if(in_array($member->getStatus(),$statusFilter))
+		{
+			$class = "";
+			$removeLink = "";
+			if ($member->getRemoveRequest()) {
+				$class = " class=\"removePending\"";
+			}
+			if ($member->getPosition() == 1) {
+				$class= " class=\"president\"";
+			}
+			
+			
+echo "
+		<tr$class>
+			<td>{$member->getLastname()}</td>
+			<td>{$member->getFirstname()}</td>
+			<td>{$member->getPositionLabel()}</td>
+			<td>{$member->getStatusLabel()}</td>
+			<td>{$member->getLastModified()}</td>";
+			if ($member->getRemoveRequest()) {
+				echo "<td><img src=\"images/hourglass_delete.png\" width=\"16\" height=\"16\" title=\"Pending..\" alt=\"Pending..\" /></td>";
+			} else {
+				echo "<td><a href=\"roster/remove/{$member->getId()}\"><img src=\"images/b_drop.png\" title=\"Request Removal\" alt=\"Request Removal\" width=\"16\" height=\"16\" /></a></td>";
+			}
+			echo "<td><a href=\"roster/edit/{$member->getId()}\"><img src=\"images/b_edit.png\" title=\"Edit Member\" alt=\"Edit Member\" width=\"16\" height=\"16\" /></a></td>
+		</tr>	";
+		
+
+		}	
+	}
+	?>
+		
+		
+		
+	
+	
+</table>
+</form>
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

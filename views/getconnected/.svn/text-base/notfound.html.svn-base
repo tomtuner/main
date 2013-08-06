@@ -1,0 +1,9 @@
+<?php require('header.html'); ?>
+
+<h2>Oops!</h2>
+
+<p>
+The page you requested can not be found!
+</p>
+
+<?php require('footer.html'); ?>

@@ -1,0 +1,529 @@
+<?php require('artHeader.html'); ?>
+
+<?php
+	if ( isset ( $_GET['s'] ) )
+	{
+		$holder = $_GET['s'];
+		$trip = $_GET['trip'];
+		
+		switch ( $holder )
+		{
+			case 1:
+				echo ( "<div> Please fill in all fields on the page.</div> <br />" );
+				break;
+			case 2:
+				echo ( "<div> The inputted end date for the event is before the beginning date.  Please input the correct date. </div> <br />" );
+				break;
+		}
+	}
+?>
+
+<h1>New Request</h1>
+<form action="art_request/databaseSubmit" method="POST">
+
+<br />
+
+<div id="requestor_info">
+	<strong>Requester</strong>
+	<br />
+	<table>	
+		<tr>
+			<td> <div>Name</div> </td>
+			<td> <input id="art_request_requester_name" name="art_request[requester_name]" size="30" type="text" /> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>E-mail</div> </td>
+			<td> <input id="art_request_requester_email" name="art_request[requester_email]" size="30" type="text" /> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>Phone</div> </td>
+			<td> <input id="art_request_requester_phone" name="art_request[requester_phone]" size="30" type="text" /> </td>
+		</tr>
+	</table>
+	<br />
+</div>
+
+<div id="date_request">
+	<strong>Due Date</strong>
+	<br />
+	<select id="art_request_due_on_2i" name="art_request[due_on(2i)]">
+		<option value="1">January</option>
+		<option value="2">February</option>
+		<option value="3">March</option>
+		<option value="4">April</option>
+		<option value="5">May</option>
+		<option value="6">June</option>
+		
+		<option value="7">July</option>
+		<option value="8">August</option>
+		<option value="9">September</option>
+		<option value="10">October</option>
+		<option value="11">November</option>
+		<option value="12">December</option>
+	</select>
+
+	<select id="art_request_due_on_3i" name="art_request[due_on(3i)]">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+		<option value="10">10</option>
+		<option value="11">11</option>
+		<option value="12">12</option>
+		<option value="13">13</option>
+		<option value="14">14</option>
+		<option value="15">15</option>
+
+		<option value="16">16</option>
+		<option value="17">17</option>
+		<option value="18">18</option>
+		<option value="19">19</option>
+		<option value="20">20</option>
+		<option value="21">21</option>
+		<option value="22">22</option>
+		<option value="23">23</option>
+		<option value="24">24</option>
+
+		<option value="25">25</option>
+		<option value="26">26</option>
+		<option value="27">27</option>
+		<option value="28">28</option>
+		<option value="29">29</option>
+		<option value="30">30</option>
+		<option value="31">31</option>
+	</select>
+	
+	<select id="art_request_due_on_1i" name="art_request[due_on(1i)]">
+		<option value="2008">2008</option>
+		<option value="2009">2009</option>
+		<option value="2010">2010</option>
+	</select>
+</div>
+	
+<br />
+	
+<div id="media_request">
+	<strong>Requests</strong>
+	<br />
+	<div><input id="banner_request" name="banner_requested" onclick="toggleVisible('banner_request_info')" type="checkbox" value="1" />Banner request</div>
+	<div><input id="flyer_request" name="flyer_requested" onclick="toggleVisible('flyer_request_info')" type="checkbox" value="1" />Flyer request</div>
+	<div><input id="other_request" name="other_requested" onclick="toggleVisible('other_request_info')" type="checkbox" value="1" />Other request</div>		
+</div>
+
+<p>
+	Please fill out all fields which pertain to your request.
+</p>
+
+<div id="banner_request_info">
+	<strong>Banner Request</strong>
+	<div>Size</div>
+	<div>
+		<select id="banner_request_width_length" name="banner_request[width_length]" onchange="conditionalToggle('banner_request_other_size', this.value, 'Other' )">
+			<option value="3.0x6.0">3' x 6'</option>
+			<option value="Other">Other</option>
+		</select>
+
+		<div id="banner_request_other_size">
+			Please state your custom size - 
+			<input id="banner_request_width" name="banner_request[width]" size="2" type="text" />' &times; <input id="banner_request_length" name="banner_request[length]" size="2" type="text" />'
+		</div>
+	</div>
+	
+	
+	
+	<div>Location</div>
+	<div>
+		<input class="banner_request_rooms" id="banner_request_room_ids_11" name="banner_request[room_ids][0]" type="checkbox"/> Lobby
+		<input class="banner_request_rooms" id="banner_request_room_ids_14" name="banner_request[room_ids][1]" type="checkbox"/> Dining Commons
+	</div>
+	
+	
+
+	<div>Number of Banners </div>
+	<div>
+	<select id="banner_request_number" name="banner_request[number]">
+		<option value="1" selected="selected">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+	</select>
+	</div>
+	
+	<br />
+	
+</div>
+
+
+
+<div id="flyer_request_info">
+
+	<strong>Flyer Request</strong>
+	<div>
+		<input id="flyer_request_color_true" name="flyer_request[color]" type="radio" value="true" /> Color
+		<input id="flyer_request_color_false" name="flyer_request[color]" type="radio" value="false" /> Black &amp; White
+	</div>	
+	
+	<div>Size</div>
+	<div>
+		<select id="flyer_request_width_length" name="flyer_request[width_length]" onchange="conditionalToggle('flyer_request_other_size', this.value, 3)">
+			<option value="1">8.5&quot; x 11&quot;</option>
+			<option value="2">11&quot; x 17&quot;</option>
+			<option value="3">Other</option>
+		</select>
+	</div>
+
+	<div id="flyer_request_other_size">
+		Please state your custom size - 
+		<input id="flyer_request_width" name="flyer_request[width]" size="2" type="text" />" &times; <input id="flyer_request_length" name="flyer_request[length]" size="2" type="text" />"
+	</div>
+	
+	<br />
+	
+</div>
+
+
+
+<div id="other_request_info">
+
+	<strong>Other Request</strong>
+	<div>
+		<textarea cols="40" id="other_request_description" name="other_request[description]" rows="20"></textarea>
+	</div>
+	
+	<br />
+	
+</div>
+
+
+
+<div id="event_info">
+
+	<strong>Event Information</strong>
+
+	<div>
+		
+		<div>Event name</div>
+		<div>
+			<input id="event_name" name="event[event_name]" size="30" type="text" value="" />
+		</div>
+
+		<div>Category</div>
+		
+		<div>
+		<select id="event_category_id" name="event[category_id]">
+			<option value="1">Athletic</option>
+			<option value="2">Banquet</option>
+			<option value="3">BBQ/Picnic</option>
+			<option value="4">Charity</option>
+
+			<option value="5">Comedy</option>
+			<option value="6">Community Service</option>
+			<option value="7">Competition</option>
+			<option value="8">Concert</option>
+			<option value="9">Conference</option>
+			<option value="10">Cultural</option>
+			<option value="11">Dance/DJ Party</option>
+			<option value="12">Dinner</option>
+			<option value="13">Educational</option>
+
+			<option value="14">Fair</option>
+			<option value="15">Forum</option>
+			<option value="16">Fundraiser</option>
+			<option value="17">Game (non athletic)</option>
+			<option value="18">Informational</option>
+			<option value="19">Lecture</option>
+			<option value="20">Meeting</option>
+			<option value="21">Movie</option>
+
+			<option value="22">Party</option>
+			
+			<option value="23">Presentation</option>
+			<option value="24">Recruitment</option>
+			<option value="25">Social</option>
+			<option value="26">Speaker</option>
+			<option value="27">Travel</option>
+			
+			
+			<option value="28">Performance</option>
+			<option value="29">Leadership</option>
+			<option value="30">Other</option>
+		</select>
+		</div>
+
+		<div>Event sponsor</div>
+
+		<select id="organization_category_id" name="event[sponsor_category]">
+			<option value="8">Department</option>
+			<option value="9">Greek Councils</option>
+			<option value="3">Greek Organization</option>
+			<option value="6">Honors Fraternity</option>
+			<option value="2">Major Student Organization</option>
+
+			<option value="7">Non SG Club</option>
+			<option value="4">Other Organization</option>
+			<option value="1">SG Recognized Club</option>
+			<option value="5">Special Interest</option>
+		</select>
+
+		<div>Sponsor's name</div>
+
+		<input type="text" name="event[sponsor_name]"></input>
+
+		<div> Event description </div>
+			<textarea cols="40" id="event_description" name="event[event_description]" rows="20"></textarea>
+		</div>
+</div>
+
+<br />
+
+<div id="event_dates">
+	<strong>Dates</strong>
+	<div>From</div>
+	<div>
+		<select id="art_request_begin_m" name="begin_date[begin_m]">
+			<option value="1">January</option>
+			<option value="2">February</option>
+			<option value="3">March</option>
+			<option value="4">April</option>
+			<option value="5">May</option>
+			<option value="6">June</option>
+			
+			<option value="7">July</option>
+			<option value="8">August</option>
+			<option value="9">September</option>
+			<option value="10">October</option>
+			<option value="11">November</option>
+			<option value="12">December</option>
+		</select>
+		
+		<select id="art_request_begin_d" name="begin_date[begin_d]">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+			
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="15">15</option>
+			<option value="16">16</option>
+			<option value="17">17</option>
+			<option value="18">18</option>
+			
+			<option value="19">19</option>
+			<option value="20">20</option>
+			<option value="21">21</option>
+			<option value="22">22</option>
+			<option value="23">23</option>
+			<option value="24">24</option>
+			
+			<option value="25">25</option>
+			<option value="26">26</option>
+			<option value="27">27</option>
+			<option value="28">28</option>
+			<option value="29">29</option>
+			<option value="30">30</option>
+			
+			<option value="31">31</option>
+		</select>
+		
+		<select id="art_request_begin_y" name="begin_date[begin_y]">
+			<option value="2008">2008</option>
+			<option value="2009">2009</option>
+			<option value="2010">2010</option>
+		</select>
+		
+		&nbsp;&nbsp;
+		<select id="art_request_begin_h" name="begin_date[begin_h]">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+		</select>
+		
+		:
+		
+		<select id="art_request_begin_min" name="begin_date[begin_min]">
+			<option value="00">00</option>
+			<option value="05">05</option>
+			<option value="10">10</option>
+			<option value="15">15</option>
+			<option value="20">20</option>
+			<option value="25">25</option>
+			
+			<option value="30">30</option>
+			<option value="35">35</option>
+			<option value="40">40</option>
+			<option value="45">45</option>
+			<option value="50">50</option>
+			<option value="55">55</option>
+		</select>
+		
+		<select id="art_request_begin_am_pm" name="begin_date[begin_am_pm]">
+			<option value="1">AM</option>
+			<option value="2">PM</option>
+		</select>
+	</div>
+
+	
+	<div>To</div>
+	<div>
+		<select id="art_request_end_m" name="end_date[end_m]">
+			<option value="1">January</option>
+			<option value="2">February</option>
+			<option value="3">March</option>
+			<option value="4">April</option>
+			<option value="5">May</option>
+			<option value="6">June</option>
+			<option value="7">July</option>
+			<option value="8">August</option>
+			<option value="9">September</option>
+			<option value="10">October</option>
+			<option value="11">November</option>
+			<option value="12">December</option>
+		</select>
+
+		<select id="art_request_end_d" name="end_date[end_d]">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+			
+			<option value="13">13</option>
+			<option value="14">14</option>
+			<option value="15">15</option>
+			<option value="16">16</option>
+			<option value="17">17</option>
+			<option value="18">18</option>
+			
+			<option value="19">19</option>
+			<option value="20">20</option>
+			<option value="21">21</option>
+			<option value="22">22</option>
+			<option value="23">23</option>
+			<option value="24">24</option>
+			
+			<option value="25">25</option>
+			<option value="26">26</option>
+			<option value="27">27</option>
+			<option value="28">28</option>
+			<option value="29">29</option>
+			<option value="30">30</option>
+			
+			<option value="31">31</option>
+		</select>
+		
+		<select id="art_request_end_y" name="end_date[end_y]">
+			<option value="2008">2008</option>
+			<option value="2009">2009</option>
+			<option value="2010">2010</option>
+		</select>
+
+		&nbsp;&nbsp;
+		<select id="art_request_end_h" name="end_date[end_h]">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			<option value="11">11</option>
+			<option value="12">12</option>
+		</select>
+		
+		:
+		
+		<select id="art_request_end_min" name="end_date[end_min]">
+			<option value="00">00</option>
+			<option value="05">05</option>
+			<option value="10">10</option>
+			<option value="15">15</option>
+			<option value="20">20</option>
+			<option value="25">25</option>
+			
+			<option value="30">30</option>
+			<option value="35">35</option>
+			<option value="40">40</option>
+			<option value="45">45</option>
+			<option value="50">50</option>
+			<option value="55">55</option>
+		</select>
+		
+		<select id="art_request_end_am_pm" name="end_date[end_am_pm]">
+			<option value="1">AM</option>
+			<option value="2">PM</option>
+		</select>
+	</div>
+</div>
+
+<br />
+
+<div id="event_pricing">
+	<strong>Pricing</strong>
+	<table>
+		<tr>
+			<td><div>Member</div></td>
+			<td>&nbsp;&nbsp;<input id="price_member" name="price[member]" size="11" type="text" /></td>
+		</tr>
+		<tr>
+			<td><div>Student</div></td>
+			<td>&nbsp;&nbsp;<input id="price_student" name="price[student]" size="11" type="text" /></td>
+		</tr>
+		<tr>
+			<td><div>Staff</div></td>
+			<td>&nbsp;&nbsp;<input id="price_staff" name="price[staff]" size="11" type="text" /></td>
+		</tr>
+		<tr>
+			<td><div>Public</div></td>
+			<td>&nbsp;&nbsp;<input id="price_public" name="price[public]" size="11" type="text" /></td>
+		</tr>
+	</table>
+</div>
+
+<br />
+
+<input name="commit" type="submit" value="Create" />
+
+</form>
+
+<?php require('subFooter.html'); ?>
+
+

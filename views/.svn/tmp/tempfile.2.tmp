@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title><?php echo $this->pageTitle($page_title); ?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<base href="<?php echo 'http://'. $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) .'/'; ?>" />
+<script language="javascript" type="text/javascript" src="javascript/tiny_mce/tiny_mce.js"></script>
+		<script language="javascript" type="text/javascript">
+		tinyMCE.init({
+			mode : "textareas"
+		});
+		</script>
+<link rel="stylesheet" type="text/css" href="style_sheets/admin.css" />
+</head>
+
+<body>
+<div id="web2"></div>
+<div id="page">
+	<div id="header"><span class="logo">CCL Content Management</span></div>
+	
+	<div id="nav">
+		<p style="text-align: center">
+			<b><a href="admin/">Admin</a></b>
+		</p>
+		
+		<b>Content</b><br/>
+		<ul>
+			<li><a href="admin/newpage">Create new content</a></li>
+			<li><a href="admin/page">Edit content</a></li>
+		</ul>
+		
+		<b>Navigation</b><br/>
+		<ul>
+			<li><a href="admin/navigation">Manage Navigation</a></li>
+			<li><a href="admin/navigationHelp">Navigation Help</a></li>
+		</ul>
+		
+		<b>Permissions</b><br/>
+		<ul>
+			<li><a href="admin/permission">Manage Permissions</a></li>
+		</ul>
+		
+		<br />
+		<b><a href="admin/logout">Logout</a></b>
+		
+	</div>
+
+	<div id="content">

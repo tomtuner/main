@@ -1,0 +1,112 @@
+</div> <!-- end content -->
+			</div>
+			<div id="rightside">
+				<!-- Beging Right Side Widgets -->
+				<div id="contentNews">
+					<div id="tabs">
+						<ul>
+							<li id="tabHeader1" class="activeHeader"><a href="javascript:toggleTab(1,3,0,false)">Events</a></li>
+							<li id="tabHeader2" class="news"><a href="javascript:toggleTab(2,3,0,false)">News</a></li>
+							<li id="tabHeader3" class="links"><a href="javascript:toggleTab(3,3,0,false)">Links</a></li>
+						</ul>
+					  </div>
+					  <div id="tabscontent">
+<<<<<<< .mine
+							<div id="tabContent1" class="tabContent" style="display: block;">								
+								<div>
+								<strong>This week's events highlight...</strong>
+								 <br/><br/>
+								 <ul>
+									<li><strong>9.18.07</strong> - LASA Week Events 7pm, Clark A. Free.</li>
+									<li><strong>9.19.07</strong> - HIP-Hop Beyond Beats &amp; Rhymes 8pm, Golisano Aud. Free.</li>
+									<li><strong>9.20.07</strong>- CAB TNC Series: <i>Lucky Number Sleven</i> 10pm, Ingle Aud. Free.</li>
+									<li><strong>9.21.07</strong> - CAB FNIR: <i>Reggaeton Karaoke</i> 10pm, Ritz. Free.</li>
+			
+								 </ul>
+								 </div>
+=======
+							<div id="tabContent1" class="tabContent" style="display: block;">
+								<div>
+								<strong>This month's events highlight...</strong>
+								 <br/><br/>
+								 <ul>
+		<?php
+			// Implemented to dynamically get events from the promo database and display them on the website
+			global $db;
+			extract(getdate());
+			$now = "{$year}-{$mon}-{$mday} {$hours}:{$minutes}:{$seconds}";
+				
+			$sql = "SELECT * FROM promo.events INNER JOIN (promo.days INNER JOIN promo.locations ON promo.days.id = promo.locations.day_id) ON promo.days.event_id = promo.events.id WHERE promo.days.start_at > '{$now}' ORDER BY promo.days.start_at ASC LIMIT 0,7";
+			
+			$res = $db->query($sql);
+			
+			while ($row =& $res->fetchRow()) {
+				$formattedDate = date("n.j.y",strtotime($row['start_at']));
+				$eventsDate = date("m-j-Y",strtotime($row['start_at']));
+				
+				echo "<li><strong>{$formattedDate}</strong>- <a href=\"https://events.rit.edu/index.cfm?action=date&name=day&value={$eventsDate}\">{$row['name']}</a></li>\n";
+			}
+				
+		?>
+								 </ul>
+								 </div>
+>>>>>>> .r810
+							</div>
+	
+							<div id="tabContent2" class="tabContent" style="display: none;">								
+								<div>															
+								<strong>What's happening in CCL?</strong>
+								 <br/>
+								 <br/>
+								 <ul>
+									<li><strong>8.10.07</strong> - Welcome new CCL Grads!</li>
+									<li><strong>9.07.07</strong> - New CCL website launched</li>
+									<li><strong>9.21.07</strong> - More news goes here</li>
+								 </ul>
+								</div>
+							</div>
+	
+							<div id="tabContent3" class="tabContent" style="display: none;">								
+								<div>																
+								<strong>Check out these quick links!</strong>
+								 <br/><br/>
+								 <ul>
+									<li><a href="http://cab.rit.edu">College Activities Board</a></li>
+									<li><a href="http://www.ntid.rit.edu/current/student_life.php">NTID Student Life</a></li>
+									<li><a href="http://www.rit.edu/~ocasawww/">OCASA</a></li>
+									<li><a href="http://campuslife.rit.edu/leadership/">RLI &amp; CSC</a></li>
+									<li><a href="http://campuslife.rit.edu/thesource/">The Source</a></li>
+									<li><a href="http://www.sg.rit.edu/">Student Government</a></li>								
+									<li><a href="http://www.rit.edu/~311www/facilities_slc.php3">Student Life Center</a></li>
+								 </ul>
+								 </div>
+							</div>
+					</div><!--End of tabscontent-->
+				
+				</div> <!-- end contentNews -->
+				<div id="contentEVR">
+					
+					<div id="evrText">
+						<h1><a href="sau/evr">Plan Your Event</a></h1>
+						<h3>EVR&#8212;Event Registration</h3>
+						<br/>
+						<h4><a href="http://campuslife.rit.edu/evr">Register your event</a> online now!<br/>
+						Not EVR certified? <a href="http://campuslife.rit.edu/evr">Get trained here</a>.</h4>
+					</div>
+				</div>
+				<div id="adTextTop"><a class="adLink specialLink" href="about/FAQ">FAQ<span class="adText">Center for Campus Life</span></a></div>
+				<div id="adTextMiddle"><a class="adLink specialLink" href="about/jobs">APPLY!<span class="adText">CCL Employment</span></a></div>
+				<div id="adTextBottom"><a class="adLink specialLink" href="aim:addbuddy?screenname=EventsatRIT">AIM<span class="adText">Add EventsatRIT</span></a></div>
+				<!--<div id="adTextBlog"><a class="adLink specialLink" href="">BLOGS<span class="adText">Student Views</span></a></div>-->
+<!--<div id="adTextForum"><a class="adLink specialLink" href="">FORUM<span class="adText">Have a Question?</span></a></div>-->
+			</div><!-- end right side -->
+		</div>
+		<div id="rightBottom">&nbsp;</div>
+		<div id="footer" style="float: left;">Rochester Institute of Technology, One Lomb Memorial Drive, Rochester, NY 14623-5603
+			<br/>© Rochester Institute of Technology. All Rights Reserved | <a class="footerLink" href="http://www.rit.edu/disclaimer.html" target="_blank">Disclaimer</a> | <a class="footerLink" href="http://www.rit.edu/copyright.html" target="_blank">Copyright Infringement</a><br/>
+			Questions or concerns? Send us <a class="footerLink" href="http://www.rit.edu/ask/" target="_blank">feedback</a>. Telephone: 585-475-2411</div>
+		<div id="clear" style="display:block; ">&nbsp;</div>
+	</div>
+	&nbsp; &nbsp;
+</div>
+</body></html>

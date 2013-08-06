@@ -1,0 +1,68 @@
+<?php require("subHeader.html") ?>
+<br />
+
+<form>
+<strong>Greek Council Archived Minutes</strong><br />
+<select onchange='window.location=this.value'>
+<option value='fratsorlife/minutes'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $filename['88'] ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/minutes/" . $filename['88'][$i]  . "' >" . $date['88'][$i] . "</option><br />\n";
+	}
+?>	
+</select>
+
+<br/><br/><br/>
+<strong>NPHC Archived Minutes</strong><br />
+<select onchange='window.location=this.value'>
+<option value='fratsorlife/minutes'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $filename['403'] ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/minutes/" . $filename['403'][$i]  . "' >" . $date['403'][$i] . "</option><br />\n";
+	}
+?>
+</select>
+
+<br/><br/><br/>
+<strong>IFC Archived Minutes</strong><br />
+<select onchange='window.location=this.value'>
+<option value='fratsorlife/minutes'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $filename['102'] ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/minutes/" . $filename['102'][$i]  . "' >" . $date['102'][$i] . "</option><br />\n";
+	}
+?>
+</select>
+
+
+<br/><br/><br/>
+<strong>CPC Archived Minutes</strong><br />
+<select onchange='window.location=this.value'>
+<option value='fratsorlife/minutes'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $filename['49'] ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/minutes/" . $filename['49'][$i]  . "' >" . $date['49'][$i] . "</option><br />\n";
+	}
+?>
+</select>
+
+
+<br/><br/><br/>
+<strong>GAMMA Archived Minutes</strong><br />
+<select onchange='window.location=this.value'>
+<option value='fratsorlife/minutes'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $filename['401'] ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/minutes/" . $filename['401'][$i]  . "' >" . $date['401'][$i] . "</option><br />\n";
+	}
+?>
+</select>
+</form>
+<br/><br/><br/><br/><br/><br/><br/>
+<?php require("subFooter.html") ?>
+

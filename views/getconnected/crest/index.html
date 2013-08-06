@@ -1,0 +1,33 @@
+<?php require('header.html'); ?>
+<?php require('getconnected_start.html'); ?>
+
+<h2>Manage Crest</h2>
+<div id="currentCrest">
+<h3>Current Crest</h3>
+<?php 
+//http://campuslife.rit.edu/greek/images/crests/479crest.JPG
+
+// check if a crest is already uploaded
+if (is_file("../../data-dist/greek/images/crests/".$this->organization->getId()."crest.JPG")) 
+{
+ echo "<img src=\"http://campuslife.rit.edu/greek/images/crests/{$this->organization->getId()}crest.JPG\" width=\"169\" height=\"179\"/><br /><a href=\"http://campuslife.rit.edu/greek/images/crests/{$this->organization->getId()}crest.JPG\" target=\"_blank\">Full Size</a>";
+} 
+else 
+{
+ echo "<p>No crest available</p>";
+}
+
+?>
+</div>
+<div id="newcrest">
+<h3>Add/Change Crest</h3>
+<p>
+<strong>Note: </strong> Images must be in JPEG format.
+</p>
+<form action="crest/process" method="post" enctype="multipart/form-data">
+	<input name="c_crest" type="file" /> <input name="submit" type="submit" value="Save" />
+</form>
+</div>
+
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

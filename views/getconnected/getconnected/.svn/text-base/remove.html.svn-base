@@ -1,0 +1,24 @@
+<?php require('header.html'); ?>
+<?php require('getconnected_start.html'); ?>
+
+<p>
+You have requested the removal of <strong><?php echo "{$user->getLastname()}, {$user->getFirstname()}";?></strong> from the fraternity.  Please tell us the reason:
+</p>
+
+<form method="post">
+<select name="reason">
+					<option value="Graduated">Graduated</option>
+					<option value="Transfered">Transfered</option>
+					<option value="Left RIT w/out Graduating">Left RIT w/out Graduating</option>
+					<option value="Co-op">Co-op</option>
+					<option value="Deactivated">Deactivated</option>
+</select>
+<input type="submit" name="removeUser" value="Request Removal" />
+</form>
+
+<p>
+	<strong>Note:</strong>  Removal is not immediate and is subject to review by CCL staff.
+</p>
+
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<!--this is header.html-->
+	<head>
+	<meta name="google-site-verification" content="OKOMA_J-oD-H3Y4hvCeXNLHEAau50CnGiymaixRbXO8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+		
+		<meta name="Author" content="The Center for Campus Life"/><title>RIT - Center for Campus Life</title>
+		<base href="http://localhost/main/" />
+		<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://campuslife.rit.edu/main/rss/"/>
+		<link rel="stylesheet" type="text/css" href="style_sheets/news.css"/>
+		<link rel="shortcut icon" href="images/favicon.gif" type="image/x-icon" />
+		<script type="text/javascript" src="javascript/yui/yahoo/yahoo.js"></script>
+		<script type="text/javascript" src="javascript/yui/event/event.js"></script>
+		<script type="text/javascript" src="javascript/yui/dom/dom.js"></script>
+		<script type="text/javascript" src="javascript/yui/animation/animation.js"></script>
+      <script type="text/javascript" src="javascript/event_ajax.js"></script>
+      <script type="text/javascript" src="javascript/general.js"></script>
+	  <script type="text/javascript" src="javascript/base.js"></script>
+		<script type="text/javascript" src="javascript/findClub.js"></script>
+		<script type="text/javascript" src="javascript/framework/prototype.js"></script>
+		<script language="javascript" type="text/javascript">
+			<!--
+			if( getInternetExplorerVersion() == 6)
+			{
+				document.write("<link rel='stylesheet' type='text/css' href='style_sheets/IE6_base.css'/>\n");
+			}
+			else
+			{
+				document.write("<link rel='stylesheet' type='text/css' media='handheld' href='style_sheets/handheld.css'/>\n");
+				document.write("<link rel='stylesheet' type='text/css' media='screen' href='style_sheets/base.css'/>\n");
+			}
+			-->
+		</script>	
+	</head>
+	<body>
+	<!-- <div id="about">asdas</div> -->
+<div id="page">
+	<div id="pageBack">
+		<div id="nav">
+			<div id="navigation">
+			<!-- Begin Navigation -->
+				<div id="cclLogo"><a href="/main">
+				<img src="images/cclLogo.jpg" alt="RIT Center for Campus Life" class="ccllogo" border="0"/></a></div>
+					<ul class="navigation">
+            <!-- you are here -->
+					<li class="parent">
+					<a href="about/index">About the Center</a>
+						<ul id="about">
+							<li><a href="about/departments">Departments</a></li>
+							<li><a href="about/profstaff">Professional Staff</a></li>
+							<li><a href="about/studentstaff">Student Staff</a></li>
+						</ul>
+					</li>
+					<li class="parent">
+						<a href="clubs/index">Clubs &amp; Organizations</a>
+							<ul id="clubs">
+								<li><a href="clubs/find">Find new  Club</a></li>
+								<li><a href="clubs/reviewboard">Club Review Board</a></li>
+								<li><a href="clubs/mso">Major Student Orgs</a></li>
+								<li><a href="clubs/resources">Resources</a></li>
+								<li><a href="clubs/sginfo" title="SG Info Center">Club Resource Center</a></li>
+								<li><a href="http://campuslife.rit.edu/clubsconnection/">Clubs Connection <br />(club admin site)</a></li>
+								<li><a href="http://campuslife.rit.edu/main/art_request/displayForm">Art Requests</a></li>
+								<!--<li><a href="http://campuslife.rit.edu/main/love_day/displayForm">Love Day  '09<br/>Participation Form</a></li>-->
+								<!--<li><a href="clubs/fair">Club Fair Registration</a></li>-->
+							</ul>
+					<br/></li>
+					<li class="parent">
+						<a href="fratsorlife/index">Fraternity &amp; Sorority Life</a>
+							<ul id="fratsorlife">
+								<li><a href="fratsorlife/fratsorinfo">Learn More</a></li>
+								<li><a href="http://ritgreek.com/chapter-profiles">Greek Chapters</a></li>
+								<li><a href="fratsorlife/gogreek">Go Greek!</a></li>
+								<li><a href="fratsorlife/councils">Governing Councils</a></li>
+								<li><a href="fratsorlife/connection">Greek Connection</a></li>
+								<li><a href="fratsorlife/resources">Resources</a></li>
+							</ul>
+					</li>
+					<li class="parent">
+						<a href="specialevents/index">Special Events</a>
+							<ul id="specialevents">
+								<li><a href="specialevents/pas">Performing Artist Series</a></li>
+								<li><a href="specialevents/css">Cultural Spotlight Series</a></li>
+							</ul>
+					</li>
+					<li class="parent">
+					<a href="sau/index">Student Alumni Union</a>
+						<ul id="sau">
+							<li><a href="sau/services">Services</a></li>
+							<li><a href="sau/descriptions">Room Descriptions</a></li>
+						</ul>
+					</li>
+					<li class="parent">
+					<a href="techcrew/index">Tech Crew</a>
+						<ul id="techcrew">
+							<li><a href="techcrew/services">Services</a></li>
+							<li><a href="techcrew/setups">Room Setups</a></li>
+							<li><a href="techcrew/employment">Employment</a></li>
+						</ul>
+					</li>
+					<li class="parent">
+					<a href="advisor/index">Advisor Information</a>
+						<ul id="advisorinfo">
+							<li><a href="advisor/forms">Forms</a></li>
+							<li><a href="advisor/links">Links</a></li>
+						</ul>
+					</li>
+</ul>
+				
+				<!-- End Navigation -->
+				<!--Club of the day beginning ~solo-->
+					<div id="clubday"><img src="images/club-box5_02.jpg"/><div id="clubdayContent"></div></div><!--End of Club of the day  -->
+			</div>
+		<div id="contactInfo">
+			<div style="padding-left:10px">
+					<strong>Office Hours:</strong><br/>
+					Monday - Friday<br/>
+					8:30 AM to 4:30 PM<br/>
+					(p) 585.475.7058<br/>
+					(f) 585.475.7019<br/><br/>
+					<a class="contactLink" href="http://campuslife.rit.edu/main/about/profstaff"><strong>Staff Directory</strong></a>
+			</div>		
+		</div>
+		<div id="navBottom">&nbsp;<br><br><br>
+		<!--<div> 
+			<a href = "http://campuslife.rit.edu/freezefest/"><img src="images/FreezeFestLogo.jpg" height=164 width=174 alt="FreezeFest" border=0>
+		</div>-->
+		
+		</div>
+	</div>
+		<div id="right">
+			<!-- Begin Right Column-->
+			<div id="header">
+				<a href="http://www.rit.edu/"><img alt="RIT Home" src="images/RITLogo.jpg" border="0"/></a>
+			<!-- Begin Header -->
+				<form id="searchbox_016792319780221422966:zlqjppyxsiy" action="http://google.com/cse">
+					<ul>
+								<li><a href="http://www.rit.edu/">RIT Home</a></li>
+								<li><a href="http://www.rit.edu/Index/">RIT A-Z Site Index</a></li>
+								<li><a href="http://events.rit.edu/">RIT Events Calendar</a></li>
+								<li><a href="http://www.rit.edu/Search/">RIT Search</a></li>
+								
+								<a href="http://www.google.com/cse?cx=016792319780221422966:zlqjppyxsiy&amp;cof=FORID:0">CCL Search</a>						
+									<input type="hidden" name="cx" value="016792319780221422966:zlqjppyxsiy" />
+									<input type="hidden" name="cof" value="FORID:0" />
+									<input name="q" type="text" size="20" id="cclSearchBox" onclick="resetSearchValue()" value="Search CCL Site"/>&nbsp;&nbsp;
+					</ul>
+				</form>
+			<!-- end header -->				
+			</div> 
+			<div id="flashBlog"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="720" height="120">
+					<param name="movie" value="flash/FlashBanner.swf" /> 
+					<param name="quality" value="high" />
+
+					<param name="bgcolor" value="#FFFFFF" />
+					
+					<!--[if !IE]> <-->
+					<object data="flash/FlashBanner.swf" width="720" height="120" type="application/x-shockwave-flash">
+						 <param name="quality" value="high" />
+
+						 <param name="bgcolor" value="#FFFFFF" />
+						 <param name="pluginurl" value="http://www.macromedia.com/go/getflashplayer" />
+					</object>
+					<!--> <![endif]-->	
+			 </object> </div>	
+			<div id="leftside">
+				<div id="contentFlash">
+					<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="400" height="270">
+					<param name="movie" value="flash/test6.swf" /> 
+					<param name="quality" value="high" />
+					<param name="bgcolor" value="#FFFFFF" />
+					
+					<!--[if !IE]> <-->
+					<object data="flash/test6.swf" width="400" height="270" type="application/x-shockwave-flash">
+						 <param name="quality" value="high" />
+						 <param name="bgcolor" value="#FFFFFF" />
+						 <param name="pluginurl" value="http://www.macromedia.com/go/getflashplayer" />
+					</object>
+					<!--> <![endif]-->
+				</object></div>
+				
+				<div id="content">
+					<!-- BEGIN CONTENT -->
+<h2></h2>
+	
+	<h1>Welcome to Center for Campus Life!</h1><br />
+
+<p>
+I am thrilled that you are visiting us on-line, and invite you to take a look through the entire website for important and valuable information.  The Center for Campus Life is here to provide assistance to each of you, as a member of the RIT community, while you seek your own unique way of contributing to or connecting with life in the extended activities' and events' "classroom"; the classroom beyond your academic environments, and designed to support and enhance your student experience.
+</p>
+
+<p>
+Through programming design, implementation, and support, our efforts aim to provide opportunities for students to connect with other students, faculty and staff. The programs and related services we coordinate meet a variety of broad and diverse needs.  From helping students to create their own club to sponsoring student led events, from inviting and informing the campus about the active social environment and fraternity and sorority life at RIT to encouraging the pursuit of hobbies related to your own personal interests, the Center seeks to provide something for everyone!
+</p>
+
+<p>
+Staff from the Center also manage and coordinate services in our campus' Student Alumni Union.  The SAU is host to a variety of student and staff departments.  Each of these offices is central to creating and maintaining a diverse and healthy campus community.  Feel free to visit the Club Resource Center - located in the RITreat at the SAU, and the SAU Information Desk - in the first floor lobby of the SAU, to learn more about the specific departments and offices in the building, and about how you can connect with events, organizations, and staff members!
+</p>
+
+<p>
+My hope is that as you tour this website, you will learn more about the exciting and dynamic community RIT provides for students wishing to be involved at any and all levels!  And, that you will see the enthusiasm and commitment our Campus Life staff has in their ultimate goal of supporting your success.  If you have any questions, or would like to provide feedback about additions and updates to the site, please do not hesitate to contact me.  Again, welcome, and I am so grateful for your visit!
+</p><br /><br />
+
+<p>
+Sincerely,<br /><br />
+Karey T. Pine,<br />
+Director, Center for Campus Life<br />
+ktprla@rit.edu 
+
+</p>
+	
+</div> <!-- end content -->
+			</div>
+			<div id="rightside">
+				<!-- Beging Right Side Widgets -->
+				<div id="contentNews">
+					<div id="tabs">
+						<!--
+						<ul>
+							<li id="tabHeader1" class="activeHeader"><a href="javascript:toggleTab(1,3,0,false)">Events</a></li>
+							<li id="tabHeader2" class="news"><a href="javascript:toggleTab(2,3,0,false)"></a></li>
+							<li id="tabHeader3" class="links"><a href="javascript:toggleTab(3,3,0,false)">Links</a></li>
+						</ul>
+						-->
+					  </div>
+					  <div id="tabscontent">
+							<div id="tabContent1" class="tabContent" style="display: block;">
+								<div>
+								<br /><br />
+								<strong>Event highlights...</strong>
+								 <br/><br/>
+								 <ul id="eventList">
+																<script type="text/javascript">
+									<!--
+										// Nifty ajax loader for the most recent 7 events 
+										getAjaxPage("index/loadevent","eventList");
+									-->
+								</script>
+								 </ul>
+								 </div>
+							</div>
+	
+						<!--	<div id="tabContent2" class="tabContent" style="display: none;">								
+								<div>															
+								<strong>What's happening in CCL?</strong>
+								 <br/>
+								 <br/>
+								 <ul>
+									<li><strong>8.10.07</strong> - Welcome new CCL Grads!</li>
+									<li><strong>9.07.07</strong> - New CCL website launched</li>
+									<li><strong>9.21.07</strong> - More news goes here</li>
+								 </ul>
+								</div>
+							</div>-->
+	
+							<div id="tabContent3" class="tabContent" style="display: none;">								
+								<div>																
+								<strong>Check out these quick links!</strong>
+								 <br/><br/>
+								 <ul>
+									<li><a href="http://cab.rit.edu">College Activities Board</a></li>
+									<li><a href="http://www.ntid.rit.edu/current/student_life.php">NTID Student Life</a></li>
+									<li><a href="http://www.rit.edu/~ocasawww/">OCASA</a></li>
+									<li><a href="http://campuslife.rit.edu/leadership/">RLI &amp; CSC</a></li>
+									<li><a href="http://campuslife.rit.edu/thesource/">The Source</a></li>
+									<li><a href="http://www.sg.rit.edu/">Student Government</a></li>								
+									<li><a href="http://www.rit.edu/~311www/facilities_slc.php3">Student Life Center</a></li>
+								 </ul>
+								 </div>
+							</div>
+					</div><!--End of tabscontent-->
+				
+				</div> <!-- end contentNews -->
+				<div id="contentEVR">
+					
+					<div id="evrText">
+						<h1><a href="sau/evr"><u>Plan Your Event</u></a></h1>
+						<h3>EVR&#8212;Event Registration</h3>
+						<br/>
+						<h4><a href="http://campuslife.rit.edu/evr"><u>Register your event</u></a> online now!<br/>
+						Not EVR certified? <a href="http://campuslife.rit.edu/evr"><u>Get trained here</u></a>.</h4>
+					</div>
+				</div>
+				
+				
+				
+				<div id="adTextTop"><a class="adLink specialLink" href="about/FAQ">FAQ<span class="adText">Center for Campus Life</span></a></div>
+				<div id="adTextMiddle"><a class="adLink specialLink" href="about/jobs">APPLY!<span class="adText">CCL Employment</span></a></div>
+				<div id="adTextBottom"><a class="adLink specialLink" href="aim:addbuddy?screenname=EventsatRIT">AIM<span class="adText">Add EventsatRIT</span></a></div>
+				
+				<div id="adStaffArtist"><a class="adLink specialLink" href="http://campuslife.rit.edu/art_request/">Staff Artist<span class="adText">Staff Artist Request</span></a></div>
+				
+				<div id="adFinanceCertification"><a class="adLink specialLink" href="http://campuslife.rit.edu/cfc/cfc.swf">Finance Certification<br /><span class="adText">Become financially certified</span></a></div>
+				<div id="adRLI"><a class="adLink specialLink" href="http://campuslife.rit.edu/leadership/index.php">RIT Leadership Institute<br /><span class="adText">Become A Leader</span></a></div>
+				
+				
+				
+				<!--<div id="adTextBlog"><a class="adLink specialLink" href="">BLOGS<span class="adText">Student Views</span></a></div>-->
+<!--<div id="adTextForum"><a class="adLink specialLink" href="">FORUM<span class="adText">Have a Question?</span></a></div>-->
+			</div><!-- end right side -->
+		</div>
+		<div id="rightBottom">&nbsp;</div>
+		<div id="footer" style="float: left;">Rochester Institute of Technology, One Lomb Memorial Drive, Rochester, NY 14623-5603
+			<br/>© Rochester Institute of Technology. All Rights Reserved | <a class="footerLink" href="http://www.rit.edu/disclaimer.html" target="_blank">Disclaimer</a> | <a class="footerLink" href="http://www.rit.edu/copyright.html" target="_blank">Copyright Infringement</a><br/>
+			Questions or concerns? Send us <a class="footerLink" href="http://www.rit.edu/ask/" target="_blank">feedback</a>. Telephone: 585-475-2411</div>
+		<div id="clear" style="display:block; ">&nbsp;</div>
+	</div>
+	&nbsp; &nbsp;
+</div>
+</body></html>

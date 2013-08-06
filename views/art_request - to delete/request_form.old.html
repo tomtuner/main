@@ -1,0 +1,888 @@
+<?php 
+	if (isset ($_GET['banner_requested']))
+	{
+		$banner_requested = $_GET['banner_requested'];
+	} else
+	{
+		$banner_requested = "";
+	}
+	if (isset ($_GET['flyer_requested']))
+	{
+		$flyer_requested = $_GET['flyer_requested'];
+	} else
+	{
+		$flyer_requested = "";
+	}
+	if (isset ($_GET['LCD_requested']))
+	{
+		$LCD_requested = $_GET['LCD_requested'];
+	} else
+	{
+		$LCD_requested = "";
+	}
+	if (isset ($_GET['other_requested']))
+	{
+		$other_requested = $_GET['other_requested'];
+	} else
+	{
+		$other_requested = "";
+	}
+	if (isset ($_GET['banner_width_length']))
+	{
+		$banner_width_length = $_GET['banner_width_length'];
+	} else
+	{
+		$banner_width_length = "";
+	}
+	if (isset ($_GET['flyer_width_length']))
+	{
+		$flyer_width_length = $_GET['flyer_width_length'];
+	} else
+	{
+		$flyer_width_length = "";
+	}
+	if (isset ($_GET['uploaded_file1']))
+	{
+		$addMore1 = $_GET['uploaded_file1'];
+	} else
+	{
+		$addMore1 = "";
+	}
+	if (isset ($_GET['uploaded_file2']))
+	{
+		$addMore2 = $_GET['uploaded_file2'];
+	} else
+	{
+		$addMore2 = "";
+	}
+	
+	require('artHeader.html'); ?>
+
+<?php
+	if ( isset ( $_GET['s'] ) )
+	{
+		$holder = $_GET['s'];
+		$trip = $_GET['trip'];
+		
+		switch ( $holder )
+		{
+			case 1:
+				echo ( "<div id = 'art_error'> Please fill values in all the following fields on the page.</div> <br />" );
+				if($_GET['requester_name']=="")
+					echo "<div class = 'indiv_error'>Please enter Requester's name.</div><br />";
+				if($_GET['requester_email']=="")
+					echo "<div class = 'indiv_error'>Please enter Requester's email.</div><br />";
+				if($_GET['requester_phone']=="")
+					echo "<div class = 'indiv_error'>Please enter Requester's Phone.</div><br />";
+				if($_GET['event_name']=="")
+					echo "<div class = 'indiv_error'>Please enter Event's name.</div><br />";
+				if($_GET['sponsor_name']=="")
+					echo "<div class = 'indiv_error'>Please enter Sponsor's name.</div><br />";
+				if(isset($_GET['other_requested']) && $_GET['description']=="")
+					echo "<div class = 'indiv_error'>Please enter description.</div><br />";
+				if($_GET['event_description']=="")
+					echo "<div class = 'indiv_error'>Please enter Event description.</div><br />";
+				if($_GET['file_description']=="")
+					echo "<div class = 'indiv_error'>Please enter File description.</div><br />";
+				if($_GET['member']=="")
+					echo "<div class = 'indiv_error'>Please enter Member's price.</div><br />";
+				if($_GET['student']=="")
+					echo "<div class = 'indiv_error'>Please enter Student's price.</div><br />";
+				if($_GET['staff']=="")
+					echo "<div class = 'indiv_error'>Please enter Staff's price.</div><br />";
+				if($_GET['public']=="")
+					echo "<div class = 'indiv_error'>Please enter price for public.</div><br />";
+				break;
+			case 2:
+				echo ( "<div> The inputted end date for the event is before the beginning date.  Please input the correct date. </div> <br />" );
+				break;
+			case 3:
+				echo ( "<div> The uploaded file is too large.  Use a smaller file or compress it. </div> <br />" );
+				break;
+			case 4:
+				echo ( "<div> The uploaded file's format is not supported. Please use JPG, JPEG, GIF, PNG, AI, PSD, TXT PDF, ZIP or 7Z. </div> <br />" );
+				break;
+		}
+		$requester_name = $_GET['requester_name'];
+		$requester_email = $_GET['requester_email'];
+		$requester_phone = $_GET['requester_phone'];
+		$due_on1i = $_GET['due_on(1i)'];
+		$due_on2i = $_GET['due_on(2i)'];
+		$due_on3i = $_GET['due_on(3i)'];
+		$banner_width = $_GET['banner_width'];
+		$banner_length = $_GET['banner_length'];
+
+		//Lobby = SAU Lobby = lobby in db
+		//Commons = Grace Watson Lobby = gw_hall in db
+		//Centre = Student Developement Centre = dining_commons in db 
+		if (isset ($_GET['lobby']))
+		{
+			$lobby = $_GET['lobby'];
+		} else
+		{
+			$lobby = "";
+		}
+		if (isset ($_GET['commons']))
+		{
+			$commons = $_GET['commons'];
+		} else
+		{
+			$commons = "";
+		}
+		if (isset ($_GET['centre']))
+		{
+			$centre = $_GET['centre'];
+		} else
+		{
+			$centre = "";
+		}
+
+		$number = $_GET['number'];
+		$flyer_width = $_GET['flyer_width'];
+		$flyer_length = $_GET['flyer_length'];
+		if (isset ($_GET['color']))
+		{
+			$color = $_GET['color'];
+		} else
+		{
+			$color = "";
+		}
+		$description = $_GET['description'];
+		$event_name = $_GET['event_name'];
+		$event_information = $_GET['event_information'];
+		$category_id = $_GET['category_id'];
+		$sponsor_category = $_GET['sponsor_category'];
+		$sponsor_name = $_GET['sponsor_name'];
+		$event_description = $_GET['event_description'];
+		$file_description = $_GET['file_description'];
+		$begin_m = $_GET['begin_m'];
+		$begin_d = $_GET['begin_d'];
+		$begin_y = $_GET['begin_y'];
+		$begin_h = $_GET['begin_h'];
+		$begin_min = $_GET['begin_min'];
+		$begin_am_pm = $_GET['begin_am_pm'];
+		$end_m = $_GET['end_m'];
+		$end_d = $_GET['end_d'];
+		$end_y = $_GET['end_y'];
+		$end_h = $_GET['end_h'];
+		$end_min = $_GET['end_min'];
+		$end_am_pm = $_GET['end_am_pm'];
+		$member = $_GET['member'];
+		$student = $_GET['student'];
+		$staff = $_GET['staff'];
+		$public = $_GET['public'];
+
+	} else
+	{
+		// empty values if it has not been sent back by the controller
+		$requester_name = $requester_email = $requester_phone = $due_on1i = $due_on2i = $due_on3i = $banner_width_length = "";
+		$banner_width = $banner_length = $number = $flyer_width_length = $flyer_width = $flyer_length = $description = "";
+		$event_name = $event_information = $category_id = $sponsor_category = $sponsor_name = $begin_m = $color = $lobby = $commons = $centre = "";
+		$begin_d = $begin_y = $begin_h = $begin_min = 	$begin_am_pm = $end_m = $end_d = $end_y = $end_h = $end_min = "";
+		$end_am_pm = $member = $student = $staff = $public = $banner_requested = $flyer_requested = $other_requested = "";
+		$event_description = "Please type a description of your event here, including any co-sponsors.";
+		$file_description = "Please type a short description of what this file contains. ";
+
+	}
+	
+	//set months array
+	$months = array(1 => 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+	// set AM or PM array
+	$AMPM_array = array(1 => 'AM', 'PM');
+	
+	//set category array
+	$cat_array = array(1 => 'Athletic', 'Banquet', 'BBQ/Picnic', 'Charity', 'Comedy', 'Community Service', 'Competition', 'Concert', 'Conference', 'Cultural', 'Dance/DJ Party', 'Dinner', 'Educational', 'Fair', 'Forum', 'Fundraiser', 'Game (non athletic)', 'Informational', 'Lecture', 'Meeting', 'Movie', 'Party', 'Presentation', 'Recruitment', 'Social', 'Speaker', 'Travel', 'Performance', 'Leadership', 'Other');
+	
+	$sponsor_array = array(1 => 'SG Recognized Club', 'Major Student Organization', 'Greek Organization', 'Other Organization', 'Special Interest', 'Honors Fraternity', 'Non SG Club', 'Department', 'Greek Councils');
+
+?>
+
+<h1>New Request</h1>
+<form enctype="multipart/form-data" action="art_request/databaseSubmit" method="POST">
+
+<div id="jsWarning">
+	You do not have JavaScript turned on.  You will be able to submit an Staff Artist Art Request but you will lose some functionality.  As a result we suggest that you enable JavaScript for this process.
+</div>
+
+<br />
+
+<div id="requestor_info">
+	<strong>Requester</strong>
+	<br />
+	<table>	
+		<tr>
+			<td> <div>Name</div> </td>
+			<td> <input id="art_request_requester_name" name="art_request[requester_name]" size="30" type="text" value="<?php echo ($requester_name);?>"/> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>E-mail</div> </td>
+			<td> <input id="art_request_requester_email" name="art_request[requester_email]" size="30" type="text"  value="<?php echo ($requester_email);?>"/> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>Phone</div> </td>
+			<td> <input id="art_request_requester_phone" name="art_request[requester_phone]" size="30" type="text"  value="<?php echo ($requester_phone);?>"/> </td>
+		</tr>
+	</table>
+	<br />
+</div>
+
+<div id="date_request">
+	<strong>Due Date</strong>
+	<br />
+	<select id="art_request_due_on_2i" name="art_request[due_on(2i)]">
+	<?php
+		for ( $i = 1; $i <= 12; $i += 1) { 
+			if ( $i == $due_on2i)
+			{
+			echo "<option value=\"" . $i . "\" selected=\"selected\">" . $months[$i] . "</option>";
+			}
+			else
+			{
+			echo "<option value=\"" . $i . "\">" . $months[$i] . "</option>";
+			}
+		}
+	?>
+	</select>
+
+	<select id="art_request_due_on_3i" name="art_request[due_on(3i)]" value="<?php echo ($requester_name);?>">
+	<?php
+		for ( $i = 1; $i <= 31; $i += 1) { 
+			if ( $i == $due_on3i)
+			{
+			echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+			}
+			else
+			{
+			echo "<option value=\"" . $i . "\">" . $i . "</option>";
+			}
+		}
+	?>
+	</select>
+	
+	<select id="art_request_due_on_1i" name="art_request[due_on(1i)]" value="<?php echo ($requester_name);?>">
+	<?php
+		for ( $i = 2009; $i <= 2011; $i += 1) { 
+			if ( $i == $due_on1i)
+			{
+			echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+			}
+			else
+			{
+			echo "<option value=\"" . $i . "\">" . $i . "</option>";
+			}
+		}
+	?>
+	</select>
+</div>
+	
+<br />
+	
+<div id="media_request">
+	<strong>Requests</strong>
+	<br />
+	<div>
+	<?php
+		if ($banner_requested == '1')
+		{
+	?>
+	<input id="banner_request" name="banner_requested" onclick="toggleVisible('banner_request_info')" type="checkbox" checked value="1" />
+	<?php
+		} else
+		{
+	?>
+	<input id="banner_request" name="banner_requested" onclick="toggleVisible('banner_request_info')" type="checkbox" value="1" />
+	<?php
+	}
+	?>
+	Banner request
+	</div>
+	<div>
+	<?php
+		if ($flyer_requested == '1')
+		{
+	?>
+	<input id="flyer_request" name="flyer_requested" onclick="toggleVisible('flyer_request_info')" type="checkbox" checked value="1" />
+	<?php
+		} else
+		{
+	?>
+	<input id="flyer_request" name="flyer_requested" onclick="toggleVisible('flyer_request_info')" type="checkbox" value="1" />
+	<?php
+	}
+	?>
+	Flyer request</div>
+	<div>
+	<?php
+		if ($LCD_requested == '1')
+		{
+	?>
+	<input id="LCD_request" name="LCD_requested" onclick="toggleVisible('LCD_request_info')" type="checkbox" checked value="1" />
+	<?php
+		} else
+		{
+	?>
+	<input id="LCD_request" name="LCD_requested" onclick="toggleVisible('LCD_request_info')" type="checkbox" value="1" />
+	<?php
+	}
+	?>
+	LCD Screen request
+	</div>
+	<div>
+	<?php
+		if ($other_requested == '1')
+		{
+	?>
+	<input id="other_request" name="other_requested" onclick="toggleVisible('other_request_info')" type="checkbox" checked value="1" />
+	<?php
+		} else
+		{
+	?>
+	<input id="other_request" name="other_requested" onclick="toggleVisible('other_request_info')" type="checkbox" value="1" />
+	<?php
+	}
+	?>
+	Other request</div>		
+</div>
+
+<p>
+	<br />Please fill out all fields which pertain to your request.<br />&nbsp 
+</p>
+
+<div id="banner_request_info">
+	<strong>Banner Request</strong>
+	<div>Size</div>
+	<div>
+		<select id="banner_request_width_length" name="banner_request[banner_width_length]" onchange="conditionalToggle('banner_request_other_size', this.value, 'Other' )">
+			<option value="3.0x6.0">3' x 6'</option>
+			<?php
+			if ($banner_width_length == 'Other')
+			{
+			?>
+			<option value="Other" selected="selected">Other</option>
+			<?php
+			} else
+			{
+			?>
+			<option value="Other">Other</option>
+			<?php
+			}
+			?>
+		</select>
+
+		<div id="banner_request_other_size">
+			Please state your custom size - 
+			<input id="banner_request_width" name="banner_request[banner_width]" size="2" type="text" value="0"/>' &times; <input id="banner_request_length" name="banner_request[banner_length]" size="2" type="text" value="0" />'
+		</div>
+	</div>
+	
+	
+	
+	<div>Location</div>
+	<div>
+	<?php
+	if ($commons == 'on')
+	{
+	?>
+	<input class="banner_request_rooms" id="banner_request_room_ids_14" name="banner_request[room_ids][2]" type="checkbox" checked /> 
+	<?php
+	} else
+	{
+	?>
+	<input class="banner_request_rooms" id="banner_request_room_ids_14" name="banner_request[room_ids][2]" type="checkbox"/> 
+	<?php
+	}
+	?>
+	Grace Watson Lobby
+	<?php
+	if ($centre == 'on')
+	{
+	?>
+	<input class="banner_request_rooms" id="banner_request_room_ids_15" name="banner_request[room_ids][1]" type="checkbox" checked /> 
+	<?php
+	} else
+	{
+	?>
+	<input class="banner_request_rooms" id="banner_request_room_ids_15" name="banner_request[room_ids][1]" type="checkbox"/> 
+	<?php
+	}
+	?>
+	Student Development Center
+	<?php
+	if ($lobby == 'on')
+	{
+	?>
+		<input class="banner_request_rooms" id="banner_request_room_ids_11" name="banner_request[room_ids][0]" type="checkbox" checked />
+	<?php
+	} else
+	{
+	?>
+	<input class="banner_request_rooms" id="banner_request_room_ids_11" name="banner_request[room_ids][0]" type="checkbox"/>
+	<?php
+	}
+	?>
+	SAU Lobby
+
+	</div>
+	
+	
+
+	<div>Number of Banners </div>
+	<div>
+	<select id="banner_request_number" name="banner_request[number]">
+	<?php
+		for ( $i = 1; $i <= 3; $i += 1) { 
+			if ( $i == $number)
+			{
+			echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+			}
+			else
+			{
+			echo "<option value=\"" . $i . "\">" . $i . "</option>";
+			}
+		}
+	?>
+	</select>
+	</div>
+	
+	<br />
+	
+</div>
+
+<div id="flyer_request_info">
+
+	<strong>Flyer Request</strong>
+	<div>
+	<?php
+		if ($color == 'true')
+		{ ?>
+			<input id="flyer_request_color_true" name="flyer_request[color]" type="radio" value="true" checked /> Color
+			<input id="flyer_request_color_false" name="flyer_request[color]" type="radio" value="false" /> Black &amp; White
+		<?php
+		} elseif ($color == 'false')
+		{
+		?>
+			<input id="flyer_request_color_true" name="flyer_request[color]" type="radio" value="true" /> Color
+			<input id="flyer_request_color_false" name="flyer_request[color]" type="radio" value="false" checked /> Black &amp; White
+		<?php
+		} else
+		{
+		?>
+			<input id="flyer_request_color_true" name="flyer_request[color]" type="radio" value="true" /> Color
+			<input id="flyer_request_color_false" name="flyer_request[color]" type="radio" value="false" /> Black &amp; White
+		<?php
+		}
+		?>
+	</div>	
+	
+	<div>Size</div>
+	<div>
+		<select id="flyer_request_width_length" name="flyer_request[flyer_width_length]" onchange="conditionalToggle('flyer_request_other_size', this.value, 3)">
+			<option value="1">8.5&quot; x 11&quot;</option>
+			<?php
+			if ($flyer_width_length == '2')
+			{
+			?>
+			<option value="2" selected="selected">11&quot; x 17&quot;</option>
+			<option value="3">Other</option>
+			<?php
+			} else if ($flyer_width_length == '3')
+			{
+			?>
+			<option value="2">11&quot; x 17&quot;</option>
+			<option value="3" selected="selected">Other</option>
+			<?php
+			} else
+			{
+			?>
+			<option value="2">11&quot; x 17&quot;</option>
+			<option value="3">Other</option>
+			<?php
+			}
+			?>
+			
+		</select>
+	</div>
+
+	<div id="flyer_request_other_size">
+		Please state your custom size - 
+		<input id="flyer_request_width" name="flyer_request[flyer_width]" size="2" type="text" />" &times; <input id="flyer_request_length" name="flyer_request[flyer_length]" size="2" type="text" />"
+	</div>
+	
+	<br />
+	
+</div>
+
+
+
+<div id="other_request_info">
+
+	<strong>Other Request</strong>
+	<div>
+		<textarea cols="40" id="other_request_description" name="other_request[description]" rows="20"><?php echo ($description);?></textarea>
+	</div>
+	
+	<br />
+	
+</div>
+
+
+
+<div id="event_info">
+
+	<strong>Event Information</strong>
+
+	<div>
+		
+		<div>Event name</div>
+		<div>
+			<input id="event_name" name="event[event_name]" size="30" type="text" value="<?php echo ($event_name);?>"/>
+		</div>
+
+		<div>Event Location</div>
+		<div>
+			<input id="event_information" name="event[event_information]" size="30" type="text" value="<?php echo ($event_information);?>"/>
+		</div>
+
+
+		<div>Category</div>
+		
+		<div>
+		<select id="event_category_id" name="event[category_id]">
+		<?php
+			for ( $i = 1; $i <= 30; $i += 1) { 
+				if ( $i == $category_id)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $cat_array[$i] . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $cat_array[$i] . "</option>";
+				}
+			}
+		?>
+		</select>
+		</div>
+
+		<div>Event sponsor</div>
+
+		<select id="organization_category_id" name="event[sponsor_category]">
+		<?php
+			for ( $i = 1; $i <= 9; $i += 1) { 
+				if ( $i == $sponsor_category)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $sponsor_array[$i] . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $sponsor_array[$i] . "</option>";
+				}
+			}
+		?>
+		</select>
+
+		<div>Sponsor's name</div>
+
+		<input type="text" name="event[sponsor_name]" value="<?php echo ($requester_name);?>"></input>
+
+		<div> Event description </div>
+			<textarea cols="40" rows="20" id="event_description" name="event[event_description]"><?php echo ($event_description);?></textarea>
+		</div>
+		
+		<br/>
+		<strong> File Uploads </strong>
+		<br/>
+		<input type="Button" name="uploadMore" value="Add More" id="addFiles" onclick="addMoreFiles()" />
+		<div>
+			<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+			Choose a file to upload: <input id="sent_file" name="uploaded_file" type="file" /><br />
+		</div>
+		<div id="AreaAddMore">
+		
+		</div>
+		<!---
+		<div>
+			<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+			Choose a file to upload: <input id="sent_file1" name="uploaded_file1" type="file" /><br />
+		</div>
+		<div>
+			<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+			Choose a file to upload: <input id="sent_file2" name="uploaded_file2" type="file" /><br />
+		</div>
+		-->
+		<div>All files must be 2MB or smaller.</div>
+		<br/>
+		<div>
+			File Description
+		</div>
+			<textarea cols="40" rows="5" id="file_description" name="file[file_description]"><?php echo ($file_description);?></textarea>
+			
+</div>
+
+<br />
+
+<div id="event_dates">
+	<strong>Dates</strong>
+	<div>From</div>
+	<div>
+		<select id="art_request_begin_m" name="begin_date[begin_m]">
+		<?php
+			for ( $i = 1; $i <= 12; $i += 1) { 
+				if ( $i == $begin_m)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $months[$i] . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $months[$i] . "</option>";
+				}
+			}
+		?>
+		</select>
+		
+		<select id="art_request_begin_d" name="begin_date[begin_d]">
+		<?php
+			for ( $i = 1; $i <= 31; $i += 1) { 
+				if ( $i == $begin_d)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $i . "</option>";
+				}
+			}
+		?>
+		</select>
+		
+		<select id="art_request_begin_y" name="begin_date[begin_y]">
+		<?php
+			for ( $i = 2009; $i <= 2011; $i += 1) { 
+				if ( $i == $begin_y)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $i . "</option>";
+				}
+			}
+		?>
+		</select>
+		
+		&nbsp;&nbsp;
+		<select id="art_request_begin_h" name="begin_date[begin_h]">
+		<?php
+			for ( $i = 1; $i <= 12; $i += 1) { 
+				if ( $i == $begin_h)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $i . "</option>";
+				}
+			}
+		?>
+		</select>
+		
+		:
+		
+		<select id="art_request_begin_min" name="begin_date[begin_min]">
+		<?php
+			for ( $i = 0; $i <= 55; $i += 5) { 
+				if ( $i == $begin_min)
+				{
+					if ( $i < 10 ) {
+						echo "<option value=\"0" . $i . "\" selected=\"selected\">0" . $i . "</option>";
+					} else {
+						echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+					}
+				}
+				else
+				{
+					if ( $i < 10 ) {
+						echo "<option value=\"0" . $i . "\">0" . $i . "</option>";
+					} else {
+						echo "<option value=\"" . $i . "\">" . $i . "</option>";
+					}
+				}
+			}
+		?>
+		</select>
+		
+		<select id="art_request_begin_am_pm" name="begin_date[begin_am_pm]">
+		<?php
+			for ( $i = 1; $i <= 2; $i += 1) { 
+				if ( $i == $begin_am_pm)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $AMPM_array[$i] . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $AMPM_array[$i] . "</option>";
+				}
+			}
+		?>
+		</select>
+	</div>
+
+	
+	<div>To</div>
+	<div>
+		<select id="art_request_end_m" name="end_date[end_m]">
+		<?php
+			for ( $i = 1; $i <= 12; $i += 1) { 
+				if ( $i == $end_m)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $months[$i] . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $months[$i] . "</option>";
+				}
+			}
+		?>
+		</select>
+
+		<select id="art_request_end_d" name="end_date[end_d]">
+		<?php
+			for ( $i = 1; $i <= 31; $i += 1) { 
+				if ( $i == $end_d)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $i . "</option>";
+				}
+			}
+		?>
+		</select>
+		
+		<select id="art_request_end_y" name="end_date[end_y]">
+		<?php
+			for ( $i = 2009; $i <= 2011; $i += 1) { 
+				if ( $i == $end_y)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $i . "</option>";
+				}
+			}
+		?>
+
+		</select>
+
+		&nbsp;&nbsp;
+		<select id="art_request_end_h" name="end_date[end_h]">
+		<?php
+			for ( $i = 1; $i <= 12; $i += 1) { 
+				if ( $i == $end_h)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $i . "</option>";
+				}
+			}
+		?>
+		</select>
+		
+		:
+		
+		<select id="art_request_end_min" name="end_date[end_min]">
+		<?php
+			for ( $i = 0; $i <= 55; $i += 5) { 
+				if ( $i == $end_min)
+				{
+					if ( $i < 10 ) {
+						echo "<option value=\"0" . $i . "\" selected=\"selected\">0" . $i . "</option>";
+					} else {
+						echo "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>";
+					}
+				}
+				else
+				{
+					if ( $i < 10 ) {
+						echo "<option value=\"0" . $i . "\">0" . $i . "</option>";
+					} else {
+						echo "<option value=\"" . $i . "\">" . $i . "</option>";
+					}
+				}
+			}
+		?>
+		</select>
+		
+		<select id="art_request_end_am_pm" name="end_date[end_am_pm]">
+		<?php
+			for ( $i = 1; $i <= 2; $i += 1) { 
+				if ( $i == $end_am_pm)
+				{
+				echo "<option value=\"" . $i . "\" selected=\"selected\">" . $AMPM_array[$i] . "</option>";
+				}
+				else
+				{
+				echo "<option value=\"" . $i . "\">" . $AMPM_array[$i] . "</option>";
+				}
+			}
+		?>
+		</select>
+	</div>
+</div>
+
+<br />
+
+<div id="event_pricing">
+	<strong>Pricing</strong>
+	<table>
+		<tr><!--
+			<td><div>Member</div></td>
+			<td>&nbsp;&nbsp;<input id="price_member" name="price[member]" size="11" type="text" value="<?php echo ($member);?>" /></td>
+		</tr>
+		<tr>
+			<td><div>Student</div></td>
+			<td>&nbsp;&nbsp;<input id="price_student" name="price[student]" size="11" type="text" value="<?php echo ($student);?>" /></td>
+		</tr>
+		<tr>
+			<td><div>Staff</div></td>
+			<td>&nbsp;&nbsp;<input id="price_staff" name="price[staff]" size="11" type="text" value="<?php echo ($staff);?>" /></td>
+		</tr>
+		<tr>
+			<td><div>Public</div></td>
+			<td>&nbsp;&nbsp;<input id="price_public" name="price[public]" size="11" type="text" value="<?php echo ($public);?>" /></td>-->
+			<td><div>Member</div></td>
+			<td>&nbsp;&nbsp;<input id="price_member" name="price[member]" size="11" type="text" value="0" /></td>
+		</tr>
+		<tr>
+			<td><div>Student</div></td>
+			<td>&nbsp;&nbsp;<input id="price_student" name="price[student]" size="11" type="text" value="0" /></td>
+		</tr>
+		<tr>
+			<td><div>Staff</div></td>
+			<td>&nbsp;&nbsp;<input id="price_staff" name="price[staff]" size="11" type="text" value="0" /></td>
+		</tr>
+		<tr>
+			<td><div>Public</div></td>
+			<td>&nbsp;&nbsp;<input id="price_public" name="price[public]" size="11" type="text" value="0" /></td>
+		</tr>
+	</table>
+</div>
+
+<br />
+<table width="100%">
+	<tr>
+		<td><input name="commit" type="submit" value="Submit" /></td>
+		<td align="right"><div><a href="art_request/logout">Log Out</a></div></td>
+	</tr>
+</table>
+
+</form>
+
+<?php require('subFooter.html'); ?>
+
+

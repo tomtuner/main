@@ -1,0 +1,63 @@
+<ul class="navigation">
+            <!-- you are here -->
+					<li class="parent">
+					<a href="about/index">About the Center</a>
+						<ul id="about">
+							<li><a href="about/departments">Departments</a></li>
+							<li><a href="about/profstaff">Professional Staff</a></li>
+							<li><a href="about/studentstaff">Student Staff</a></li>
+						</ul>
+					</li>
+					<li class="parent">
+						<a href="clubs/index">Clubs &amp; Organizations</a>
+							<ul id="clubs">
+								<li><a href="clubs/find">Find a Club</a></li>
+								<li><a href="clubs/reviewboard">Club Review Board</a></li>
+								<li><a href="clubs/mso">Major Student Org's</a></li>
+								<li><a href="clubs/resources">Resources</a></li>
+								<li><a href="http://campuslife.rit.edu/clubsconnection/">Clubs Connection <br />(club admin site)</a></li>
+								<li><a href="clubs/fair">Club Fair Registration</a></li>
+							</ul>
+					</li>
+					<li class="parent">
+						<a href="fratsorlife/index">Fraternity &amp; Sorority Life</a>
+							<ul id="fratsorlife">
+								<li><a href="fratsorlife/fratsorinfo">Learn More</a></li>
+								<li><a href="fratsorlife/chapters">Greek Chapters</a></li>
+								<li><a href="fratsorlife/gogreek">Go Greek!</a></li>
+								<li><a href="fratsorlife/councils">Governing Councils</a></li>
+								<li><a href="fratsorlife/connection">Greek Connection</a></li>
+								<li><a href="fratsorlife/resources">Resources</a></li>
+							</ul>
+					</li>
+					<li class="parent">
+						<a href="specialevents/index">Special Events</a>
+							<ul id="specialevents">
+								<li><a href="specialevents/pas">Performing Artist Series</a></li>
+								<li><a href="specialevents/css">Cultural Spotlight Series</a></li>
+							</ul>
+					</li>
+					<li class="parent">
+					<a href="sau/index">Student Alumni Union</a>
+						<ul id="sau">
+							<li><a href="sau/services">Services</a></li>
+							<li><a href="sau/descriptions">Room Descriptions</a></li>
+						</ul>
+					</li>
+					<li class="parent">
+					<a href="techcrew/index">Tech Crew</a>
+						<ul id="techcrew">
+							<li><a href="techcrew/services">Services</a></li>
+							<li><a href="techcrew/setups">Room Setups</a></li>
+							<li><a href="techcrew/employment">Employment</a></li>
+						</ul>
+					</li>
+					<li class="parent">
+					<a href="advisor/index">Advisor Information</a>
+						<ul id="advisorinfo">
+							<li><a href="advisor/forms">Forms</a></li>
+							<li><a href="advisor/links">Links</a></li>
+						</ul>
+					</li>
+</ul>
+				

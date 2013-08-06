@@ -1,0 +1,74 @@
+<?php require('header.html'); ?>
+<?php require('getconnected_start.html'); ?>
+<form action="roster/process" method="post">
+<table class="list">
+	<tr>
+		<th>Username</th>
+	</tr>
+	<tr>
+		<td><input type="hidden" name="username" value="<?php echo $user->getUsername(); ?>" /> <?php echo $user->getUsername(); ?></td>
+	</tr>
+	<tr>
+		<th>Name</th>
+	</tr>
+	<tr>
+		<td>First:&nbsp;<input name="first_name" type="text" disabled="true" size="15" value="<?php echo $user->getFirstname();?>" />
+		&nbsp;&nbsp;Last:&nbsp;<input name="last_name" disabled="true" type="text" size="25" value="<?php echo $user->getLastname();?>" /></td>
+	</tr>
+	<tr>
+		<th>Phone Number</th>
+	</tr>
+
+	<tr>
+		<td><input name="phone" type="text" size="30" value="<?php echo $user->getPhone();?>"/></td>
+	</tr>
+	<tr>
+		<th>Address</th>
+	</tr>
+	<tr>
+		<td><textarea name="address"><?php echo $user->getAddress();?></textarea></td>
+
+	</tr>
+	<tr>
+		<th>Email</th>
+	</tr>
+	<tr>
+		<td><input name="email" id="email" type="text" size="30" value="<?php echo $user->getEmail();?>"/></td>
+	</tr>
+	<tr>
+		<th>Position</th>
+	</tr>
+	<tr>
+		<td>
+		<select name="position">
+			
+		<?php
+		if (!$user->getPosition()) {
+				echo "<option value=\"\" selected=\"selected\">Select a position</option>";
+			}
+		foreach ($positions as $position) {
+			
+	
+			echo "<option value=\"{$position->getId()}\"$selected>{$position->getLabel()}</option>\n";
+		}
+		?>
+		</select>	
+		
+		</td>
+	</tr>
+	<tr>
+		<th>Status</th>
+	</tr>
+	<tr>
+		<td>
+			<input type="hidden" readonly="true" name="status" value="2" />
+			<input type="text" name="display" disabled="true" value="New Member" />
+		</td>
+	</tr>
+	<tr>
+		<td><input type="submit" name="saveUser" value="Save User and Add to Roster" /></td>
+	</tr>
+</table>
+</form>
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

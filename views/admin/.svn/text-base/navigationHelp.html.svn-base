@@ -1,0 +1,47 @@
+<?php require('admin_header.html'); ?>
+
+<h2>Navigation Help</h2>
+<h3>Navigation Properties</h3>
+<table cellspacing="1" width="100%" colspacing="0" style="background: #CCC">
+	<tr>
+		<th>Parent</th>
+		<td style="background: #FFF">
+		If parent is "None", then it is a top-level menu item.</br>
+		If parent is another navigation item, then this navigation item will appear in the submenu under the parent navigation item.
+		</td>
+	</tr>
+	<tr>
+		<th>Weight</th>
+		<td style="background: #FFF">
+		Weight is an integer that allows for menu ordering.</br>
+		The heavier a navigation item is, the lower it will sink on the menu.
+		</td>
+	</tr>
+	<tr>
+		<th>Label</th>
+		<td style="background: #FFF">
+		This is what the navigation item's text will be.
+		</td>
+	</tr>
+	<tr>
+		<th>Full URL</th>
+		<td style="background: #FFF">
+		This is the URL that the navigation item points to.</br>
+		If a navigation item is a Parent, then the full url will: /main/parentUrl</br>
+		If a navigation item is a Child, then the full url will: /main/parentUrl/childUrl</br>
+		If a navigation item needs to point to a specific location outside of CCL, use the full Url path when defining the navigation: http://www.woot.com</br>
+		</td>
+	</tr>
+</table>
+</br>
+<h3>Deleting Navigation</h3>
+<p>
+To delete a navigation item, simlpy check the proper box in the delete column for that navigation item and press the "Delete Selected Navigations" button.
+</p>
+<p>
+NOTE: If a parent navigation is deleted, then the children of that parent navigation item will also be deleted.
+</p>
+		
+		
+
+<?php require('admin_footer.html'); ?>

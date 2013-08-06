@@ -1,0 +1,35 @@
+<?php
+
+$to = "cclwww@rit.edu";
+//$to = "reserve@rit.edu";
+$subject = "Online SAU Room Reservation Request from the CCL website";
+$from = $_POST['email'];
+
+$message = "Name: " . $_POST['name'] . "\n";
+$message .= "Phone: " . $_POST['phone'] . "\n";
+$message .= "E. Mail: " . $_POST['email'] . "\n";
+$message .= "Department: " . $_POST['department'] . "\n\n";
+
+for( $i=1; $i<=$_POST['totalRequests']; $i++ )
+{
+	$eventName = "eventName" . $i;
+	$eventDate = "eventDate" . $i;
+	$roomChoiceOne = "roomChoiceOne" . $i;
+	$roomChoiceTwo = "roomChoiceTwo" . $i;
+	$startTime = "startTime" . $i;
+	$endTime = "endTime" . $i;
+	$peopleExpected = "peopleExpected" . $i;
+	
+	$message .= "Request No. " . $i . "\n\n";
+	$message .= "Event Name: " . $_POST[$eventName] . "\n";
+	$message .= "Event Date: " . $_POST[$eventDate] . "\n";
+	$message .= "First Room Choice: " . $_POST[$roomChoiceOne] . "\n";
+	$message .= "Second Room Choice: " . $_POST[$roomChoiceTwo] . "\n";
+	$message .= "Start Time: " . $_POST[$startTime] . "\n";
+	$message .= "End Time: " . $_POST[$endTime] . "\n";
+	$message .= "People Expected: " . $_POST[$peopleExpected] . "\n\n";
+}
+
+mail( $to, $subject, $message, $from );
+
+?>

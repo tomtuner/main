@@ -1,0 +1,35 @@
+<?php require('admin_header.html'); ?>
+
+<h2>Available Content</h2>
+
+
+<table cellspacing="1" width="100%" colspacing="0" style="background: #CCC">
+	<tr>
+		<th><a href="admin/page/title">Title</a></th>
+		<th>Last Modified Date</th>
+		<th>Last Modified By</th>
+		<th>Location</th>
+		<th></th>
+	</tr>
+	<?php
+	foreach ($pages as $page) {
+$html = <<<EOL
+	<tr style="background: #FFF">
+		<td>{$page->getTitle()} <a href="admin/editPage/{$page->getId()}">(Edit)</a></td>
+		<td>{$page->getLastmodifieddate()}</td>
+		<td>{$page->getLastmodifiedby()}</td>
+		<td class="location"><a href="{$page->getController()}/{$page->getAction()}" target="_blank">{$page->getController()}/{$page->getAction()}</a></td>
+
+		<td><b><a href="admin/deletePage/{$page->getId()}" title="Delete"><img src="images/b_drop.png" alt="Delete" hspace="0" vspace="0" width="16" height="16" border="0" /></a></b></td>
+	</tr>	
+	
+EOL;
+echo $html;
+		
+	}
+	
+	
+	?>
+</table>
+
+<?php require('admin_footer.html'); ?>

@@ -1,0 +1,6 @@
+<?php require('header.html'); ?>
+<?php require('reportHeader.html'); ?>
+
+
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

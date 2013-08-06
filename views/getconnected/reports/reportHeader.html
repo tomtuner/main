@@ -1,0 +1,99 @@
+<style type="text/css">
+	#content { width: 100% !important; }
+	tr.d0 td {
+	background-color: #eeeeee;;
+}
+tr.d1 td {
+	background-color: #ffffff; ;
+}
+table.list, table.record {
+	font-size: 12px;
+	width: 100%;
+	border: 1px solid silver;
+}
+
+table.left {
+	margin: 10px 0px 0px 0px;
+}
+
+tr.row1 {
+	background-color: #eeeeee;
+}
+
+tr.row2 {
+	background-color: #ffffff;
+}
+
+table.list td, table.list th, table.record td, table.record th {
+	padding: 4px;
+}
+
+table.record th {
+	width: 20%;
+	text-align: right;
+}
+
+table.list th {
+	background-color: #FAEDCB;
+	color: #2F4D6B;
+	text-align: left;
+}
+
+table.list table.list td {
+	height: 25px;
+}
+
+table.list th{
+	height: 15px;
+}
+
+table.list caption {
+	text-align: left;
+	font-weight: bold;
+	font-size: 12px;
+	padding: 10px 0px 3px 0px;
+}
+
+table.list th a {
+	color: #fff;
+}
+
+table.list td.submit {
+	text-align: right;
+}
+
+h3 {
+	font-size: 1em;
+	font-variant: small-caps;
+}
+
+#core_values dt {
+	font-weight: bold;
+	font-size: 90%;
+}
+
+#core_values dd {
+	margin: 0px;
+	padding-bottom: 1em;
+}
+
+.removePending {
+  color: #CCC;
+}
+</style>
+<div style="float:top; width:100%; padding: 10px;">
+	<a href="roster/">Roster</a> - 
+	Reports -
+	<a href="crest/">Manage Crest</a> - 
+	<a href="roster/logout">Log Out</a></li>
+</div>
+
+<div style="float:top; width:100%; padding: 10px;">
+	<a href="report/community">Community Report</a> - 
+	<a href="report/philanthropy">Philanthropy Report</a> -
+	<a href="report/programming">Programming Report</a> -
+	<a href="report/quarterly">Quarterly Report</a>
+</div>
+<div style="float:left; border: 1px dotted #CCC; padding: 10px; width:600px;">
+	<!-- page content -->
+<strong><?php echo $this->organization->getName() ?></strong>

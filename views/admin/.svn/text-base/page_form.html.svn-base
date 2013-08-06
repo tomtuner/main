@@ -1,0 +1,19 @@
+<form action="admin/process<?php if ( defined( 'ID' ) ) { echo "/".ID; } ?>" method="post">
+<table>
+	<tr>
+		<td>Title</td>
+		<td><input type="text" size="60" name="title" value="<?php echo $page[0]->getTitle(); ?>" /></td>	
+	</tr>
+	<tr>
+		<td>Location</td>
+		<td><input type="text" size="40" name="location" value="<?php echo "{$page[0]->getController()}/{$page[0]->getAction()}";  ?>"/> (I.E about/foo)</td>
+	</tr>
+	<tr>
+		<td valign="top">Content</td>
+		<td><textarea name="content" cols="70" rows="25"><?php echo $page[0]->getContent(); ?></textarea></td>	
+	</tr>
+	<tr>
+		<td colspan="2">Ignore content and use a view? <input type="checkbox" name="useview" <?php if($page[0]->getUseview()) {echo " checked";} ?>/></td>
+	</tr>
+</table>
+

@@ -1,0 +1,17 @@
+<?php require('header.html'); ?>
+<?php require('getconnected_start.html'); ?>
+
+	<p>
+		
+	
+
+We have developed this site for presidents of RIT Student Organizations. Here you can modify, update, and view information about your organization. In addition, you can now submit your quarterly reports online. Please use the menu items at the top to navigate the site. 
+
+
+
+
+</p>
+
+
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

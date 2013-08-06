@@ -1,0 +1,20 @@
+<?php require('subHeader.html'); ?>
+
+<h1>About This Publication</h1>
+<br/>
+In an attempt to streamline the information you are receiving from the Office of Fraternity & Sorority Life, we have decided to revamp the newsletter “Between the Columns” and distribute it as a weekly e-newsletter. This newsletter will include everything you need to know about what’s going on in the Greek community at RIT. 
+<br/><br/>Please take the time to read this each week, as it will be a primary means of communication between our office and you! If you have comments or feedback, or you would like to have your organizations events and news put into Between The Columns, please email <a href="mailto:greekga@rit.edu">greekga@rit.edu</a>.
+<br/><br/>
+<img src="/main/images/icon_acrobat.gif"alt="adobe pdf" border="0"/><strong> Back Issues</strong><br />
+<select name='forms' onchange='window.open(this.value)'>
+<option value='fratsorlife/between'>--Please make a Selection--</option>
+<?php foreach ($files as $file): ?>
+<option value='http://campuslife.rit.edu/admin/greekadmin/files/<?php echo $file['filename']; ?>' ><?php echo $file['name']; ?></option>
+<?php endforeach; ?>
+</select>
+</form>
+
+<br/><br/><br/><br/>
+<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="_blank"><img src="http://campuslife.rit.edu/clubs/images/getacro2.gif" alt="Get Adobe Acrobat" border="0"/></a><br/><br/>Note: You may need to <a href="http://www.adobe.com/products/acrobat/readstep2.html" target="_blank"><strong>download Acrobat Reader</strong></a> before viewing a document in PDF format.
+<br/><br/><br/><br/><br/>
+<?php require('subFooter.html'); ?>

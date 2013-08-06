@@ -1,0 +1,66 @@
+<?php require('subHeader.html'); ?>
+
+
+
+<form>
+
+<img src="/main/images/icon_acrobat.gif"alt="adobe pdf" border="0"/><strong> Forms and Applications</strong><br />
+<select name='forms' onchange='window.open(this.value)'>
+<option value='fratsorlife/forms'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $formName ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/" . $formFile[$i]  . "' >" . $formName[$i] . "</option><br />\n";
+	}
+?>	
+</select>
+
+<br /><br /><br /><img src="/main/images/icon_acrobat.gif"alt="adobe pdf" border="0"/><strong> Constitutions</strong><br />
+<select name='constituitions' onchange='window.open(this.value)'>
+<option value='fratsorlife/forms'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $constName ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/" . $constFile[$i]  . "' >" . $constName[$i] . "</option><br />\n";
+	}
+?>	
+</select>
+
+<br /><br /><br /><img src="/main/images/icon_acrobat.gif"alt="adobe pdf" border="0"/><strong> Officer Resources</strong><br />
+<select name='officer' onchange='window.open(this.value)'>
+<option value='fratsorlife/forms'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $miscName ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/" . $miscFile[$i]  . "' >" . $miscName[$i] . "</option><br />\n";
+	}
+?>	
+</select>
+
+<br /><br /><br /><img src="/main/images/icon_acrobat.gif"alt="adobe pdf" border="0"/><strong> Policies & Guidelines</strong><br />
+<select name='policy' onchange='window.open(this.value)'>
+<option value='fratsorlife/forms'>--Please make a Selection--</option>
+<?php
+	for( $i=0; $i<sizeof( $policyName ); $i++)
+	{
+		echo "<option value='http://campuslife.rit.edu/admin/greekadmin/files/" . $policyFile[$i]  . "' >" . $policyName[$i] . "</option><br />\n";
+	}
+?>	
+</select>
+
+<br /><br /><br /><strong>Links</strong><br />
+<!-- Links section are from a different table -->
+<select name='policy' onchange='window.location = this.value'>
+<option value='fratsorlife/forms'>--Please make a Selection--</option>
+<?php
+	while( $row = $linkResult->fetchRow() )
+	{
+		echo "<option value='" . $row['url'] . "'>" . $row['name'] . "</option>";
+	}
+?>	
+</select>
+</form>
+<br/><br/><br/><br/>
+<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="_blank"><img src="http://campuslife.rit.edu/clubs/images/getacro2.gif" alt="Get Adobe Acrobat" border="0"/></a><br/><br/>Note: You may need to <a href="http://www.adobe.com/products/acrobat/readstep2.html" target="_blank"><strong>download Acrobat Reader</strong></a> before viewing a document in PDF format.
+<br/><br/><br/><br/><br/>
+<?php require('subFooter.html'); ?>

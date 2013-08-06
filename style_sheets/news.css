@@ -1,0 +1,90 @@
+#tabs{
+        margin: 0 0 0 20px;
+        padding: 0;
+        background: transparent;
+		width: 280px;
+  }
+    #tabs ul{
+
+        margin:0;
+        padding:0;
+        list-style:none;
+    }
+    #tabs li{
+        display:inline;
+        margin:0;
+        padding:0;
+		font-size:18px;
+		font-weight: bold;
+    }
+	
+	#tabs li.events {
+		background: #E26E32;
+	}
+	
+	li.news {
+		background-color: #5E331B;
+	}
+	
+	 li.links {
+		background: #F4F5E4;
+	}
+	
+    #tabs a{
+        float:left;
+        margin:5px 35px 25px 0;
+        text-decoration:none;
+    }
+	#tabs a:hover {
+		color:#412315;
+	}
+	#tabs a:visited {
+		color:#412315;
+	}
+    #tabs a span{
+        float:left;
+        display:block;
+        
+        padding:0 9px 0px 6px;
+    }
+    #tabs a span{float:none;}
+  
+  
+    .tabContent {
+        padding:25px 0 0 20px;
+		width:240px;
+		height:215px;
+		font-size:14px;
+		color:#412315;
+		 
+    }
+	
+	.tabContent h2 {
+		color: #EB6822;
+	}
+	
+	.tabContent ul,  .tabContent li {
+		list-style-type: none;
+		margin:0;
+		padding:0;
+		color:#412315;
+	}
+	
+	#tabContent3 a{
+		color:#412315;
+		}
+	
+	.activeHeader a
+	{
+		color: #fff;
+	}
+	.deActiveHeader a
+	{
+		color: #412315;
+	}
+	
+	#eventList{
+	font-size:0.9em;
+	height:176px;
+	overflow:hidden;
+	}

@@ -1,0 +1,94 @@
+<?php require('header.html'); ?>
+<?php require('reportHeader.html'); ?>
+
+
+<p><h2>Programming Report</h2></p>
+
+<table class="list">
+	
+	<tr>
+		<th>Sposored Events</th>
+		<th>Attended Events</th>
+	</tr>
+	<tr>
+		<td><?php echo $numSpon ?></td>
+		<td><?php echo $numAtt ?></td>
+	</tr>
+	
+	</table>
+	<br>
+	<br>
+	<table class="list">
+		<tr>
+			<th colspan="5">Last 3 Submitted Programming Reports</th>
+		</tr>
+		<tr>
+			<th>Name of Event</th>
+			<th>Attendance</th>
+			<th>Type of Program</th>
+			<th>Sponsor</th>
+			<th>Date of Event (yyyy/mm/dd)</th>
+		</tr>
+		<?php print $last3;?>
+	</table>
+	<br>
+	<br>
+	
+	<form action="report/addProgReport" method="post">
+	<input name="type" id="type" type="hidden" size="15" value="0"/>
+	<table class="list">
+	<tr>
+		<th>Name of Event</th>
+		<th>Attendance</th>
+		<th>Type of Program</th>
+		<th>Sponsor</th>
+		<th>Date of Event (mm/dd/yyyy)</th>
+	</tr>
+	<tr>
+		<td>
+			<input name="name" id="name" type="text" size="13" style="width:100%"/>
+		</td>
+		<td>
+			<input name="attended" id="attended" type="text" size="5" />
+		</td>
+		<td>
+			<select name="type" style="width:100%">
+			<option value="Academic/Scholarship">Academic/Scholarship
+			<option value="Campus Involvement">Campus Involvement
+			<option value="Fraternity Education">Fraternity Education
+			<option value="Leadership Development">Leadership Development
+			<option value="Risk Management">Risk Management
+			<option value="Brotherhood/Sisterhood">Brotherhood/Sisterhood
+			<option value="Other">Other
+			</select>
+		</td>
+		<td>
+			<select name="sponsor" style="width:100%">
+			<option value="1">Sponsored
+			<option value="0">Attended
+			</select>
+		</td>
+		<td>
+			<input name="month" id="month" type="text" size="2" maxlength="2"/>
+			<input name="day" id="day" type="text" size="2" maxlength="2"/>
+			<input name="year" id="year" type="text" size="4" maxlength="4"/>
+		</td>
+	</tr>
+	<tr>
+		<th colspan="5">Description of Event</th>
+	</tr>
+	<tr>
+		<td colspan="5"><textarea name="desc" cols="50" rows="10" style="width:100%" ></textarea></td>
+	</tr>
+	<tr>
+		<td colspan="4">
+		<font color="#FF0000">*NOTE: Once a report is submitted it cannot be edited
+		</td>
+		<td align="right"><input name="addProglReport" type="submit" value="Add Report"/></td>
+	</tr>
+	</table>
+	</form>
+	<br>
+	<br>
+<?php require('getconnected_end.html'); ?>
+<?php require('footer.html'); ?>

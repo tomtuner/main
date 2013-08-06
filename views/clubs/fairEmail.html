@@ -1,0 +1,42 @@
+<html>
+<head>
+</head>
+<body>
+<p>
+Thank you for registering!
+</p>
+<p>
+You have successfully registered for the 2012 Fall Club Fair.  This email serves as confirmation that your attendance is accounted for and that your requests have been received.
+</p>
+Name: <?php echo $responsible_rep; ?><br />
+Email: <?php echo $email; ?><br />
+Phone: <?php echo $phone; ?><br />
+Organization Name: <?php echo $organization_name; ?><br />
+Power Source? <?php if($need_power) echo "Yes"; else echo "No"; ?><br />
+Interpreting Services? <?php if($need_interp) echo "Yes"; else echo "No"; ?><br />
+Other Requests: <?php if (empty($other_requests)) echo "None"; else echo $other_requests; ?><br />
+<p>
+Here are a few reminders for the Fair:
+<div style="color: #E88A3C;">
+<strong>
+Event Date: Sunday, September 2, 2012
+<br />Event Time: 1:00 - 4:00 pm
+<br />Location: Gordon Field House and Activities Center 
+</strong>
+</div>
+<ul>
+	<li><strong>Set up begins at Noon: Please arrive early to set up prior to 1:00pm</strong></li>
+	<li>All tables must be staffed exclusively by students of the organization</li>
+	<li>Each organization will receive 1 table and 2 chairs with your registration</li>
+	<li>Power is available to groups who request it on this form</li>
+	<li>Interpreting Services is available to groups who request it on this form</li>
+</ul>
+</p>
+<p>
+We look forward to seeing you at the Club Fair!  Thank you!
+</p>
+<div style="color: #E88A3C;">
+<em>Sarah Griffith</em>
+</div>
+</body>
+</html>

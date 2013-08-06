@@ -1,0 +1,112 @@
+<?php require('views/subHeaderAdv.html'); ?>
+<style type="text/css">
+p {
+margin-top: 5px;
+}
+span.required {
+color: red;
+font-size:12px;
+}
+form#advisorForm {
+margin-top: 20px;
+background:#efefef;
+border:solid 2px #ccc;
+padding: 10px;
+}
+
+</style>
+
+<form id="advisorForm" action="/main/clubs/submitAdvisorForm" method="post">
+<table>
+<?php if (isset($_POST["errors"])): ?>
+<tr>
+<td colspan="2">
+<strong><span class="required">The following errors were found!</span></strong>
+<ul>
+<?php foreach ($_POST["errors"] as $error): ?>
+<li><?php echo $error; ?></li>
+<?php endforeach; ?>
+</ul>
+</td>
+</tr>
+<?php endif; ?>
+<tr>
+<th colspan="2" style="text-align:left;">Advisor Information</th>
+</tr>
+<tr>
+<td>Name:</td>
+<td><input type="text" value="<?php if (isset($_POST["advisorName"])) echo $_POST["advisorName"]; ?>" name="advisorName" size="30"/></td>
+</tr>
+<tr>
+<td>Department:</td>
+<td><input type="text" value="<?php if (isset($_POST["advisorDept"])) echo $_POST["advisorDept"]; ?>" name="advisorDept" size="30"/></td>
+</tr>
+<tr>
+<td>Title:</td>
+<td><input type="text" value="<?php if (isset($_POST["advisorTitle"])) echo $_POST["advisorTitle"]; ?>" name="advisorTitle" size="30"/></td>
+</tr>
+<tr>
+<td>Email:</td>
+<td><input type="text" value="<?php if (isset($_POST["advisorEmail"])) echo $_POST["advisorEmail"]; ?>" name="advisorEmail" size="30"/></td>
+</tr>
+<tr>
+<td>Phone Number:<br/><span class="required">e.g. 585-475-2804</span></td>
+<td><input type="text" value="<?php if (isset($_POST["advisorPhone"])) echo $_POST["advisorPhone"]; ?>" name="advisorPhone" size="30"/></td>
+</tr>
+<tr>
+<td>
+<?php
+if(isset($_POST["staff"])){
+	$staffhold=$_POST["staff"];
+} else {
+	$staffhold=3;
+} ?>
+<input type="radio" name="staff" value="0" <?php if(($staffhold)==0){echo "checked";} ?> /> Staff 
+<input type="radio" name="staff" value="1" <?php if(($staffhold)==1){echo "checked";} ?> /> Faculty
+</td>
+</tr>
+<tr>
+<th colspan="2" style="text-align:left;">Club Advisor Expectations</th>
+</tr>
+
+</table>
+<?
+$strlis="</LI><BR /><LI>";
+$strbr ="<BR /><BR />";
+$str  ="Please read and check the box after each section to confirm that you had read it and agree to comply with the statements within.";
+$str .=$strbr;
+$str .="As an advisor for the club, I agree to assume counseling and informational roles in relation to the club by (but not limited to):<BR>";
+$str .="<UL><LI>";
+$str .="As the advisor, I will help students understand and follow campus policies and procedures appropriately.&nbsp; I will ensure that all student leaders, co-advisors, and myself read and understand the RIT Clubs Handbook of Policies and Procedures. (For access to the Clubs Handbook of Policies and Procedures, please visit clubs.rit.edu)";
+$str .="<input type=\"checkbox\" name=\"line1\" value=\"1\" ".($_POST['line1'] ? "checked" : "")." />".$strlis;
+$str .="As the advisor, I will assist the club in identifying yearly goals, completing necessary paperwork, and aid in the clarification of officer and member responsibilities within the club.&nbsp; In addition, I will serve as a source of information, guidance, and leadership, while understanding that the club is <B>student-directed: I am an advocate, not the director.</B>";
+$str .="<input type=\"checkbox\" name=\"line2\" value=\"1\" ".($_POST['line2'] ? "checked" : "")." />".$strlis;
+$str .="As the advisor, I will ensure the club designates club members that will attent mandatory club meetings and requirements, and completes requirements/paperwork on time to the Club Center.";
+$str .="<input type=\"checkbox\" name=\"line3\" value=\"1\" ".($_POST['line3'] ? "checked" : "")." />".$strlis;
+$str .="As the advisor, I will oversee the financial affairs of the club.&nbsp; I will review the Expense Approval Forms (EAF) and other financial material in a timely manner and will ensure that the club e-board members maintain accurate financial records that are consistent with the Club Center Finance Department.&nbsp; I will also ensure that all club funds are properly collected, donated, fundraised, and deposited and done so in accordance with RIT policies.&nbsp; All club dues and proceedings MUST be deposited through the club budget account in the Club Center.";
+$str .="<input type=\"checkbox\" name=\"line4\" value=\"1\" ".($_POST['line4'] ? "checked" : "")." />".$strlis;
+$str .="As the advisor, I agree to attend scheduled meetings and events to the best of my ability.&nbsp; In addition to attending, I will stay informed about events the club is planning and ensure proper steps are taken to protect the safety and welfare of the club members participating.";
+$str .="<input type=\"checkbox\" name=\"line5\" value=\"1\" ".($_POST['line5'] ? "checked" : "")." />".$strlis;
+$str .="As the advisor, I will ensure that I or a co-advisor will be in attendance when possible with events that require travel and any level of risk.&nbsp; I will also ensure that Risk Management, the Club Center staff and other parties are notified and that waivers/additional travel forms have been completed before leaving if necessary.";
+$str .="<input type=\"checkbox\" name=\"line6\" value=\"1\" ".($_POST['line6'] ? "checked" : "")." />".$strlis;
+$str .="As the advisor, I will actively participate in the planning of all on-campus and off-campus events when possible.&nbsp; I will make time available for club officers and members to discuss club matters.&nbsp; I will also serve as a resource to aid in resolving issues confronting the club and its members.";
+$str .="<input type=\"checkbox\" name=\"line7\" value=\"1\" ".($_POST['line7'] ? "checked" : "")." />".$strlis;
+$str .="As the advisor, I will be an advocate for club programs, purpose, and goals.";
+$str .="<input type=\"checkbox\" name=\"line8\" value=\"1\" ".($_POST['line8'] ? "checked" : "")." />"."</LI></UL>";
+$str .="<P>Thank you for considering serving as an advisor to a campus club.&nbsp; Please contact the RIT Clubs Administrator, Sarah Griffith (sbgccl@rit.edu), with any questions or concerns.&nbsp; For additional information regarding club policies and procedures please refer to our online handbook and documents at clubs.rit.edu</P>";
+$str .="<P>I further understand that I must notify the Clubs Administrator if, for any reason, I am unable to continue with my responsibilities so that a suitable replacement may be found.</P>";
+$str .=$strbr;
+
+echo $str;
+?>
+
+<p>
+<strong>By entering your full name in the box and clicking agree you accept the terms of being a club advisor as laid out above.</strong><br />
+<input type="text" value="<?php if (isset($_POST["eSig"])) echo $_POST["eSig"]; ?>" name="eSig" size="30"/>
+<input type="hidden" name="submitted" value="1"/>
+<input type="submit" value="Submit"/>
+</p>
+</form>
+<br/>
+
+<?php require('views/subFooter2.html'); ?>

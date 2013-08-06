@@ -1,0 +1,13 @@
+<?php require('header.html'); ?>
+
+<?php
+
+$html = <<<EOL
+	<h2>{$page[0]->getTitle()}</h2>
+	{$page[0]->getContent()}
+	
+EOL;
+	     		echo $html;
+?>
+
+<?php require('footer.html'); ?>

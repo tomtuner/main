@@ -1,0 +1,91 @@
+<?php require('admin_header.html'); ?>
+
+<h2>Available Navigation</h2>
+<!-- Here we start the form for the list of all navigation -->
+<form action="admin/process" method="post">
+	<table cellspacing="1" width="100%" colspacing="0" style="background: #CCC">
+		<tr>
+			<th>Parent</th>
+			<th>Weight</th>
+			<th>Label</th>
+			<th>Full URL</th>
+			<th>Delete</th>
+		</tr>
+		
+		<?php
+		$counter = 0;
+		foreach ($navigation as $myNavigation) 
+		{
+			/*
+			* Note: The last row is seperated out just in case Ajax or effects are to be added on new nav entry
+			*/
+			if($counter+1 == sizeof($navigation))
+			{
+			$html = <<<EOL
+					<tr id="lastNavigation" class="NavigationRow" style="background: #FFF">
+						<td>{$myNavigation->getParentName()}</td>
+						<td>{$myNavigation->getWeight()}</td>
+						<td>{$myNavigation->getLabel()}</td>
+						<td>{$myNavigation->getFullUrl()}</td>
+						<td><input type="checkbox" name="deleteBox[]" value="{$myNavigation->getId()}" /></td>
+					</tr>	
+EOL;
+			}
+			else
+			{
+			$html = <<<EOL
+					<tr style="background: #FFF">
+						<td>{$myNavigation->getParentName()}</td>
+						<td>{$myNavigation->getWeight()}</td>
+						<td>{$myNavigation->getLabel()}</td>
+						<td>{$myNavigation->getFullUrl()}</td>
+						<td><input type="checkbox" name="deleteBox[]" value="{$myNavigation->getId()}" /></td>
+					</tr>	
+EOL;
+			}
+	echo $html;
+	$counter++;	
+		}
+		?>
+	</table>
+<input type="submit" name="deleteNav" value="Delete Selected Navigations" />
+</form>
+
+
+
+<h2>Add New Navigation</h2>
+<form action="admin/process" method="post">
+	<table cellspacing="1" width="100%" colspacing="0" style="background: #CCC">
+		<tr>
+			<th>Parent</th>
+			<th>Weight</th>
+			<th>Label</th>
+			<th>This URL</th>
+		</tr>
+		<tr style="background: #FFF">
+			<td>
+				<select name="parent" style="width:100%">
+				<option value="0">None</option>
+				<?php
+					foreach ($navigation as $parent) 
+					{
+						if($parent->getParent()==0)
+						{
+							echo "<option value=\"{$parent->getId()}\">{$parent->getLabel()}</option>";
+						}
+					}
+				?>
+				
+				</select>
+			</td>
+			<td><input type="integer" name="weight" style="width:100%"></td>
+			<td><input type="text" name="label"style="width:100%"></td>
+			<td><input type="text" name="url" style="width:100%"></td>
+		</tr>
+	</table>
+
+	<input type="submit" name="saveNewNav" value="Add Navigation" />
+</form>
+
+
+<?php require('admin_footer.html'); ?>

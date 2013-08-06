@@ -1,0 +1,3 @@
+<?php require('header.html'); ?>
+<p class="top"><?php echo $message; ?></p>
+<?php require('footer.html'); ?>

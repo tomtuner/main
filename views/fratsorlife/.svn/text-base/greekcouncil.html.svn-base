@@ -1,0 +1,42 @@
+<?php require('subHeader.html'); ?>
+<strong>Greek Council</strong><br/><br/>
+The Greek Council at Rochester Institute of Technology is comprised of representatives from the Interfraternity Council,
+Panhellenic Council, and the National Pan-Hellenic Council. It is the governing body of all Greek organizations at 
+RIT.<br/><br/>
+
+The purpose of Greek Council is:
+<br/>
+<ol>
+   <li>To increase cooperation, communication, education, and unity between all members of the fraternity, sorority, and campus community.
+   </li><br/>
+   <li>To enhance the image of the fraternity and sorority community by providing information for and about Greek life throughout the Rochester Institute of Technology community.
+   </li><br/>
+   <li>To coordinate all joint Greek sponsored functions that are open and beneficial to the entire Greek community and the Rochester Institute of Technology community.
+   </li><br/>
+   <li>To protect the individual rights and freedoms of its members.
+   </li><br/>
+   <li>To provide an official and representative Greek organization, with powers to participate in decisions affecting the Greek community.
+   </li><br/>
+   <li>To work together with the Institute administration, the alumni(ae), chapter advisor and the undergraduate population for the achievement of common goals.
+   </li><br/>
+   <li>To work with the Interfraternity council, College Panhellenic Council, Order of Omega, National Pan-Hellenic Council, and GAMMA, to protect the Greek system.
+   </li>
+</ol>
+
+
+<br/>
+
+<table border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td valign="left" width="100">Advisor:<br/><br/></td>
+		<td><a href="mailto:jrbccl@rit.edu">Jessica Berner</a><br/><br/></td>
+	</tr>
+	<tr>
+		<td valign="left">President:<br/><br/></td>
+		<td><a href="mailto:allgood2386@gmail.com">Rich Allen</a><br/><br/></td>
+	</tr>
+</table><br/>
+What is Greek Council up to? <br/>
+Find out at our <a href=http://rit.facebook.com/group.php?gid=2232555000><strong>Facebook page!</strong></a>
+
+<?php require('subFooter.html'); ?>

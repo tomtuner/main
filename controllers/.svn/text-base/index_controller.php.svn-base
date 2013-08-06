@@ -1,0 +1,105 @@
+<?php
+
+class IndexController extends Controller {
+	
+	public function loadevents() {
+		global $db;
+		$MAX = 7;
+		
+		// Implemented to dynamically get events from the promo database and display them on the website
+		// This is only necessary in the index controller because we need to use ajax to acquire the eventkey from the events.rit.edu feed
+		
+		$rssFeed = "http://events.rit.edu/web_service/rss_feed.cfm?categories=1,2,3,4,5,6,8,9,11,12,13,14,15,17,18";
+		$xml = new Xml();
+		$xml->setFile($rssFeed);
+		$xml->parse();
+	
+		extract(getdate());
+		$now = "{$year}-{$mon}-{$mday} {$hours}:{$minutes}:{$seconds}";
+		
+		// Get promos from database
+		$sql = "SELECT * FROM promo.events INNER JOIN (promo.days INNER JOIN promo.locations ON promo.days.id = promo.locations.day_id) ON promo.days.event_id = promo.events.id WHERE promo.days.start_at > '{$now}' ORDER BY promo.days.start_at ASC LIMIT 0,15";
+
+		$res = $db->query($sql);
+		$counter = 0;
+		$used = array();
+		$doPrint = false;
+		
+		while ($row =& $res->fetchRow()) {
+			$formattedDate = date("n.j.y",strtotime($row['start_at']));
+			$eventsDate = date("m-j-Y",strtotime($row['start_at']));
+			
+			$eventKeyLink = $xml->getEventKeyLink($row['name']);
+						
+			// If the key exists, link to the actual event; else, link to the day of the event
+			$eventLink = (isset($eventKeyLink))?$eventKeyLink:"https://events.rit.edu/index.cfm?action=date&name=day&value={$eventsDate}";
+			
+			if ($counter < $MAX) {
+				if (isset($eventKeyLink)) {
+					// So the event key is set meaning we are linking to the actual event and we need to check the event key so we don't print it twice
+					$searchSalt = "event_key=([0-9]+)";
+					preg_match("#{$searchSalt}#",$eventKeyLink,$matches);
+					
+					$needle = strtoupper($matches[1]);
+				} else {
+					// No event key meaning we are linking to a day so we need to check to event name
+					$needle = strtoupper($row['name']);
+				}
+				
+				if (!in_array($needle,$used)) {
+					// The needle used isn't in the array 
+					if (!isset($eventKeyLink)) {
+						// Lets check if there is something 'like' it in the array because of misspellings and what not..this is not perfect but useful
+						foreach ($used as $item) if ($this->compareLike($item,$needle)) break;
+					}
+					
+					// store in the array
+					$used[] = strtoupper($needle);
+					// increment counter so we only get 7
+					$counter++;
+					$doPrint = true;
+				} else {
+					$doPrint = false;
+				}
+				
+				if ($doPrint) echo "<strong>{$formattedDate}</strong>- <a href=\"{$eventLink}\">{$row['name']}</a>\n";
+			}
+		}
+	}
+	
+	private function compareLike($str,$str2) {
+		// If either is a number, dont do anything because this is a string comparison for event names
+		if (is_numeric($str)||is_numeric($str2)) return;
+		
+		$pros = 0;
+		// length will be the longest of the two strings
+		$length = (strlen($str)>strlen($str2))?strlen($str):strlen($str2);
+		// this is the percentage of precision we want..0.7 would be 70%
+		$acceptableCorrect = floor(0.7*$length);
+		
+		// If they aren't the same thing, lets see if they are at least 'close' in length..if not, do nothing
+		if (strlen($str)!=strlen($str2)) if (abs(strlen($str)-strlen($str2)) > $acceptableCorrect) return;
+	
+		for ($i=0;$i<$length;$i++) {
+			// Three separate comparisons in the loop to check for the same position, position+1 for first string, and position+1 for second string
+			if (isset($str[$i])&&isset($str2[$i])) {
+				if ($str[$i]==$str2[$i]) $pros++;
+			}
+			
+			if (isset($str[$i+1])&&isset($str2[$i])) {
+				if ($str[$i+1]==$str2[$i]) $pros++;
+			}
+			
+			if (isset($str[$i])&&isset($str2[$i+1])) {
+				if ($str[$i]==$str2[$i+1]) $pros++;
+			}
+		}
+		
+		if ($pros > $acceptableCorrect) return true;
+		
+		return false;
+	}
+
+}
+
+?>

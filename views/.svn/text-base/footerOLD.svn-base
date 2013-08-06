@@ -1,0 +1,6 @@
+</div>
+	<div id="footer">
+	  <?php include( $home."footer/footer.php" ) ?>	
+    </div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+This is a horrible hack to hard code the image for hispanic heritage calendar untill we get access to the admin login. ~Solo
+
+The images were moved to www/data-dist/images/SpecialEvents/
+
+~solo

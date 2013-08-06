@@ -1,0 +1,359 @@
+<?php 
+ 
+	// Checks to see if this page was called after a failed validation in the controller
+	if ( isset ( $_GET['e'] ) )
+	{
+		$first_name = $_GET['first_name'];
+		$middle_initial = $_GET['middle_initial'];
+		$last_name = $_GET['last_name'];
+		$gender = $_GET['gender'];
+		$perm_street = $_GET['perm_street'];
+		$perm_city = $_GET['perm_city'];
+		$perm_state = $_GET['perm_state'];
+		$perm_zip = $_GET['perm_zip'];
+		$curr_street = $_GET['curr_street'];
+		$curr_city = $_GET['curr_city'];
+		$curr_state = $_GET['curr_state'];
+		$curr_zip = $_GET['curr_zip'];
+		$sendInfoTo = $_GET['sendInfoTo'];
+		$im = $_GET['im'];
+		$email = $_GET['email'];
+		$phone_area = $_GET['phone_area'];
+		$phone = $_GET['phone'];
+		$enrollmentstatus = $_GET['enrollmentstatus'];
+		$info_on = $_GET['info_on'];
+	} 
+	else
+	{
+		// empty values if it has not been sent back by the controller
+		$first_name = $middle_initial = $last_name = $gender = $perm_street = $perm_city = $perm_state = "";
+		$perm_zip = $curr_street = $curr_city = $curr_state = $curr_zip = $sendInfoTo = $im = $email = "";
+		$phone_area = $phone = $enrollmentstatus = $info_on = "";
+		
+	}
+	
+	// Array containing the states value
+	$states_value = array('AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','GU','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','PR','RI','SC','SD','TN','TX','UT','VT','VA','VI','WA','WV','WI','WY');
+
+	// Array containing the states name
+	$states_name = array('Alabama (AL)','Alaska (AK)','Arizona (AZ)','Arkansas (AR)','California (CA)','Colorado (CO)','Connecticut (CT)','Delaware (DE)','District of Columbia (DC)','Florida (FL)','Georgia (GA)','Guam (GU)','Hawaii (HI)','Idaho (ID)','Illinois (IL)','Indiana (IN)','Iowa (IA)','Kansas (KS)','Kentucky (KY)','Louisiana (LA)','Maine (ME)','Maryland (MD)','Massachusetts (MA)','Michigan (MI)','Minnesota (MN)','Mississippi (MS)','Missouri (MO)','Montana (MT)','Nebraska (NE)','Nevada (NV)','New Hampshire (NH)','New Jersey(NJ)','New Mexico (NM)','New York (NY)','North Carolina (NC)','North Dakota (ND)','Ohio (OH)','Oklahoma (OK)','Oregon (OR)','Pennyslvania (PA)','Puerto Rico (PR)','Rhode Island (RI)','South Carolina (SC)','South Dakota (SD)','Tennessee (TN)','Texas (TX)','Utah (UT)','Vermont (VT)','Virginia (VA)','Virgin Islands (VI)','Washington (WA)','West Virginia (WV)','Wisconsin (WI)','Wyoming (WY)');
+
+require('fratsorinfoHeader.html'); 
+?>
+
+Please fill in and submit this form for more information on Greek life at RIT<br/><br/>
+
+<?php
+	// Displays error message if error flag is set (e)
+	if ( isset ( $_GET['e'] ) )
+	{
+		$holder = $_GET['e'];
+		$msg = $_GET['emsg'];
+		echo ("<div style='color:red; font-weight:bold;'>" . $msg . "</div> <br />");
+		
+	}
+?>
+
+<form action="fratsorlife/submitRequest" method="POST">
+
+<div id="personal_info">
+	<table>	
+		<tr>
+			<td> <div>First Name</div> </td>
+			<td> <input id="first_name" name="personal_info[first_name]" size="30" type="text" value="<?php echo ($first_name);?>"/> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>Middle Initial</div> </td>
+			<td> <input id="middle_i" name="personal_info[middle_initial]" size="5" type="text"  value="<?php echo ($middle_initial);?>"/> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>Last Name</div> </td>
+			<td> <input id="last_name" name="personal_info[last_name]" size="30" type="text"  value="<?php echo ($last_name);?>"/> </td>
+		</tr>
+		<tr>
+			<td> <div>Gender</div> </td>
+			<td> 
+				<select id="gender" name="personal_info[gender]">
+				<?php
+					if ($gender == 'female')
+					{
+				?>
+					<option value="male">Male</option>
+					<option value="female" selected>Female</option>
+				<?php
+					}
+					else
+					{
+				?>
+					<option value="male" selected>Male</option>
+					<option value="female">Female</option>
+				<?php
+				}
+				?>
+				
+				</select>
+			</td>
+		</tr>
+	</table>
+	<br />
+</div>
+
+<div id="address">
+<strong>Permanent Address:</strong><br />
+	<table>	
+		<tr>
+			<td> <div>Street</div> </td>
+			<td> <input id="permanent_street" name="permanent_address[street]" size="30" type="text" value="<?php echo ($perm_street);?>"/> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>City</div> </td>
+			<td> <input id="permanent_city" name="permanent_address[city]" size="30" type="text"  value="<?php echo ($perm_city);?>"/> </td>
+		</tr>
+		<tr>
+			<td> <div>State</div> </td>
+			<td> 
+				<select id="permanent_state" name="permanent_address[state]">
+				<?php
+					for ( $i = 1; $i <= 53; $i += 1) {
+						if ($states_value[$i] == $perm_state)
+						{
+							echo "<option id=\"" . $states_value[$i] . "\" value=\"" . $states_value[$i] . "\" selected>" . $states_name[$i] ."</option>\n";
+						}
+						else
+						{
+							echo "<option id=\"" . $states_value[$i] . "\" value=\"" . $states_value[$i] . "\">" . $states_name[$i] ."</option>\n";
+						}
+					}
+				?> 
+				</select>
+			</td>
+		</tr>	
+		<tr>
+			<td> <div>Zip code</div> </td>
+			<td> <input id="permanent_zip" name="permanent_address[zip]" size="6" type="text"  value="<?php echo ($perm_zip);?>"/> </td>
+		</tr>
+	</table>
+	<br />
+	
+	<strong>Current Address:</strong><br />
+	<table>
+		<tr>
+			<td> <div>Same as permanent</div> </td>
+			
+			<?php
+			if (isset ($_GET['sameAddress']))
+			{
+				echo "<td><input type=\"checkbox\" id=\"sameAddress\" name=\"sameAddress\" onclick=\"copyAddress( 'sameAddress' )\" checked></td>";
+			} 
+			else
+			{
+				echo "<td><input type=\"checkbox\" id=\"sameAddress\" name=\"sameAddress\" onclick=\"copyAddress( 'sameAddress' )\"></td>";
+			}
+			
+			
+			?>
+			
+			
+		</tr>
+		<tr>
+			<td> <div>Street</div> </td>
+			<td> <input id="current_street" name="current_address[street]" size="30" type="text" value="<?php echo ($curr_street);?>"/> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>City</div> </td>
+			<td> <input id="current_city" name="current_address[city]" size="30" type="text"  value="<?php echo ($curr_city);?>"/> </td>
+		</tr>
+		<tr>
+			<td> <div>State</div> </td>
+			<td> 
+				<select id="current_state" name="current_address[state]">
+				<?php
+					for ( $i = 1; $i <= 53; $i += 1) {
+						if ($states_value[$i] == $curr_state)
+						{
+							echo "<option id=\"" . $states_value[$i] . "\" value=\"" . $states_value[$i] . "\" selected>" . $states_name[$i] ."</option>\n";
+						}
+						else
+						{
+							echo "<option id=\"" . $states_value[$i] . "\" value=\"" . $states_value[$i] . "\">" . $states_name[$i] ."</option>\n";
+						}
+					}
+				?> 
+				</select>
+			</td>
+		</tr>	
+		<tr>
+			<td> <div>Zip code</div> </td>
+			<td> <input id="current_zip" name="current_address[zip]" size="6" type="text"  value="<?php echo ($curr_zip);?>"/> </td>
+		</tr>
+	</table>
+	<br />
+</div>
+
+<table>	
+		<tr>
+			<td> <div>Please send the information to my</div> </td>
+			<td>
+				<select id="sendInfoTo" name="sendInfoTo">
+				<?php
+					if ($sendInfoTo == 'permanent')
+					{
+				?>
+					<option value="permanent" selected>Permanent Address</option>
+					<option value="current">Current Address</option>
+				<?php
+					}
+					else
+					{
+				?>
+					<option value="permanent">Permanent Address</option>
+					<option value="current" selected>Current Address</option>
+				<?php
+				}
+				?>
+				</select>
+			</td>
+		</tr>
+</table>
+<br />
+
+<div id="contact_info">
+	<strong>Contact information:</strong><br />
+	<table>	
+		<tr>
+			<td> <div>IM Screen Name (optional)</div> </td>
+			<td> <input id="name" name="contact_info[im]" size="30" type="text" value="<?php echo ($im);?>"/> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>E-mail Address</div> </td>
+			<td> <input id="email" name="contact_info[email]" size="30" type="text"  value="<?php echo ($email);?>"/> </td>
+		</tr>
+		
+		<tr>
+			<td> <div>Phone</div> </td>
+			<td> 
+				(<input id="phone_area" name="contact_info[phone_area]" size="5" type="text" value="<?php echo ($phone_area);?>"/>)  
+				<input id="phone" name="contact_info[phone]" size="17" type="text"  value="<?php echo ($phone);?>"/>
+			</td>
+		</tr>
+	</table>
+	<br />
+</div>
+
+<strong>Enrollment Status:</strong><br />
+<select id="enrollmentstatus" name="enrollmentstatus">
+	<?php
+		if ($enrollmentstatus == 'prospective')
+		{
+	?>
+		<option value="prospective" selected>Prospective RIT Student</option>
+		<option value="accepted">Accepted RIT Student</option>
+		<option value="current">Current Student</option>
+	<?php
+		}
+		elseif ($enrollmentstatus == 'accepted')
+		{
+	?>
+		<option value="prospective">Prospective RIT Student</option>
+		<option value="accepted" selected>Accepted RIT Student</option>
+		<option value="current">Current Student</option>
+	<?php
+		} 
+		else
+		{
+	?>
+		<option value="prospective">Prospective RIT Student</option>
+		<option value="accepted">Accepted RIT Student</option>
+		<option value="current" selected>Current Student</option>
+	<?php
+		}
+	?>
+	
+</select>
+<br /><br />
+
+<strong>I am interested in receiving information about:</strong><br />
+<select id="info_on" name="info_on" onchange="toggleVisible( 'specific_RIT', 'info_on', 'true' )">
+	<?php
+		if ($info_on == 'specific')
+		{
+	?>
+		<option value="general">Fraternity and Sorority Life at RIT</option>
+		<option value="specific" selected>Specific Greek Organizations at RIT</option>
+		<option value="both">Both</option>
+	<?php
+		}
+		elseif ($info_on == 'both')
+		{
+	?>
+		<option value="general">Fraternity and Sorority Life at RIT</option>
+		<option value="specific">Specific Greek Organizations at RIT</option>
+		<option value="both" selected>Both</option>
+	<?php
+		} 
+		else
+		{
+	?>
+		<option value="general" selected>Fraternity and Sorority Life at RIT</option>
+		<option value="specific">Specific Greek Organizations at RIT</option>
+		<option value="both"x>Both</option>
+	<?php
+		}
+	?>
+	
+</select>
+<br /><br />
+
+<?php
+
+	$totalSorority=0;
+
+	echo "<div id='specific_RIT'>\n<strong>Fraternities</strong><br/><br/>\n";
+	
+	// Display fraternities
+	while($row = $result->fetchRow())
+	{
+		if( $row['type'] == 'Fraternity')
+		{
+			if (isset ($_GET[ $row['org_id'] ]))
+			{
+				echo "<input class='specific_requests' id='specific_info_requests' name='specific_request[" . $row['org_id'] . "]' type='checkbox' checked/>" . $row['n_name'] . "<br />\n";
+			} 
+			else
+			{
+				echo "<input class='specific_requests' id='specific_info_requests' name='specific_request[" . $row['org_id'] . "]' type='checkbox' />" . $row['n_name'] . "<br />\n";
+			}
+		
+		}
+		else
+		{
+			$sorority[] = $row['n_name'];
+			$sororityId[] = $row['org_id'];
+			$totalSorority++;
+		}
+	}
+	
+	// Display sororities
+	echo "<br/><br/><strong>Sororities</strong><br/><br/>\n";
+	for( $i=0; $i<$totalSorority; $i++ )
+	{
+		if (isset ($_GET[ $sororityId[$i] ]))
+			{
+				echo "<input class='specific_requests' id='specific_info_requests' name='specific_request[" . $sororityId[$i] . "]' type='checkbox' checked/>" .  $sorority[$i] . "<br />\n";
+			} 
+			else
+			{
+				echo "<input class='specific_requests' id='specific_info_requests' name='specific_request[" . $sororityId[$i] . "]' type='checkbox'/>" .  $sorority[$i] . "<br />\n";
+			}
+	}
+	echo "</div>";
+?>
+<br />
+<input name="commit" type="submit" value="Submit" />
+</form>
+<?php require('subFooter.html'); ?>
