@@ -382,13 +382,13 @@ class ClubsController extends Controller
 	}
 
 	
-	#public function resources()
-	# This has moved into the CMS
-	#{
-	#	$page_title = array('Resources');
-	#	
-	#	require('views/clubs/resources.html');
-	#}
+	public function resources()
+	 #This has moved into the CMS
+	{
+		$page_title = array('Resources');
+		
+		require('views/clubs/resources.html');
+	}
 	
 	public function AdvisorDocGen($AName="Leroy Jenkins",$ADept="Technomancy Department",$ATitle="Arch Technomancer",$APhone="123-456-7890",$AEmail="abc1234@rit.edu",$AStaff=0,$eSig="Invalid"){
 		ini_set('display_errors','On');
